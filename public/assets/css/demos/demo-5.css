@@ -1,0 +1,940 @@
+/* Font Imports and Definitions */
+@import url("https://fonts.googleapis.com/css?family=Poppins:200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800");
+
+@font-face {
+  font-family: 'flamingregular';
+  src: url("../../fonts/flaming/flaming-webfont.woff2") format("woff2"),
+       url("../../fonts/flaming/flaming-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Title Styles */
+.title {
+  font-weight: 600;
+  font-size: 3rem;
+  letter-spacing: -.025em;
+}
+
+/* Navigation Styles */
+.nav.nav-pills .nav-link {
+  font-size: 1.5rem;
+}
+
+/* Introduction Slider Styles */
+.intro-slider-container,
+.intro-slide {
+  height: 100vh;
+  background-color: #b0b3b3;
+}
+
+.intro-slider.owl-theme.owl-nav-inside .owl-dots {
+  bottom: 20;
+}
+
+.intro-slide {
+  display: flex;
+  align-items: center;
+  background-size: cover;
+  background-position: center center;
+}
+
+.intro-slide .intro-content {
+  position: static;
+  left: auto;
+  top: auto;
+  transform: translateY(0);
+  -ms-transform: translateY(0);
+}
+
+.intro-slide .btn-primary {
+  background-color: transparent;
+  color: #fff;
+  border-color: #fff;
+}
+
+.intro-slide .btn-primary:hover,
+.intro-slide .btn-primary:focus {
+  background-color: #fff;
+  color: #c66;
+}
+
+.intro-content .btn {
+  font-weight: 400;
+  text-transform: uppercase;
+  border-radius: 30px;
+}
+
+.intro-subtitle,
+.intro-text {
+  font-weight: 300;
+  font-size: 1.6rem;
+  letter-spacing: -.025em;
+}
+
+.intro-subtitle {
+  margin-bottom: 1rem;
+}
+
+.intro-title {
+  font-family: 'flamingregular', serif;
+  font-weight: 400;
+  font-size: 8.6rem;
+  line-height: .75;
+  letter-spacing: 0;
+  margin-bottom: 2rem;
+}
+
+.intro-text {
+  margin-bottom: 1.6rem;
+}
+
+/* Styles for the extended header search */
+
+.header-search-extended .btn-primary {
+    background-color: transparent;
+}
+
+.header-search-extended .btn-primary:hover,
+.header-search-extended .btn-primary:focus {
+    color: #c66;
+}
+
+.header-search-extended .btn-primary:not(:disabled):not(.disabled):active,
+.header-search-extended .btn-primary:not(:disabled):not(.disabled).active,
+.header-search-extended .show > .btn-primary.dropdown-toggle {
+    background-color: transparent;
+    border: none;
+    color: #c66;
+}
+
+/* Styles for the owl theme navigation */
+
+.owl-theme .owl-nav [class*='owl-'] {
+    width: 3.2rem;
+    height: 3.2rem;
+    font-size: 2rem;
+    margin-top: -1.6rem;
+}
+
+.owl-theme.owl-light .owl-nav [class*='owl-'] {
+    border-color: #fff;
+    color: #fff;
+}
+
+/* Styles for the brands with borders and carousels */
+
+.brands-border .brand {
+    height: 100px;
+    border: 0.1rem solid #ebebeb;
+    border-left-width: 0;
+}
+
+.brands-carousel-full {
+    border-bottom: 0.1rem solid #ebebeb;
+}
+
+.brands-carousel-full.brands-border .brand {
+    border-right-width: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
+}
+/* Brand Carousel Styles */
+.brands-carousel-full.brands-border .owl-item:first-child .brand {
+  border-left-width: 0;
+}
+
+/* Banner Border Styles */
+.banner-border,
+.banner-border-hover {
+  position: relative;
+}
+
+/* Banner Border Pseudo-element Styles */
+.banner-border:after,
+.banner-border-hover:after {
+  content: '';
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  top: 30px;
+  bottom: 30px;
+  border: 0.5rem solid rgba(255, 255, 255, 0.3);
+  transition: all 0.45s ease;
+  pointer-events: none;
+}
+
+/* Hover-specific Banner Border Styles */
+.banner-border-hover:after {
+  left: 20px;
+  right: 20px;
+  top: 20px;
+  bottom: 20px;
+  visibility: hidden;
+  background-color: rgba(255, 255, 255, 0.4);
+  opacity: 0;
+}
+
+/* Banner Content Styles */
+.banner-border .banner-content {
+  left: 60px;
+}
+/* Banner Border Hover Styles */
+.banner-border:hover:after {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Banner Border Hover Styles (specific to .banner-border-hover) */
+.banner-border-hover:hover:after {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Banner Content Styles */
+.banner-content {
+  left: 48px;
+  padding-top: 0;
+}
+
+/* Banner Subtitle Styles */
+.banner-subtitle {
+  color: #999;
+  font-weight: 300;
+  font-size: 1.6rem;
+  letter-spacing: -0.01em;
+  margin-bottom: 1rem;
+}
+
+/* Banner Title Styles */
+.banner-title {
+  color: #666;
+  font-weight: 300;
+  font-size: 2rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.6rem;
+}
+
+/* Main Banner Title Styles */
+.main .banner-title span {
+  color: #333;
+  font-weight: 600;
+}
+
+/* Main Banner Border Title Styles */
+.main .banner-border .banner-title span {
+  font-size: 2.4rem;
+  letter-spacing: -0.025em;
+}
+
+/* Main Banner Content Styles */
+.main .banner-border .banner-content {
+  left: 7rem;
+}
+
+/* Main Banner Text Styles */
+.main .banner-border .banner-subtitle,
+.main .banner-border .banner-title span,
+.main .banner-border .banner-link {
+  color: #fff;
+}
+
+/* Main Banner Hover Link Styles */
+.main .banner-border-hover .banner-link {
+  color: #333;
+}
+
+/* Banner Link Button Styles */
+.banner .banner-link.btn {
+  padding-left: 0;
+  padding-right: 0;
+  min-width: none;
+  border-radius: 0;
+  border: none;
+  text-transform: uppercase;
+  position: relative;
+}
+
+/* Icon Styles within Banner Link Button */
+.banner .banner-link.btn i {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: -1.8rem;
+  font-size: 1.5rem;
+}
+
+/* Before Pseudo-element Styles for Banner Link Button */
+.banner .banner-link.btn::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: -1.8rem;
+  bottom: -0.2rem;
+  height: 0.1rem;
+  background-color: #c66;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+}
+
+/* Banner Link Button Hover and Focus Styles */
+.banner .banner-link.btn:hover,
+.banner .banner-link.btn:focus {
+    color: #c66;
+    background-color: transparent;
+}
+
+/* Before Pseudo-element Hover and Focus Styles for Banner Link Button */
+.banner .banner-link.btn:hover::before,
+.banner .banner-link.btn:focus::before {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Video Banner Title Styles */
+.video-banner-title span {
+    text-transform: uppercase;
+}
+
+.video-banner-title i {
+    font-weight: 200;
+}
+
+/* Banner Set Row and Column Styles */
+.banner-set > .row {
+    align-items: stretch;
+}
+
+.banner-set > .row > [class*="col-"] {
+    display: flex;
+    align-items: stretch;
+}
+
+.banner-set > .row > [class*="col-"] > div {
+    width: 100%;
+}
+
+/* Banner Set Content Styles */
+.banner-set-content {
+    display: flex;
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #777;
+    font-weight: 400;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    background-color: #fff;
+    padding: 2rem 3rem 1.5rem;
+}
+
+/* Banner Set Content Heading Styles */
+.banner-set-content h4 {
+    text-transform: uppercase;
+    color: #c66;
+    font-weight: 400;
+    font-size: 1.6rem;
+    margin-bottom: 1.6rem;
+    letter-spacing: 0;
+}
+
+/* Banner Set Content Heading (H2) Styles */
+.banner-set-content h2 {
+  font-weight: 600;
+  font-size: 3rem;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  margin-bottom: 1.5rem;
+}
+
+/* Banner Set Content Paragraph (P) Styles */
+.banner-set-content p {
+  max-width: 420px;
+  letter-spacing: -0.01em;
+  font-size: 1.6rem;
+  font-weight: 300;
+}
+
+/* Centered Text Styles within Banner Set Content */
+.banner-set-content.text-center p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Product Hover Styles */
+.product.product-2:hover,
+.product.product-2:focus {
+  box-shadow: none;
+}
+
+/* Banner Set Products Styles */
+.banner-set-products {
+  margin-top: 4rem;
+  max-width: 390px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Centered Banner Set Products */
+.text-center .banner-set-products {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Product Styles within Banner Set Products */
+.banner-set-products .product.product-2 {
+  box-shadow: none;
+  margin-bottom: 0;
+}
+
+/* Row Styles for Banner Set Products */
+.banner-set-products .row {
+  justify-content: center;
+}
+
+/* Products Container Styles within Banner Set Products */
+.banner-set-products .row .products {
+  flex: 0 0 83%;
+  max-width: 83%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Padding for Products within Banner Set Products */
+.banner-set-products .row .products>div {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+/* Product Body Styles within Banner Set Products */
+.banner-set-products .product-body {
+  padding-right: 0;
+  padding-bottom: 0;
+}
+
+/* Product Price Styles within Banner Set Products */
+.banner-set-products .product-price {
+  align-items: center;
+}
+
+/* Product Title Styles within Banner Set Products */
+.banner-set-products .product-title {
+  letter-spacing: -0.01em;
+}
+
+/* Banner Set Image Link Styles */
+.banner-set-image > a {
+  display: block;
+}
+
+/* Banner Set Image Styles */
+.banner-set-image img {
+  max-width: none;
+  width: 100%;
+}
+
+/* Banner Set Image Title Styles */
+.banner-set-image .banner-title {
+  margin-bottom: 2.6rem;
+}
+
+/* Banner Set Image Title Span Styles */
+.banner-set-image .banner-title span {
+  font-size: 2.4rem;
+  letter-spacing: -0.025em;
+}
+
+/* Banner Set Image Content Styles */
+.banner-set-image .banner-content {
+  left: 5rem;
+  top: initial;
+  transform: none;
+  bottom: 8rem;
+}
+
+/* Text Color Styles for Banner Set Image Elements */
+.banner-set-image .banner-title span,
+.banner-set-image .banner-link,
+.banner-set-image .banner-detail {
+  color: #fff;
+}
+
+/* Banner Set Image Subtitle Styles */
+.banner-set-image .banner-subtitle {
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: #ebebeb;
+  text-transform: uppercase;
+}
+
+/* Banner Set Image Detail Styles */
+.banner-set-image .banner-detail {
+  font-size: 1.4rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  margin-bottom: 2.5rem;
+  line-height: 1.4em;
+}
+
+/* Banner Set Image Price Styles */
+.banner-set-image .banner-price {
+  font-size: 1.4rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: #ebebeb;
+  margin-bottom: 3rem;
+}
+
+/* Banner Set Image Link Button Styles */
+.banner-set-image .btn.banner-link {
+  padding: 1.5rem 4rem;
+  border-radius: 3rem;
+  color: #fff;
+  border: 0.2rem solid #fff;
+}
+
+/* Banner Set Image Link Button Hover, Focus, and Active Styles */
+.banner-set-image .btn.banner-link:hover,
+.banner-set-image .btn.banner-link:focus,
+.banner-set-image .btn.banner-link:active {
+  color: #c66;
+  background-color: #fff;
+  border-color: #fff;
+}
+
+/* Product 2 Styles */
+.product.product-2 {
+  background-color: #fff;
+}
+
+/* Vertical Product Action Styles for Product 2 */
+.product.product-2 .product-action-vertical {
+  top: 2rem;
+}
+
+/* Product 2 Category Styles */
+.product.product-2 .product-cat {
+  color: #ccc;
+}
+
+/* Product 2 Body Styles */
+.product.product-2 .product-body {
+  padding-left: 0;
+}
+
+/* Product 2 Action Styles */
+.product.product-2 .product-action {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+/* Transparent Product Action Styles for Product 2 */
+.product.product-2 .product-action-transparent {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* Button Product Styles for Product 2 */
+.product.product-2 .product-action-transparent .btn-product {
+  color: #ccc;
+  padding-top: 1.1rem;
+  padding-bottom: 1.1rem;
+}
+
+/* Button Product Span Styles for Product 2 */
+.product.product-2 .product-action-transparent .btn-product span {
+  color: #333;
+  text-transform: uppercase;
+  margin-left: -1.35rem;
+}
+
+/* Before Pseudo-element Styles for Button Product */
+.product.product-2 .product-action-transparent .btn-product::before {
+  color: #fff;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.1s;
+}
+
+/* Hover and Focus Styles for Button Product */
+.product.product-2 .product-action-transparent .btn-product:hover,
+.product.product-2 .product-action-transparent .btn-product:focus {
+  color: #fff;
+  background-color: #c66;
+}
+
+/* Hover and Focus Styles for Button Product Span */
+.product.product-2 .product-action-transparent .btn-product:hover span,
+.product.product-2 .product-action-transparent .btn-product:focus span {
+  color: #fff;
+  margin-left: 0;
+  box-shadow: none;
+}
+
+/* Hover and Focus Styles for Before Pseudo-element */
+.product.product-2 .product-action-transparent .btn-product:hover::before,
+.product.product-2 .product-action-transparent .btn-product:focus::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* New Arrivals Styles */
+.new-arrivals {
+  position: relative;
+}
+
+/* Before Pseudo-element Styles for New Arrivals */
+.new-arrivals::before {
+  content: '';
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  top: 0;
+  height: 0.1rem;
+  background-color: #ebebeb;
+}
+
+/* Wishlist Button Styles */
+.btn-wishlist {
+  font-size: 1.6rem;
+  color: #333;
+}
+
+/* Product Category Link Styles */
+.product-cat a {
+  font-weight: 400;
+}
+
+/* Product Title Styles */
+.product-title {
+  font-size: 1.4rem;
+  font-weight: 300;
+  letter-spacing: 0;
+}
+
+/* Product Price Styles */
+.product-price {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+  letter-spacing: 0;
+  color: #333;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Old Price Styles */
+.old-price {
+  margin-top: 0.3rem;
+  text-decoration: none;
+}
+
+/* More Button Styles */
+.btn-more {
+  min-width: 170px;
+  border-color: #ebebeb;
+}
+
+/* Video Banner Title Styles */
+.video-banner-title strong,
+.video-banner-title span {
+  letter-spacing: 0;
+}
+
+/* Video Banner Title Span Styles */
+.video-banner-title span {
+  margin-bottom: 3rem;
+}
+
+/* Call to Action (CTA) Title Styles */
+.cta-title {
+  font-weight: 600;
+  font-size: 3rem;
+  letter-spacing: -0.025em;
+  margin-bottom: 0;
+}
+
+/* CTA Wrapper Title and Text Styles */
+.cta-wrapper .cta-title,
+.cta-wrapper.cta-text .cta-title {
+  margin-bottom: 0.5rem;
+}
+
+/* CTA Text Description Styles */
+.cta-wrapper.cta-text .cta-desc {
+  margin-bottom: 2rem;
+}
+
+/* CTA Description Styles */
+.cta-desc {
+  color: #999;
+  font-size: 1.6rem;
+  line-height: 1.5;
+}
+
+/* CTA Text Wrapper Styles */
+.cta-wrapper.cta-text {
+  max-width: 380px;
+}
+
+/* CTA Social Icon Styles */
+.cta .social-icon {
+  width: 4.6rem;
+  height: 4.6rem;
+  font-size: 1.8rem;
+}
+
+/* CTA Form Control Styles */
+.cta .form-control:not(:focus) {
+  border-color: #e1e1e1;
+}
+
+/* CTA Input Group Styles */
+.cta .input-group .form-control {
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  border-right: none;
+}
+
+/* CTA Button Styles */
+.cta .input-group .btn {
+  border-left: none;
+  min-width: 70px;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+  background-color: transparent;
+  border-color: #e1e1e1;
+  color: #333;
+}
+
+/* Hover and Focus Styles for CTA Button */
+.cta .input-group .btn:hover,
+.cta .input-group .btn:focus {
+  background-color: #c66;
+  border-color: #c66;
+  color: #fff;
+}
+
+/* CTA Button Icon Styles */
+.cta .input-group .btn i {
+  margin: 0 !important;
+}
+/* Feed Column Styles */
+.feed-col {
+  display: flex;
+  align-items: stretch;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+
+/* Hidden Feed Column Title */
+.feed-col-title {
+  display: none;
+}
+
+/* Instagram Feed Title Styles */
+.instagram-feed-title {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  background-color: #fff;
+  border: 0.1rem solid #ebebeb;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+/* Instagram Feed Title Icon Styles */
+.instagram-feed-title i {
+  display: inline-block;
+  font-size: 2.4rem;
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+/* Instagram Feed Title Paragraph Styles */
+.instagram-feed-title p {
+  margin-bottom: 0.5rem;
+}
+
+/* Instagram Feed Title Link Styles */
+.instagram-feed-title a {
+  text-transform: uppercase;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Instagram Feed Container Styles */
+.instagram-feed-container {
+  margin-bottom: 2.5rem;
+}
+
+/* Icon Box Side Styles */
+.icon-box-side {
+  font-size: 1.5rem;
+}
+
+/* Icon Box Side Icon Styles */
+.icon-box-side .icon-box-icon {
+  min-width: 100px;
+  font-size: 4rem;
+  margin-right: 0.5rem;
+  margin-left: -1rem;
+}
+
+/* Icon Box Side Title Styles */
+.icon-box-side .icon-box-title {
+  font-weight: 600;
+  font-size: 1.6rem;
+}
+
+/* Icon Box Side Content Styles */
+.icon-box-side .icon-box-content {
+  padding-left: 0.5rem;
+}
+
+/* Icon Box Side Paragraph Styles */
+.icon-box-side p {
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+/* Footer Widget About Paragraph Styles */
+.footer .widget-about p {
+  max-width: 540px;
+}
+
+/* Footer Widget About Info Link Styles */
+.footer .widget-about-info a {
+  color: #a6c76c;
+}
+
+/* Footer Middle Styles for Footer-2 */
+.footer-2 .footer-middle {
+  padding-top: 5.5rem;
+}
+
+/* Media Queries for Responsive Design */
+@media screen and (min-width: 576px) {
+  .intro-subtitle,
+  .intro-text {
+      font-size: 1.8rem;
+  }
+
+  .intro-subtitle {
+      margin-bottom: 1rem;
+  }
+
+  .intro-title {
+      font-size: 9.4rem;
+  }
+
+  .intro-text {
+      margin-bottom: 2rem;
+  }
+
+  .feed-col {
+      flex: 0 0 33.33%;
+      max-width: 33.33%;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .intro-content .btn {
+      min-width: 140px;
+  }
+
+  .intro-subtitle,
+  .intro-text {
+      font-size: 2rem;
+  }
+
+  .intro-subtitle {
+      margin-bottom: 0;
+  }
+
+  .intro-title {
+      font-size: 11rem;
+      margin-bottom: 3rem;
+  }
+
+  .intro-text {
+      margin-bottom: 2.6rem;
+  }
+
+  .cta-title {
+      font-size: 3rem;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .intro-content .btn {
+      min-width: 170px;
+  }
+
+  .intro-subtitle,
+  .intro-text {
+      font-size: 2.4rem;
+  }
+
+  .intro-subtitle {
+      margin-bottom: 0;
+  }
+
+  .intro-title {
+      font-size: 14rem;
+      line-height: 0.55;
+      margin-bottom: 4.3rem;
+  }
+
+  .intro-text {
+      margin-bottom: 3.6rem;
+  }
+
+  .feed-col {
+      flex: 0 0 20%;
+      max-width: 20%;
+  }
+
+  .feed-col-title {
+      display: flex;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .owl-theme .owl-nav [class*='owl-'] {
+      width: 4rem;
+      height: 4rem;
+      font-size: 2.2rem;
+      margin-top: -2rem;
+  }
+}
+
+@media screen and (max-width: 575px) {
+  .cta .cta-wrapper .input-group {
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: nowrap;
+  }
+
+  .cta .cta-wrapper .input-group .form-control {
+      width: 1%;
+      margin-bottom: 0;
+  }
+
+  .cta .cta-wrapper .input-group .btn {
+      margin-top: 0;
+  }
+}
+
+
+/*# sourceMappingURL=demo-5.css.map */
+
+body{
+  background-color:rgba(244, 216, 197, 0.37)
+}
