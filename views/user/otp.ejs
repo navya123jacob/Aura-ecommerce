@@ -1,71 +1,40 @@
 <%- include('../layouts/header') %>
 
 <%- include('../layouts/Login/loginHeader') %>
+
 <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17" style="background-image: url('/assets/images/backgrounds/login-bg.jpg')">
     <div class="container">
         <div class="form-box" style="background-color: rgba(255, 255, 255, 0.5);">
             <div class="form-tab">
-                <h3>Register</h3>
+                <h3>OTP Verification</h3>
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
-                        <form action="/registerpost" style="color: black;" method="POST">
+                        <form action="/verifyOTP" style="color: black;" method="POST">
                             <div class="form-group">
-                                <label for="register-first-name">First Name *</label>
-                                <input type="text" class="form-control" id="register-first-name" name="Fname" required>
+                                <label for="otp">Enter 4-digit OTP</label>
+                                <input type="text" class="form-control otp-box" id="otp" name="otp" maxlength="4" pattern="\d{4}" title="Please enter a 4-digit OTP" required>
+                                
+                     
+
                             </div><!-- End .form-group -->
 
-                            <div class="form-group">
-                                <label for="register-last-name">Last Name *</label>
-                                <input type="text" class="form-control" id="register-last-name" name="Lname" required>
-                            </div><!-- End .form-group -->
-
-                            <div class="form-group">
-                                <label for="register-mobile">Mobile Number *</label>
-                                <input type="tel" class="form-control" id="register-mobile" name="mobile" required>
-                            </div><!-- End .form-group -->
-
-                            <div class="form-group">
-                                <label for="register-email-2">Your email address *</label>
-                                <input type="email" class="form-control" id="register-email-2" name="regemail" required>
-                            </div><!-- End .form-group -->
-
-                            <div class="form-group">
-                                <label for="register-password-2">Password *</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="register-password-2" name="password" required>
-                                    <div class="input-group-append">
-                                        <div class="input-group-text">
-                                            <input type="checkbox" id="password-toggle">
-                                            <label for="password-toggle"></label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div><!-- End .form-group -->
 
                             <div class="form-footer">
                                 <button type="submit" class="btn btn-outline-dark-2">
-                                    <span>SIGN UP</span>
+                                    <span>VERIFY OTP</span>
                                     <i class="icon-long-arrow-right"></i>
                                 </button>
                             </div><!-- End .form-footer -->
                         </form>
                         <div class="form-choice">
                             <p>If you do not have an account</p>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <a href="/register" class="btn btn-login btn-g">
-                                        <i class="icon-google"></i>
-                                        Register
-                                    </a>
-                                </div><!-- End .col-6 -->
-                            </div><!-- End .row -->
+                            <!-- Remove the G Register button -->
                         </div><!-- End .form-choice -->
                     </div><!-- .End .tab-pane -->
                 </div><!-- End .tab-content -->
             </div><!-- End .form-tab -->
             <h6 class="text-danger"><%=message%></h6>
         </div><!-- End .form-box -->
-       
     </div><!-- End .container -->
 </div><!-- End .login-page section-bg -->
 </main><!-- End .main -->
@@ -150,69 +119,6 @@
 <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
 <%- include('../layouts/Login/LoginMob') %>
-<!-- Sign up Modal -->
-<div class="modal fade" id="signup-modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true"><i class="icon-close"></i></span>
-                </button>
-
-                <div class="form-box">
-                    <div class="form-tab">
-                        <div class="tab-content" id="tab-content-5">
-                            <div class="tab-pane fade show active" id="register" role="tabpanel" aria-labelledby="register-tab">
-                                <form action="/signup" method="POST">
-                                    <div class="form-group">
-                                        <label for="register-email">Your email address *</label>
-                                        <input type="email" class="form-control" id="register-email" name="register-email" required>
-                                    </div><!-- End .form-group -->
-
-                                    <div class="form-group">
-                                        <label for="register-password">Password *</label>
-                                        <input type="password" class="form-control" id="register-password" name="register-password" required>
-                                    </div><!-- End .form-group -->
-
-                                    <div class="form-footer">
-                                        <button type="submit" class="btn btn-outline-primary-2">
-                                            <span>SIGN UP</span>
-                                            <i class="icon-long-arrow-right"></i>
-                                        </button>
-
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="register-policy" required>
-                                            <label class="custom-control-label" for="register-policy">I agree to the <a href="#">privacy policy</a> *</label>
-                                        </div><!-- End .custom-checkbox -->
-                                    </div><!-- End .form-footer -->
-                                </form>
-                                <div class="form-choice">
-                                    <p class="text-center">or sign in with</p>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <a href="#" class="btn btn-login btn-g">
-                                                <i class="icon-google"></i>
-                                                Login With Google
-                                            </a>
-                                        </div><!-- End .col-6 -->
-                                        <div class="col-sm-6">
-                                            <a href="#" class="btn btn-login btn-f">
-                                                <i class="icon-facebook-f"></i>
-                                                Login With Facebook
-                                            </a>
-                                        </div><!-- End .col-6 -->
-                                    </div><!-- End .row -->
-                                </div><!-- End .form-choice -->
-                            </div><!-- .End .tab-pane -->
-                        </div><!-- End .tab-content -->
-                    </div><!-- End .form-tab -->
-                </div><!-- End .form-box -->
-            </div><!-- End .modal-body -->
-        </div><!-- End .modal-content -->
-    </div><!-- End .modal-dialog -->
-</div><!-- End .modal -->
-
-
 
 
 

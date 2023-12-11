@@ -1,12 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
-
+const path = require('path');
+const dotenv = require('dotenv').config();
 
 // Create an Express application
 const app = express();
 
+
+
 // Connect to MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/Aura');
+ mongoose.connect(process.env.MONGO_URL); //process.env is a Node.js global object that provides access to the environment variables. Environment variables are key-value pairs that can be set outside of your application and are accessible from within your Node.js application
+// the configuration data stored in config.env (or .env) and accessed using process.env is considered environmental or environment-specific configuration.
 
 // Import userRoute (assuming you have a userRoute file)
 const userRoute = require('./Router/userRoute');

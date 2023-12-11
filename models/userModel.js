@@ -28,7 +28,12 @@ const userSchema=new mongoose.Schema({
     is_Admin:{
         type:Number,
         required:true
-    }
+    },
+    is_blocked:{
+        type:Boolean,
+        required:true
+    },
+
 
 })
 const User=mongoose.model('User',userSchema)

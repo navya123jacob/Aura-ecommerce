@@ -8,56 +8,78 @@
                 <h3>Register</h3>
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
-                        <form action="/registerpost" style="color: black;" method="POST">
+                        <form id="registerForm" action="/registerpost" style="color: black;" method="POST" onsubmit="return validateForm()">
                             <div class="form-group">
                                 <label for="register-first-name">First Name *</label>
                                 <input type="text" class="form-control" id="register-first-name" name="Fname" required>
+                                <small id="firstNameError" class="text-danger"></small>
                             </div><!-- End .form-group -->
 
                             <div class="form-group">
                                 <label for="register-last-name">Last Name *</label>
                                 <input type="text" class="form-control" id="register-last-name" name="Lname" required>
+                                <small id="lastNameError" class="text-danger"></small>
                             </div><!-- End .form-group -->
 
                             <div class="form-group">
                                 <label for="register-mobile">Mobile Number *</label>
                                 <input type="tel" class="form-control" id="register-mobile" name="mobile" required>
+                                <small id="mobileError" class="text-danger"></small>
                             </div><!-- End .form-group -->
 
                             <div class="form-group">
                                 <label for="register-email-2">Your email address *</label>
                                 <input type="email" class="form-control" id="register-email-2" name="regemail" required>
+                                <small id="emailError" class="text-danger"></small>
                             </div><!-- End .form-group -->
 
-                            <div class="form-group">
-                                <label for="register-password-2">Password *</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" id="register-password-2" name="password" required>
-                                    <div class="input-group-append">
-                                        <div class="input-group-text">
-                                            <input type="checkbox" id="password-toggle">
-                                            <label for="password-toggle"></label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div><!-- End .form-group -->
+                            
+<div class="form-group">
+    <label for="register-password-2">Password *</label>
+    <div class="input-group">
+        <input type="password" class="form-control" id="register-password-2" name="password" required>
+        <div class="input-group-append">
+            <div class="input-group-text">
+                <input type="checkbox" id="password-toggle" onclick="togglePassword()">
+                <label for="password-toggle"></label>
+            </div>
+        </div>
+    </div>
+    <small id="passwordError" class="text-danger"></small>
+</div><!-- End .form-group -->
+
+<div class="form-group">
+    <label for="confirm-password">Confirm Password *</label>
+    <div class="input-group">
+        <input type="password" class="form-control" id="confirm-password" name="confirmPassword" required>
+        <div class="input-group-append">
+            <div class="input-group-text">
+                <input type="checkbox" id="password-toggle" onclick="togglePassword2()">
+                <label for="password-toggle"></label>
+            </div>
+        </div>
+    </div>
+    <small id="confirmPasswordError" class="text-danger"></small>
+</div><!-- End .form-group -->
+
 
                             <div class="form-footer">
                                 <button type="submit" class="btn btn-outline-dark-2">
-                                    <span>SIGN UP</span>
+                                    <span>REGISTER</span>
                                     <i class="icon-long-arrow-right"></i>
                                 </button>
                             </div><!-- End .form-footer -->
                         </form>
                         <div class="form-choice">
-                            <p>If you do not have an account</p>
+                            <p >If you do not have an account</p>
                             <div class="row">
-                                <div class="col-sm-6">
-                                    <a href="/register" class="btn btn-login btn-g">
+                                <div class="col-sm-6 ">
+                                    <a href="/login" class="btn btn-login btn-g">
                                         <i class="icon-google"></i>
-                                        Register
+                                        LOGIN
                                     </a>
                                 </div><!-- End .col-6 -->
+                                
                             </div><!-- End .row -->
                         </div><!-- End .form-choice -->
                     </div><!-- .End .tab-pane -->
@@ -70,162 +92,94 @@
 </div><!-- End .login-page section-bg -->
 </main><!-- End .main -->
 
+<!-- Add your footer and script tags as they are -->
 
+<script>
+    function validateForm() {
+        var firstName = document.getElementById('register-first-name').value;
+        var lastName = document.getElementById('register-last-name').value;
+        var mobile = document.getElementById('register-mobile').value;
+        var email = document.getElementById('register-email-2').value;
+        var password = document.getElementById('register-password-2').value;
+        var confirmPasswordInput = document.getElementById("confirm-password").value;
+        
 
-<footer class="footer">
-<div class="footer-middle">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-6 col-lg-3">
-                <div class="widget widget-about">
-                    <img src="assets/images/logo.png" class="footer-logo" alt="Footer Logo" width="105" height="25">
-                    <p>Praesent dapibus, neque id cursus ucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. </p>
+        var firstNameError = document.getElementById('firstNameError');
+        var lastNameError = document.getElementById('lastNameError');
+        var mobileError = document.getElementById('mobileError');
+        var emailError = document.getElementById('emailError');
+        var passwordError = document.getElementById('passwordError');
+        var confirmPasswordError = document.getElementById("confirmPasswordError");
 
-                    <div class="social-icons">
-                        <a href="#" class="social-icon" target="_blank" title="Facebook"><i class="icon-facebook-f"></i></a>
-                        <a href="#" class="social-icon" target="_blank" title="Twitter"><i class="icon-twitter"></i></a>
-                        <a href="#" class="social-icon" target="_blank" title="Instagram"><i class="icon-instagram"></i></a>
-                        <a href="#" class="social-icon" target="_blank" title="Youtube"><i class="icon-youtube"></i></a>
-                        <a href="#" class="social-icon" target="_blank" title="Pinterest"><i class="icon-pinterest"></i></a>
-                    </div><!-- End .soial-icons -->
-                </div><!-- End .widget about-widget -->
-            </div><!-- End .col-sm-6 col-lg-3 -->
+        // Reset errors
+        firstNameError.textContent = '';
+        lastNameError.textContent = '';
+        mobileError.textContent = '';
+        emailError.textContent = '';
+        passwordError.textContent = '';
 
-            <div class="col-sm-6 col-lg-3">
-                <div class="widget">
-                    <h4 class="widget-title">Useful Links</h4><!-- End .widget-title -->
+        // Add your validation logic here
+        if (firstName.length < 2) {
+            firstNameError.textContent = 'First name must be at least 2 characters.';
+            return false;
+        }
 
-                    <ul class="widget-list">
-                        <li><a href="about.html">About Molla</a></li>
-                        <li><a href="#">How to shop on Molla</a></li>
-                        <li><a href="#">FAQ</a></li>
-                        <li><a href="contact.html">Contact us</a></li>
-                        <li><a href="login.html">Log in</a></li>
-                    </ul><!-- End .widget-list -->
-                </div><!-- End .widget -->
-            </div><!-- End .col-sm-6 col-lg-3 -->
+        if (lastName.length < 1) {
+            lastNameError.textContent = 'Last name must be at least 1 character.';
+            return false;
+        }
 
-            <div class="col-sm-6 col-lg-3">
-                <div class="widget">
-                    <h4 class="widget-title">Customer Service</h4><!-- End .widget-title -->
+        if (!/^\d{10}$/.test(mobile)) {
+            mobileError.textContent = 'Please enter a valid 10-digit mobile number.';
+            return false;
+        }
 
-                    <ul class="widget-list">
-                        <li><a href="#">Payment Methods</a></li>
-                        <li><a href="#">Money-back guarantee!</a></li>
-                        <li><a href="#">Returns</a></li>
-                        <li><a href="#">Shipping</a></li>
-                        <li><a href="#">Terms and conditions</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                    </ul><!-- End .widget-list -->
-                </div><!-- End .widget -->
-            </div><!-- End .col-sm-6 col-lg-3 -->
+        if (!/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(email)) {
+            emailError.textContent = 'Please enter a valid email address.';
+            return false;
+            // example user@domain (missing top-level domain),user@.com
 
-            <div class="col-sm-6 col-lg-3">
-                <div class="widget">
-                    <h4 class="widget-title">My Account</h4><!-- End .widget-title -->
+        }
 
-                    <ul class="widget-list">
-                        <li><a href="/register">Sign In</a></li>
-                        <li><a href="/cart">View Cart</a></li>
-                        <li><a href="/wishlist">My Wishlist</a></li>
-                        <li><a href="#">Track My Order</a></li>
-                        <li><a href="#">Help</a></li>
-                    </ul><!-- End .widget-list -->
-                </div><!-- End .widget -->
-            </div><!-- End .col-sm-6 col-lg-3 -->
-        </div><!-- End .row -->
-    </div><!-- End .container -->
-</div><!-- End .footer-middle -->
+        if (password.length < 6) {
+            passwordError.textContent = 'Password must be at least 6 characters.';
+            return false;
+        }
 
-<div class="footer-bottom">
-    <div class="container">
-        <p class="footer-copyright">Copyright © 2019 Molla Store. All Rights Reserved.</p><!-- End .footer-copyright -->
-        <figure class="footer-payments">
-            <img src="assets/images/payments.png" alt="Payment methods" width="272" height="20">
-        </figure><!-- End .footer-payments -->
-    </div><!-- End .container -->
-</div><!-- End .footer-bottom -->
-</footer><!-- End .footer -->
-</div><!-- End .page-wrapper -->
-<button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+        if (password !== confirmPasswordInput) {
+            confirmPasswordError.textContent = "Passwords do not match";
+            return false;
+        }
 
-<%- include('../layouts/Login/LoginMob') %>
-<!-- Sign up Modal -->
-<div class="modal fade" id="signup-modal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true"><i class="icon-close"></i></span>
-                </button>
+        
+        // Form is valid
+        return true;
+    }
 
-                <div class="form-box">
-                    <div class="form-tab">
-                        <div class="tab-content" id="tab-content-5">
-                            <div class="tab-pane fade show active" id="register" role="tabpanel" aria-labelledby="register-tab">
-                                <form action="/signup" method="POST">
-                                    <div class="form-group">
-                                        <label for="register-email">Your email address *</label>
-                                        <input type="email" class="form-control" id="register-email" name="register-email" required>
-                                    </div><!-- End .form-group -->
+    
 
-                                    <div class="form-group">
-                                        <label for="register-password">Password *</label>
-                                        <input type="password" class="form-control" id="register-password" name="register-password" required>
-                                    </div><!-- End .form-group -->
+     function togglePassword() {
+        var passwordInput = document.getElementById("register-password-2");
 
-                                    <div class="form-footer">
-                                        <button type="submit" class="btn btn-outline-primary-2">
-                                            <span>SIGN UP</span>
-                                            <i class="icon-long-arrow-right"></i>
-                                        </button>
+        // Toggle the password visibility
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+        } else {
+            passwordInput.type = "password";
+        }
+    }
+     function togglePassword2() {
+        var passwordInput = document.getElementById("confirm-password");
 
-                                        <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="register-policy" required>
-                                            <label class="custom-control-label" for="register-policy">I agree to the <a href="#">privacy policy</a> *</label>
-                                        </div><!-- End .custom-checkbox -->
-                                    </div><!-- End .form-footer -->
-                                </form>
-                                <div class="form-choice">
-                                    <p class="text-center">or sign in with</p>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <a href="#" class="btn btn-login btn-g">
-                                                <i class="icon-google"></i>
-                                                Login With Google
-                                            </a>
-                                        </div><!-- End .col-6 -->
-                                        <div class="col-sm-6">
-                                            <a href="#" class="btn btn-login btn-f">
-                                                <i class="icon-facebook-f"></i>
-                                                Login With Facebook
-                                            </a>
-                                        </div><!-- End .col-6 -->
-                                    </div><!-- End .row -->
-                                </div><!-- End .form-choice -->
-                            </div><!-- .End .tab-pane -->
-                        </div><!-- End .tab-content -->
-                    </div><!-- End .form-tab -->
-                </div><!-- End .form-box -->
-            </div><!-- End .modal-body -->
-        </div><!-- End .modal-content -->
-    </div><!-- End .modal-dialog -->
-</div><!-- End .modal -->
+        // Toggle the password visibility
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+        } else {
+            passwordInput.type = "password";
+        }
+    }
+</script>
 
-
-
-
-
-<!-- Plugins JS File -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/bootstrap.bundle.min.js"></script>
-<script src="assets/js/jquery.hoverIntent.min.js"></script>
-<script src="assets/js/jquery.waypoints.min.js"></script>
-<script src="assets/js/superfish.min.js"></script>
-<script src="assets/js/owl.carousel.min.js"></script>
-
-<!-- Main JS File -->
-<script src="assets/js/main.js"></script>
 </body>
 
 <!-- molla/login.html  22 Nov 2019 10:04:03 GMT -->
