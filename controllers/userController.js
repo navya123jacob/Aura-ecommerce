@@ -78,8 +78,7 @@ const loadRegister=async(req,res)=>{
 const sendOTPverifyEmail = async (user, res) => {
   try {
     const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
-    console.log(otp);
-    console.log(user.email);
+    console.log(otp)
     // mail options
     const mailOptions = {
       from: 'navyatjacob@gmail.com',

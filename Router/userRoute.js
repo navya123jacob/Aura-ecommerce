@@ -8,24 +8,15 @@ userRoute.set('views', './views/user');
 // Import the userController for handling user-related logic
 const userController = require('../controllers/userController.js');
 
-//login session middleware
-const loginMid = (req, res, next) => {
-    if(req.session.checkuser)
-    {
-       
-        res.redirect('/')
-    }
-    else{
-        next();
-    }
-    
-  };
+const mid=require('../middleware.js')
+
+
 
 //home page
 userRoute.get('/',userController.Home)
 
 //Register page
-userRoute.get('/register',loginMid,userController.loadRegister)
+userRoute.get('/register',mid.loginMid,userController.loadRegister)
 
 //Post on Register page(redirects to otp page)
 userRoute.post('/registerpost',userController.PostRegister)
@@ -38,7 +29,7 @@ userRoute.post('/verifyOTP',userController.verifyUserOTP)
 
 
 //login page
-userRoute.get('/login',loginMid,userController.loadLogin)
+userRoute.get('/login',mid.loginMid,userController.loadLogin)
 
 
 //login page post

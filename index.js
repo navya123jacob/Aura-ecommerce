@@ -15,6 +15,9 @@ const app = express();
 // Import userRoute (assuming you have a userRoute file)
 const userRoute = require('./Router/userRoute');
 
+// Import adminRoute
+const adminRoute = require('./Router/adminRoute');
+
 //to parse request body
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -38,7 +41,18 @@ app.use(session({
 // Use the userRoute for requests at the root ('/')
 app.use('/', userRoute);
 
+// Use the adminRoute for requests at the root ('/admin')
+app.use('/admin', adminRoute);
+
+
+const port = process.env.PORT || 3000;
+
 // Start the server on port 3000
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log('Listening at http://localhost:3000');
 });
+
+// app.use((err, req, res, next) => {
+//   console.error(err.stack);
+//   res.status(500).send('Something went wrong!');
+// });
