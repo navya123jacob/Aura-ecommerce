@@ -18,14 +18,8 @@ const addProduct=async(req,res)=>{
 //admin side add product post
 const addProductpost=async(req,res)=>{
     try{
-        let arr = []
-        console.log(req.files)
-        const {path} = req.files[0];
-        console.log(req.files[0])
-        arr.push(path)
-         console.log(arr)
-
-        console.log('yes')
+        console.log(req.body.date)
+        const arr = req.files.map(file => file.path);
          // Create a new Product document using Mongoose model
     const newProduct = new product({
         name: req.body.name,
@@ -34,7 +28,7 @@ const addProductpost=async(req,res)=>{
         category: req.body.category,
         quantity: req.body.quantity,
         date: req.body.date,
-        images: arr // Assuming 'images' is an array in your Mongoose model.req.files is an array that contains information about all the uploaded files. Each element in this array is an object with details about a single uploaded file. The .map() function is then used to create a new array containing only the paths of the uploaded files.
+        pictures: arr // Assuming 'images' is an array in your Mongoose model.req.files is an array that contains information about all the uploaded files. Each element in this array is an object with details about a single uploaded file. The .map() function is then used to create a new array containing only the paths of the uploaded files.
       });
   
       // Save the new Product document to the database
@@ -47,9 +41,22 @@ const addProductpost=async(req,res)=>{
     }
 }
 
+//products view
+const Product=async(req,res)=>{
+    try{
+       const products=await product.find()
+        res.render('product',{products})
+    }
+    catch(error)
+    {
+        console.log(error.message)
+    }
+}
+
 
 module.exports=
 {
     addProduct,
-    addProductpost
+    addProductpost,
+    Product
 }

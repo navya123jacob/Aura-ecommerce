@@ -74,10 +74,11 @@ adminRoute.get('/categories/toggle',adminController.CategoryToggle)
 //to get add products
 adminRoute.get('/products/add',productController.addProduct)
 
-
+//to post on add products
 adminRoute.post('/products/addpost',upload.array('images', 5),productController.addProductpost)//5=max num of images
 
-
+//to view products
+adminRoute.get('/products',productController.Product)
 
 //exporting 
 module.exports=adminRoute
