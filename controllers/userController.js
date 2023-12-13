@@ -30,21 +30,29 @@ const hashPassword = async (password) => {
 
 //load Home Page
 const Home=async(req,res)=>{
-    try{
-      let ses = false; // If checkuser doesn't exists
-              
-        if (req.session.checkuser) {
-            // If checkuser exists in the session, set ses to true
-            ses = true;
-        }
-        
-      const user = req.session.checkuser|| '' 
-     
-        res.render('home',{user,ses})
+  try{
+
+    const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
+    
+    if(buser)
+    {
+      req.session.checkuser=''
+      
     }
-    catch (error) {
-        console.log(error.message);
+    let ses = false; // If checkuser doesn't exists
+            
+      if (req.session.checkuser) {
+          // If checkuser exists in the session, set ses to true
+          ses = true;
       }
+      
+    const user = req.session.checkuser|| '' 
+   
+      res.render('home',{user,ses})
+  }
+  catch (error) {
+      console.log(error.message);
+    }
 }
 
 

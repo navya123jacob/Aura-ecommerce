@@ -1,0 +1,179 @@
+<%- include('./layouts/header.ejs') %>
+
+<div class="container-fluid page-body-wrapper">
+    <!-- partial:partials/_navbar.html -->
+    <%- include('./layouts/nav.ejs') %>
+    <!-- partial -->
+    <div class="main-panel">
+        <div class="content-wrapper">
+
+            <div class="card">
+                <div class="card-body">
+                    <form class="forms-sample" method="POST" action="/admin/products/addpost" enctype="multipart/form-data">
+                        <!-- enctype="multipart/form-data" to ensure that the data is correctly encoded and transmitted to the server. This is crucial for the server to interpret and process the file data appropriately. -->
+                        <!-- Update the form action endpoint accordingly -->
+            
+                        <div class="form-group row">
+                            <label for="productName" class="col-sm-3 col-form-label">Product Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="productName" name="name" placeholder="Product Name" required>
+                                <small id="nameError" class="text-danger"></small>
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="productPrice" class="col-sm-3 col-form-label">Product Price</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" id="productPrice" name="price" placeholder="Product Price" required>
+                                <small id="priceError" class="text-danger"></small>
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="productDescription" class="col-sm-3 col-form-label">Product Description</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="productDescription" name="description" placeholder="Product Description" required></textarea>
+                                <small id="descriptionError" class="text-danger"></small>
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="productCategory" class="col-sm-3 col-form-label">Category</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="productCategory" name="category" required>
+                                    <% categories.forEach(category => { %>
+                                        <option value="<%= category._id %>"><%= category.name %></option>
+                                    <% }); %>
+                                </select>
+                                <small id="categoryError" class="text-danger"></small>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="productQuantity" class="col-sm-3 col-form-label">Quantity</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" id="productQuantity" name="quantity" placeholder="Quantity" required>
+                                <small id="quantityError" class="text-danger"></small>
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="productDate" class="col-sm-3 col-form-label">Date</label>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control" id="productDate" name="date" placeholder="Date" required>
+                                <small id="dateError" class="text-danger"></small>
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="productImages" class="col-sm-3 col-form-label">Images</label>
+                            <div class="col-sm-9">
+                                <input type="file" class="form-control" id="productImages" name="images" multiple>
+                                <small id="imagesError" class="text-danger"></small>
+                            </div>
+                        </div>
+            
+                        <!-- Other form fields... -->
+            
+                        <button type="submit" class="btn btn-primary mr-2" onclick="validateForm()">Submit</button>
+                        <button class="btn btn-dark">Cancel</button>
+                    </form>
+                    <p class="text-success"> <%= message %></p>
+                </div>
+            </div>
+            
+    <!-- content-wrapper ends -->
+    <!-- partial:partials/_footer.html -->
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Aura Beauty</span>
+        </div>
+    </footer>
+    <!-- partial -->
+    </div>
+    <!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+
+<%- include('./layouts/footer.ejs') %>
+<script>
+    function validateForm() {
+        const productNameInput = document.getElementById('productName');
+        const productPriceInput = document.getElementById('productPrice');
+        const productDescriptionInput = document.getElementById('productDescription');
+        const productCategoryInput = document.getElementById('productCategory');
+        const productQuantityInput = document.getElementById('productQuantity');
+        const productDateInput = document.getElementById('productDate');
+        const productImagesInput = document.getElementById('productImages');
+        const nameError = document.getElementById('nameError');
+        const priceError = document.getElementById('priceError');
+        const descriptionError = document.getElementById('descriptionError');
+        const categoryError = document.getElementById('categoryError');
+        const quantityError = document.getElementById('quantityError');
+        const dateError = document.getElementById('dateError');
+        const imagesError = document.getElementById('imagesError');
+
+        const productName = productNameInput.value.trim();
+        const productPrice = productPriceInput.value.trim();
+        const productDescription = productDescriptionInput.value.trim();
+        const productCategory = productCategoryInput.value.trim();
+        const productQuantity = productQuantityInput.value.trim();
+        const productDate = productDateInput.value.trim();
+        const productImages = productImagesInput.value.trim();
+
+        // Regular expression to allow only letters (no numbers or special characters) for name
+        const nameRegex = /^[a-zA-Z]+$/;
+
+        if ( productName === '') {
+            nameError.textContent = 'Product name should contain only letters and cannot be empty.';
+            productNameInput.focus();
+        } else {
+            nameError.textContent = '';
+        }
+
+        if (isNaN(productPrice) || productPrice <= 0) {
+            priceError.textContent = 'Product price should be a valid positive number.';
+            productPriceInput.focus();
+        } else {
+            priceError.textContent = '';
+        }
+
+        if (productDescription === '') {
+            descriptionError.textContent = 'Product description cannot be empty.';
+            productDescriptionInput.focus();
+        } else {
+            descriptionError.textContent = '';
+        }
+
+        if (productCategory === '') {
+            categoryError.textContent = 'Please select a category.';
+            productCategoryInput.focus();
+        } else {
+            categoryError.textContent = '';
+        }
+
+        if (isNaN(productQuantity) || productQuantity <= 0) {
+            quantityError.textContent = 'Quantity should be a valid positive number.';
+            productQuantityInput.focus();
+        } else {
+            quantityError.textContent = '';
+        }
+
+        if (productDate === '') {
+            dateError.textContent = 'Please select a date.';
+            productDateInput.focus();
+        } else {
+            dateError.textContent = '';
+        }
+
+        // You may need to add additional validation for images depending on your requirements
+
+        // Clear imagesError for now
+        imagesError.textContent = '';
+    }
+</script>
+
+
+<!-- The for attribute in the <label> elements associates the label with a specific form element using the id attribute.  -->
+    

@@ -1,0 +1,122 @@
+<%- include('./layouts/header.ejs') %>
+
+<div class="container-fluid page-body-wrapper">
+  <!-- partial:partials/_navbar.html -->
+  <%- include('./layouts/nav.ejs') %>
+  <!-- partial -->
+  <div class="main-panel">
+    <div class="content-wrapper">
+
+      <div class="row">
+        <div class="col-12 grid-margin">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Category Management</h4>
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Category Name</th>
+                      <th>Description</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% let i = 1 %>
+                    <% categories.forEach(category => { %>
+                      <tr>
+                        <td><%= i %></td>
+                        <td><%= category.name %></td>
+                        <td><%= category.description %></td>
+                        <td>
+                          <button class="btn btn-danger btn-sm" onclick="showConfirmationModal('Delete', '<%= category._id %>', '<%= category.name %>')">Delete</button>
+                          <button class="btn btn-warning btn-sm" onclick="showConfirmationModal('Edit', '<%= category._id %>', '<%= category.name %>')">Edit</button>
+                          <button class="btn btn-primary btn-sm" onclick="showConfirmationModal('Toggle', '<%= category._id %>', '<%= category.name %>')">
+                            <%= category.status === 'active' ? 'Active' : 'Blocked' %>
+                          </button>
+                        </td>
+                      </tr>
+                      <% i++ %>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bootstrap Modal for Confirmation -->
+      <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to <span id="actionText"></span> the status of category <span id="categoryName"></span>?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" id="confirmActionBtn">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- content-wrapper ends -->
+    <!-- partial:partials/_footer.html -->
+    <footer class="footer">
+      <div class="d-sm-flex justify-content-center justify-content-sm-between">
+        <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Aura beauty</span>
+      </div>
+    </footer>
+    <!-- partial -->
+  </div>
+  <!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+
+<script>
+  function showConfirmationModal(action, categoryId, categoryName) {
+    $('#actionText').text(action);
+    $('#categoryName').text(categoryName);
+    $('#confirmationModal').modal('show');
+
+    // Set up the confirm button click event
+    $('#confirmActionBtn').off('click').on('click', function () {
+      let url;
+
+      // Determine the URL based on the action
+      switch (action) {
+        case 'Delete':
+          url = `/admin/categories/delete?categoryId=${categoryId}&name=${categoryName}`;
+          break;
+        case 'Edit':
+          url = `/admin/categories/edit?categoryId=${categoryId}&name=${categoryName}`;
+          break;
+        case 'Toggle':
+          url = `/admin/categories/toggle?categoryId=${categoryId}&name=${categoryName}`;
+          break;
+        default:
+          // Handle other actions if needed
+          break;
+      }
+
+      // You may want to perform additional actions or send requests to the server here
+      window.location.href = url;
+
+      // Hide the modal after confirming
+      $('#confirmationModal').modal('hide');
+    });
+  }
+</script>
+
+<%- include('./layouts/footer.ejs') %>

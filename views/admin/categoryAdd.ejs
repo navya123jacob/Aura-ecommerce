@@ -1,0 +1,88 @@
+<%- include('./layouts/header.ejs') %>
+
+<div class="container-fluid page-body-wrapper">
+    <!-- partial:partials/_navbar.html -->
+    <%- include('./layouts/nav.ejs') %>
+    <!-- partial -->
+    <div class="main-panel">
+        <div class="content-wrapper">
+
+            <div class="card">
+                <div class="card-body">
+                    <form class="forms-sample" method="POST" action="/admin/categories/addpost">
+                        <!-- Update the form action endpoint accordingly -->
+
+                        <div class="form-group row">
+                            <label for="categoryName" class="col-sm-3 col-form-label">Category Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="categoryName" name="name" placeholder="Category Name" required>
+                                <small id="nameError" class="text-danger"></small>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="categoryDescription" class="col-sm-3 col-form-label">Category Description</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="categoryDescription" name="description" placeholder="Category Description" required></textarea>
+                                <small id="descriptionError" class="text-danger"></small>
+                            </div>
+                        </div>
+
+
+                        <!-- Other form fields... -->
+
+                        <button type="submit" class="btn btn-primary mr-2" onclick="validateForm()">Submit</button>
+                        <button class="btn btn-dark">Cancel</button>
+                    </form>
+                    <p class="text-success"> <%=message%></p>
+                      
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- content-wrapper ends -->
+    <!-- partial:partials/_footer.html -->
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Aura Beauty</span>
+        </div>
+    </footer>
+    <!-- partial -->
+    </div>
+    <!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+
+<%- include('./layouts/footer.ejs') %>
+
+<script>
+    function validateForm() {
+        const categoryNameInput = document.getElementById('categoryName');
+        const categoryDescriptionInput = document.getElementById('categoryDescription');
+        const nameError = document.getElementById('nameError');
+        const descriptionError = document.getElementById('descriptionError');
+
+        const categoryName = categoryNameInput.value.trim();
+        const categoryDescription = categoryDescriptionInput.value.trim();
+
+        // Regular expression to allow only letters (no numbers or special characters)
+        const nameRegex = /^[a-zA-Z]+$/;
+
+        if (!nameRegex.test(categoryName) || categoryName === '') {
+            nameError.textContent = 'Category name should contain only letters and cannot be empty.';
+            categoryNameInput.focus();
+        } else {
+            nameError.textContent = '';
+        }
+
+        if (categoryDescription === '') {
+            descriptionError.textContent = 'Category description cannot be empty.';
+            categoryDescriptionInput.focus();
+        } else {
+            descriptionError.textContent = '';
+        }
+    }
+</script>

@@ -20,7 +20,7 @@
     <!-- Layout styles -->
     <link rel="stylesheet" href="/admin_assets/css/style.css">
     <!-- End layout styles -->
-    <link rel="shortcut icon" href="/admin_assets/images/favicon.png" />
+    
   </head>
   <body>
     <div class="container-scroller">
@@ -100,20 +100,36 @@
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="/admin/categories">
+            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
               <span class="menu-icon">
-                <i class="mdi mdi-playlist-play"></i>
+                <i class="mdi mdi-laptop"></i>
               </span>
-              <span class="menu-title">categories</span>
+              <span class="menu-title">Categories</span>
+              <i class="menu-arrow"></i>
             </a>
+            <div class="collapse" id="ui-basic">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="/admin/categories">view Categories</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/admin/categories/add">Add Categories</a></li>
+                
+              </ul>
+            </div>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="/admin/products">
+            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
               <span class="menu-icon">
-                <i class="mdi mdi-table-large"></i>
+                <i class="mdi mdi-laptop"></i>
               </span>
               <span class="menu-title">Products</span>
+              <i class="menu-arrow"></i>
             </a>
+            <div class="collapse" id="ui-basic">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="/admin/products">view producs</a></li>
+                <li class="nav-item"> <a class="nav-link" href="/admin/products/add">Add products</a></li>
+                
+              </ul>
+            </div>
           </li>
          
         </ul>
