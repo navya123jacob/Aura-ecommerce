@@ -3,6 +3,8 @@
 //models
 const User = require('../models/userModel');
 const UserOTP= require('../models/userOTPverify');
+const product = require('../models/productModel');
+const category = require('../models/categoryModel');
 
 const dotenv = require('dotenv');  //for securing your creditials
 
@@ -31,9 +33,25 @@ const hashPassword = async (password) => {
 //load Home Page
 const Home=async(req,res)=>{
   try{
-
-    const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
-    
+    const categories= await category.find({'status': 'active'})
+    console.log(categories.length)
+    const buser=await User.find({Fname:req.session.checkuser,is_blocked:true})
+    const products = await product.aggregate([
+      {
+          $lookup: {
+              from: 'categories', // Assuming your category collection is named 'categories'
+              localField: 'category',
+              foreignField: '_id',
+              as: 'categoryData'
+          }
+      },
+      {
+          $match: {
+              'status': 'active',
+              'categoryData.status': 'active'
+          }
+      }
+  ]);//The single quotes are used to treat the entire string 'category.status' as the key in the JavaScript object, indicating that it's a nested field. It helps the JavaScript interpreter to understand that it's a single property rather than two separate properties
     if(buser)
     {
       req.session.checkuser=''
@@ -48,7 +66,7 @@ const Home=async(req,res)=>{
       
     const user = req.session.checkuser|| '' 
    
-      res.render('home',{user,ses})
+      res.render('home',{user,ses,products,categories})
   }
   catch (error) {
       console.log(error.message);
@@ -307,6 +325,36 @@ const logout=async(req,res)=>{
     }
 }
 
+//view products
+const CatProductsView=async(req,res)=>{
+  try{
+      const cat=req.query.cat
+      const products = await product.aggregate([
+        {
+            $lookup: {
+                from: 'categories', // Assuming your category collection is named 'categories'
+                localField: 'category',
+                foreignField: '_id',
+                as: 'categoryData'
+            }
+        },
+        {
+            $match: {
+                'status': 'active',
+                'categoryData.status': 'active',
+                'categoryData.name':cat
+
+            }
+        }
+    ]);
+      res.render('categories',{products})
+  }
+  catch (error) {
+      console.log(error.message);
+    }
+}
+
+
 
 module.exports={
     loadLogin,
@@ -316,5 +364,6 @@ module.exports={
     loadRegisterOTP,
     verifyUserOTP,
     PostLogin,
-    logout
+    logout,
+    CatProductsView
 }

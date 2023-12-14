@@ -40,6 +40,10 @@ userRoute.post('/userLogin',userController.PostLogin)
 userRoute.get('/logout',userController.logout)
 
 
+//categories products view
+userRoute.get('/category',userController.CatProductsView)
+
+
 
 
 

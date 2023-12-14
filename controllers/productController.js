@@ -1,6 +1,9 @@
 //models
 const product = require('../models/productModel');
 const Category = require('../models/categoryModel');
+const path = require('path');
+
+
 
 //admin side add product
 const addProduct=async(req,res)=>{
@@ -18,7 +21,7 @@ const addProduct=async(req,res)=>{
 //admin side add product post
 const addProductpost=async(req,res)=>{
     try{
-        console.log(req.body.date)
+        
         const arr = req.files.map(file => file.path);
          // Create a new Product document using Mongoose model
     const newProduct = new product({
@@ -53,10 +56,119 @@ const Product=async(req,res)=>{
     }
 }
 
+//products delete
+const ProductDelete=async(req,res)=>{
+    try{
+        await product.deleteOne({_id:req.query.id})
+        res.redirect('/admin/products')
+       
+    }
+    
+    catch (error) {
+        console.log(error.message);
+      }
+    }
 
+// /products active/blocked
+const ProductToggle=async(req,res)=>{
+    try{
+        const prod=await product.findOne({_id:req.query.id})
+
+        if(prod.status=='active')
+        {
+            await product.updateOne({_id:req.query.id},{$set:{status:'blocked'}})
+        }
+        else
+        {
+            await product.updateOne({_id:req.query.id},{$set:{status:'active'}})
+        }
+        res.redirect('/admin/products')
+       
+    }
+    
+    catch (error) {
+        console.log(error.message);
+      }
+    }
+
+    //in EDIT PRODUCT
+    //products edit get
+const ProductEdit=async(req,res)=>{
+    try{
+       const editProduct=await product.findOne({_id:req.query.id})
+
+        res.render('productsEdit',{editProduct})
+    }
+    catch(error)
+    {
+        console.log(error.message)
+    }
+}
+
+
+//post form
+
+    const ProductEditpost = async (req, res) => {
+        try {
+           const newarr = req.files.map(file => file.path);
+           await product.updateOne(
+            { _id: req.query.id },
+            {
+                $set: {
+                    name: req.body.name,
+                    description: req.body.description,
+                    price: req.body.price,
+                    quantity: req.body.quantity,
+                },
+                $push: {
+                    pictures: {
+                        $each: newarr
+                    }
+                }
+            } 
+        )
+        res.redirect(`/admin/products/edit?id=${req.query.id}`)
+        }
+      catch (error) {
+      console.error(error.message);
+      res.status(500).send('Internal Server Error');
+    }
+  };
+
+  //to delete product inside post form
+  const ProducteditDelete =async(req,res)=>{
+    try{
+        console.log(req.query.img)
+        await product.updateOne(
+            { _id: req.query.id },
+            {
+                $pull: {
+                    pictures: req.query.img
+                }
+            }
+        );
+        const editProduct=await product.findOne({_id:req.query.id})
+        
+        res.redirect(`/admin/products/edit?id=${req.query.id}`)
+       
+    }
+    
+    catch (error) {
+        console.log(error.message);
+      }
+    }
+
+  
+  
 module.exports=
 {
     addProduct,
     addProductpost,
-    Product
+    Product,
+    ProductDelete,
+    ProductToggle,
+    ProductEdit,
+    ProductEditpost,
+    ProducteditDelete
+    
 }

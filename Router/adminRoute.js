@@ -80,5 +80,21 @@ adminRoute.post('/products/addpost',upload.array('images', 5),productController.
 //to view products
 adminRoute.get('/products',productController.Product)
 
+//to delete products
+adminRoute.get('/products/delete',productController.ProductDelete)
+
+// products active/blocked
+adminRoute.get('/products/toggle',productController.ProductToggle)
+
+//in PRODUCT EDIT
+//products edit 
+adminRoute.get('/products/edit',productController.ProductEdit)
+
+//products editpost 
+adminRoute.post('/products/editpost',upload.array('newImages',5),productController.ProductEditpost)
+
+//products edit product delete
+adminRoute.get('/products/editdelete',productController.ProducteditDelete)
+
 //exporting 
 module.exports=adminRoute

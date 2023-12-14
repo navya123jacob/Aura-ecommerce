@@ -24,7 +24,21 @@ const adminloginMid = (req, res, next) => {
     }
     
   };
+
+  const adminPages = (req, res, next) => {
+    if(!(req.session.admincheck))
+    {
+       
+        res.redirect('/admin/dashboard')
+    }
+    else{
+        next();
+    }
+    
+  };
+
 module.exports = 
 {loginMid,
- adminloginMid  
+ adminloginMid,
+ adminPages 
 }

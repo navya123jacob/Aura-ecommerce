@@ -22,6 +22,7 @@
                       <th>Category</th>
                       <th>Quantity</th>
                       <th>Images</th>
+                      <th>Action</th> <!-- New column for buttons -->
                     </tr>
                   </thead>
                   <tbody>
@@ -34,22 +35,32 @@
                         <td><%= product.category.name %></td>
                         <td><%= product.quantity %></td>
                         <td>
-                            <% if (product.pictures && product.pictures.length > 0) { %>
-                              <% product.pictures.forEach(image => { %>
-                                <% let s=image.replace('public','') %>
-                                <%console.log(image,s) %>
-                                <img src="<%=s%>" alt="Product Image" style="max-width: 100px; max-height: 100px; margin-right: 5px;">
-                              <% }); %>
-                            <% } else { %>
-                              <!-- Handle case when pictures array is empty -->
-                              No images available
-                            <% } %>
+                          <% if (product.pictures && product.pictures.length > 0) { %>
+                            <% product.pictures.forEach(image => { %>
+                              <% let s=image.replace('public','') %>
+                              <img src="<%=s%>" alt="Product Image" style="max-width: 100px; max-height: 100px; margin-right: 5px;">
+                            <% }); %>
+                          <% } else { %>
+                            <!-- Handle case when pictures array is empty -->
+                            No images available
+                          <% } %>
+                          <td>
+                            <!-- Edit Button -->
+                            <button class="btn btn-danger btn-sm" onclick="showConfirmationModal('Edit', '<%= product._id %>')">Edit</button>
+                            
+                            <!-- Delete Button -->
+                            <button class="btn btn-danger btn-sm" onclick="showConfirmationModal('Delete', '<%= product._id %>')">Delete</button>
+                            
+                            <!-- Toggle Button -->
+                            <button class="btn btn-info btn-sm" onclick="showConfirmationModal('Toggle', '<%= product._id %>', <%= product.active %>)" >
+                              <%= product.status=== 'active' ? 'Active' : 'Blocked' %>
+
+                            </button>
                           </td>
-                          
-                      </tr>
-                      <% i++ %>
-                    <% }); %>
-                  </tbody>
+                        </tr>
+                        <% i++ %>
+                      <% }); %>
+                    </tbody>            
                 </table>
               </div>
             </div>
@@ -59,6 +70,28 @@
 
     </div>
     <!-- content-wrapper ends -->
+
+    <!-- Bootstrap Modal for Confirmation -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to <span id="actionText"></span> this product?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirmActionBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     <!-- partial:partials/_footer.html -->
     <footer class="footer">
       <div class="d-sm-flex justify-content-center justify-content-sm-between">
@@ -72,5 +105,37 @@
 <!-- page-body-wrapper ends -->
 </div>
 <!-- container-scroller -->
+
+<script>
+  function showConfirmationModal(action, productId) {
+    $('#actionText').text(action);
+    $('#confirmationModal').modal('show');
+
+    // Set up the confirm button click event
+    $('#confirmActionBtn').off('click').on('click', function () {
+      // Perform the action based on the confirmation
+      switch (action.toLowerCase()) {
+        case 'edit':
+          // Redirect to delete route
+          window.location.href = `/admin/products/edit?id=${productId}`;
+          break;
+        case 'delete':
+          // Redirect to delete route
+          window.location.href = `/admin/products/delete?id=${productId}`;
+          break;
+        case 'toggle':
+          // Redirect to toggle route
+          window.location.href = `/admin/products/toggle?id=${productId}`;
+          break;
+        // Add more cases for other actions if needed
+        default:
+          console.error(`Unknown action: ${action}`);
+      }
+
+      // Hide the modal after confirming
+      $('#confirmationModal').modal('hide');
+    });
+  }
+</script>
 
 <%- include('./layouts/footer.ejs') %>
