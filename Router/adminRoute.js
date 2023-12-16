@@ -34,67 +34,71 @@ const storage = multer.diskStorage({
 
 
 //admin login
-adminRoute.get('/',mid.adminloginMid,adminController.Login)
+adminRoute.get('/',mid.adminloginSes,adminController.Login)
 
 //admin post
-adminRoute.post('/loginpost',mid.adminloginMid,adminController.LoginPost)
+adminRoute.post('/loginpost',mid.adminloginSes,adminController.LoginPost)
 
 //dashboard
-adminRoute.get('/dashboard',adminController.dashboard)
+adminRoute.get('/dashboard',mid.adminloginNoSes,mid.adminloginNoSes,adminController.dashboard)
 
 //users
-adminRoute.get('/users',adminController.users)
+adminRoute.get('/users',mid.adminloginNoSes,adminController.users)
 
 //user block
-adminRoute.get('/users/block',adminController.userblock)
+adminRoute.get('/users/block',mid.adminloginNoSes,adminController.userblock)
 
 //categories
-adminRoute.get('/categories',adminController.CategoryView)
+adminRoute.get('/categories',mid.adminloginNoSes,adminController.CategoryView)
 
 //categories add
-adminRoute.get('/categories/add',adminController.CategoryAdd)
+adminRoute.get('/categories/add',mid.adminloginNoSes,adminController.CategoryAdd)
 
 //categories add post
-adminRoute.post('/categories/addpost',adminController.CategoryAddpost)
+adminRoute.post('/categories/addpost',mid.adminloginNoSes,adminController.CategoryAddpost)
 
 //categories delete get
-adminRoute.get('/categories/delete',adminController.CategoryDelete)
+adminRoute.get('/categories/delete',mid.adminloginNoSes,adminController.CategoryDelete)
 
 //categories edit get
-adminRoute.get('/categories/edit',adminController.CategoryEdit)
+adminRoute.get('/categories/edit',mid.adminloginNoSes,adminController.CategoryEdit)
 
 //categories edit post
-adminRoute.post('/categories/editpost',adminController.CategoryEditpost)
+adminRoute.post('/categories/editpost',mid.adminloginNoSes,adminController.CategoryEditpost)
 
 //categories active/blocked
-adminRoute.get('/categories/toggle',adminController.CategoryToggle)
+adminRoute.get('/categories/toggle',mid.adminloginNoSes,adminController.CategoryToggle)
 
 //PRODUCTS
 
 //to get add products
-adminRoute.get('/products/add',productController.addProduct)
+adminRoute.get('/products/add',mid.adminloginNoSes,productController.addProduct)
 
 //to post on add products
 adminRoute.post('/products/addpost',upload.array('images', 5),productController.addProductpost)//5=max num of images
 
 //to view products
-adminRoute.get('/products',productController.Product)
+adminRoute.get('/products',mid.adminloginNoSes,productController.Product)
 
 //to delete products
-adminRoute.get('/products/delete',productController.ProductDelete)
+adminRoute.get('/products/delete',mid.adminloginNoSes,productController.ProductDelete)
 
 // products active/blocked
-adminRoute.get('/products/toggle',productController.ProductToggle)
+adminRoute.get('/products/toggle',mid.adminloginNoSes,productController.ProductToggle)
 
 //in PRODUCT EDIT
 //products edit 
-adminRoute.get('/products/edit',productController.ProductEdit)
+adminRoute.get('/products/edit',mid.adminloginNoSes,productController.ProductEdit)
 
 //products editpost 
-adminRoute.post('/products/editpost',upload.array('newImages',5),productController.ProductEditpost)
+adminRoute.post('/products/editpost',mid.adminloginNoSes,upload.array('newImages',5),productController.ProductEditpost)
 
 //products edit product delete
-adminRoute.get('/products/editdelete',productController.ProducteditDelete)
+adminRoute.get('/products/editdelete',mid.adminloginNoSes,productController.ProducteditDelete)
+
+
+//logout
+adminRoute.get('/logout',adminController.adminlogout)
 
 //exporting 
 module.exports=adminRoute

@@ -34,8 +34,8 @@ const hashPassword = async (password) => {
 const Home=async(req,res)=>{
   try{
     const categories= await category.find({'status': 'active'})
-    console.log(categories.length)
-    const buser=await User.find({Fname:req.session.checkuser,is_blocked:true})
+    
+   
     const products = await product.aggregate([
       {
           $lookup: {
@@ -52,7 +52,8 @@ const Home=async(req,res)=>{
           }
       }
   ]);//The single quotes are used to treat the entire string 'category.status' as the key in the JavaScript object, indicating that it's a nested field. It helps the JavaScript interpreter to understand that it's a single property rather than two separate properties
-    if(buser)
+  const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
+  if(buser)
     {
       req.session.checkuser=''
       
@@ -72,7 +73,6 @@ const Home=async(req,res)=>{
       console.log(error.message);
     }
 }
-
 
 
 //load user login
@@ -111,7 +111,7 @@ const sendOTPverifyEmail = async (user, res) => {
       to: user.email, // Use user.email instead of req.body.email
       subject: 'This is the OTP to signup to AURA',
       html: `<p>Enter ${otp} in the signup page to register</p>
-             <br><p>This code expires after 15 minutes</p>`, // text or HTML or any format
+             <br><p>This code expires after 2 minutes</p>`, // text or HTML or any format
     };
 
     // hash the otp
@@ -120,14 +120,15 @@ const sendOTPverifyEmail = async (user, res) => {
       userId: user._id, // The purpose of setting userId to user._id is to establish a link or association between the OTP verification record (in the OTPverify collection) and the corresponding user (in the User collection). 
       otp: hashedOTP,
       createdAt: Date.now(),
-      expiresAt: Date.now() + 60000,
+      expiresAt: Date.now() + 120000,
     });
 
     // save otp record
-    await newUserOTP.save();
+    await newUserOTP.save()
     await transporter.sendMail(mailOptions);
     
     userId=user._id; //to access during otp verification
+    req.session.expires
     
   } catch (error) {
     // Handle errors and send an error response
@@ -179,10 +180,10 @@ const PostRegister=async(req,res)=>{
           });
     
           userData.save().then((result) => {
-            sendOTPverifyEmail(result,res); // Pass req as a parameter
+            sendOTPverifyEmail(result,res); 
             // and result saved document is also passed into user parameter
             req.session.userId =result._id   //chelpo full clear aavum ,eg: wrong otp typeythit same /registerpostotp pagilek redirect cheyumbo
-            res.redirect(`/registerpostotp`)
+            res.redirect(`/registerpostotp?userId=${userData._id}`)
             
           });
           
@@ -202,9 +203,13 @@ const loadRegisterOTP=async(req,res)=>{
   try{
        if(req.session.userId)
        {
-    const message = req.query.message ||''
-    res.render('otp',{message})
-}
+        
+          const userId=req.query.userId||''
+          const message = req.query.message ||''
+          res.render('otp',{message,userId})
+    
+
+  }
       else{
         res.redirect('/register')
       }
@@ -257,7 +262,7 @@ const verifyUserOTP = async (req, res) => {
             await User.updateOne({ _id: req.session.userId}, { verified: true });
             await UserOTP.deleteMany({ userId:req.session.userId});
             // Destroy the session
-            req.session.destroy();
+            req.session.destroy();    //Each tab or browser is treated as a separate client by the server, and they can have different interactions with the server. Logging out from one tab doesn't automatically log out from another tab because each tab maintains its own state.
             res.redirect('/register?message=Successfully registered')
           
         }
@@ -273,12 +278,36 @@ const verifyUserOTP = async (req, res) => {
 };
 
 
+//resend otp verifaction form 
+const resendUserOTP = async (req, res) => {
+  try {
+    const userIdpost=req.query.userId
+    if(!userId)
+    {
+      throw Error('empty user details are now allowed')
+    }
+    else
+    {
+      
+      await UserOTP.deleteMany({ userId:req.session.userId});
+      const result=await User.findOne({_id:userId})
+      console.log(result)
+      sendOTPverifyEmail(result,res);
+      res.redirect("/registerpostotp?message=The new otp has been send")
+    }
+  }
+catch (error) {
+  console.log(error.message)
+ }
+}
+
 
 //posting login page
 const PostLogin=async(req,res)=>{
   try{
     
   const UserLog=await User.findOne({email:req.body.reg_email})
+  console.log(req.body.reg_password)
   if(UserLog )
   {
     
@@ -295,7 +324,7 @@ const PostLogin=async(req,res)=>{
   }
   else
   {
-    
+    console.log(req.session.checkuser)
     req.session.checkuser=UserLog.Fname
     res.redirect('/')
   }
@@ -312,23 +341,13 @@ catch(error){
 
 }
 
-//logout
-const logout=async(req,res)=>{
-  try{
-    
-     req.session.destroy()  //req.session.destroy is called, it destroys the session associated with the current request based on the session ID.
-     
-     res.redirect('/')
-  }
-  catch (error) {
-      console.log(error.message);
-    }
-}
+
 
 //view products
 const CatProductsView=async(req,res)=>{
   try{
       const cat=req.query.cat
+      const categories=await category.find({status:'active'})
       const products = await product.aggregate([
         {
             $lookup: {
@@ -347,14 +366,63 @@ const CatProductsView=async(req,res)=>{
             }
         }
     ]);
-      res.render('categories',{products})
+      res.render('categories',{products,categories})
   }
   catch (error) {
       console.log(error.message);
     }
 }
 
+//view product details
+const productdetails = async (req, res) => {
+  try {
+    const id = req.query.id;
+    const products = await product.findOne({ _id: id });
 
+    if (!products) {
+      // Handle the case when no product is found
+      return res.status(404).send('Product not found');
+    }
+    const productlist = await product.aggregate([
+      {
+          $lookup: {
+              from: 'categories', // Assuming your category collection is named 'categories'
+              localField: 'category',
+              foreignField: '_id',
+              as: 'categoryData'
+          }
+      },
+      {
+          $match: {
+              'status': 'active',
+              'categoryData.status': 'active',
+              'products._id':{$ne:req.query.id}
+          }
+      }
+  ]);
+
+    console.log(productlist, req.query.id);
+    res.render('productdeets', { products ,productlist});
+  } catch (error) {
+    console.log(error.message);
+    // Handle other errors as needed
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+
+//logout
+const logout=async(req,res)=>{
+  try{
+    
+     req.session.destroy()  //req.session.destroy is called, it destroys the session associated with the current request based on the session ID.
+     
+     res.redirect('/')
+  }
+  catch (error) {
+      console.log(error.message);
+    }
+}
 
 module.exports={
     loadLogin,
@@ -365,5 +433,7 @@ module.exports={
     verifyUserOTP,
     PostLogin,
     logout,
-    CatProductsView
+    CatProductsView,
+    productdetails,
+    resendUserOTP
 }

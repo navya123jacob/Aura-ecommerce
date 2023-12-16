@@ -8,7 +8,8 @@ userRoute.set('views', './views/user');
 // Import the userController for handling user-related logic
 const userController = require('../controllers/userController.js');
 
-const mid=require('../middleware.js')
+const mid=require('../middleware.js');
+const Product = require('../models/productModel.js');
 
 
 
@@ -16,7 +17,7 @@ const mid=require('../middleware.js')
 userRoute.get('/',userController.Home)
 
 //Register page
-userRoute.get('/register',mid.loginMid,userController.loadRegister)
+userRoute.get('/register',mid.UserSes,userController.loadRegister)
 
 //Post on Register page(redirects to otp page)
 userRoute.post('/registerpost',userController.PostRegister)
@@ -24,30 +25,36 @@ userRoute.post('/registerpost',userController.PostRegister)
 //to load the signup otp page
 userRoute.get('/registerpostotp',userController.loadRegisterOTP)
 
-////Post on OTP form
+//Post on OTP form
 userRoute.post('/verifyOTP',userController.verifyUserOTP)
+
+//send on OTP form
+userRoute.get('/resendOTP',userController.resendUserOTP)
 
 
 //login page
-userRoute.get('/login',mid.loginMid,userController.loadLogin)
+userRoute.get('/login',mid.UserSes,userController.loadLogin)
 
 
 //login page post
 userRoute.post('/userLogin',userController.PostLogin)
 
 
-//logout page post
-userRoute.get('/logout',userController.logout)
-
 
 //categories products view
-userRoute.get('/category',userController.CatProductsView)
+userRoute.get('/category',mid.UserNoSes,userController.CatProductsView)
+
+//to view product details
+userRoute.get('/productdetails',mid.UserNoSes,userController.productdetails)
 
 
 
 
 
 
+
+//logout page post
+userRoute.get('/logout',mid.UserNoSes,userController.logout)
 
 
 

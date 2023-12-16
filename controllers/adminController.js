@@ -194,6 +194,21 @@ const CategoryToggle=async(req,res)=>{
 
 
 
+
+
+//logout
+const adminlogout=async(req,res)=>{
+    try{
+      
+       req.session.destroy()  //req.session.destroy is called, it destroys the session associated with the current request based on the session ID.
+       
+       res.redirect('/admin')
+    }
+    catch (error) {
+        console.log(error.message);
+      }
+  }
+
 module.exports={
     Login,
     LoginPost,
@@ -206,5 +221,6 @@ module.exports={
     CategoryDelete,
     CategoryEdit,
     CategoryEditpost,
-    CategoryToggle
+    CategoryToggle,
+    adminlogout
 }

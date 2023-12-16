@@ -96,13 +96,12 @@
 
 <script>
     function validateForm() {
-        var firstName = document.getElementById('register-first-name').value;
-        var lastName = document.getElementById('register-last-name').value;
-        var mobile = document.getElementById('register-mobile').value;
-        var email = document.getElementById('register-email-2').value;
-        var password = document.getElementById('register-password-2').value;
-        var confirmPasswordInput = document.getElementById("confirm-password").value;
-        
+        var firstName = document.getElementById('register-first-name').value.trim();
+        var lastName = document.getElementById('register-last-name').value.trim();
+        var mobile = document.getElementById('register-mobile').value.trim();
+        var email = document.getElementById('register-email-2').value.trim();
+        var password = document.getElementById('register-password-2').value.trim();
+        var confirmPasswordInput = document.getElementById("confirm-password").value.trim();
 
         var firstNameError = document.getElementById('firstNameError');
         var lastNameError = document.getElementById('lastNameError');
@@ -135,14 +134,13 @@
         }
 
         if (!/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(email)) {
-            emailError.textContent = 'Please enter a valid email address.';
+            emailError.textContent = 'Please enter a valid email address.'; //user.domain is invalid
             return false;
-            // example user@domain (missing top-level domain),user@.com
-
         }
 
-        if (password.length < 6) {
-            passwordError.textContent = 'Password must be at least 6 characters.';
+        // Stronger password requirements
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(password)) { // must be at least 6 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character from the set @$!%*?&
+            passwordError.textContent = 'Password must be at least 6 characters and include at least one uppercase letter, one lowercase letter, one number, and one special character.';
             return false;
         }
 
@@ -151,36 +149,24 @@
             return false;
         }
 
-        
         // Form is valid
         return true;
     }
 
-    
-
-     function togglePassword() {
+    function togglePassword() {
         var passwordInput = document.getElementById("register-password-2");
-
         // Toggle the password visibility
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-        } else {
-            passwordInput.type = "password";
-        }
+        passwordInput.type = (passwordInput.type === "password") ? "text" : "password";
     }
-     function togglePassword2() {
-        var passwordInput = document.getElementById("confirm-password");
 
+    function togglePassword2() {
+        var passwordInput = document.getElementById("confirm-password");
         // Toggle the password visibility
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-        } else {
-            passwordInput.type = "password";
-        }
+        passwordInput.type = (passwordInput.type === "password") ? "text" : "password";
     }
 </script>
 
 </body>
 
-<!-- molla/login.html  22 Nov 2019 10:04:03 GMT -->
+
 </html>

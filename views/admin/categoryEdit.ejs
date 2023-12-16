@@ -15,7 +15,7 @@
                         <div class="form-group row">
                             <label for="categoryName" class="col-sm-3 col-form-label">Category Name</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="categoryName" name="name" placeholder="Category Name" required>
+                                <input type="text" class="form-control" id="categoryName" name="name" placeholder="Category Name" value="<%=editcat.name%>" required>
                                 <small id="nameError" class="text-danger"></small>
                             </div>
                         </div>
@@ -23,7 +23,7 @@
                         <div class="form-group row">
                             <label for="categoryDescription" class="col-sm-3 col-form-label">Category Description</label>
                             <div class="col-sm-9">
-                                <textarea class="form-control" id="categoryDescription" name="description" placeholder="Category Description" required></textarea>
+                                <input type="text" class="form-control"  id="categoryDescription" name="description" placeholder="Category description" value="<%=editcat.description%>" required>
                                 <small id="descriptionError" class="text-danger"></small>
                             </div>
                         </div>
