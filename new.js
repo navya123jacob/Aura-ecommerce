@@ -125,11 +125,11 @@ const sendOTPverifyEmail = async (user, res) => {
 
     // save otp record
     await newUserOTP.save()
-   
     const expiresAt= newUserOTP.expiresAt
-    const createdAt= newUserOTP.createdAt
     await transporter.sendMail(mailOptions);
-    return {expiresAt,createdAt}
+    return expiresAt
+    
+    
     
   } catch (error) {
     // Handle errors and send an error response
@@ -181,10 +181,10 @@ const PostRegister=async(req,res)=>{
           });
     
           userData.save().then(async(result) => {
-            const date=await sendOTPverifyEmail(result,res); 
+            const expiresAt=await sendOTPverifyEmail(result,res); 
             // and result saved document is also passed into user parameter
             req.session.userId =result._id   //chelpo full clear aavum ,eg: wrong otp typeythit same /registerpostotp pagilek redirect cheyumbo
-            res.redirect(`/registerpostotp?userId=${req.session.userId}&expiresAt=${date.expiresAt}&createdAt=${date.createdAt}`)
+            res.redirect(`/registerpostotp?userId=${userData._id}&expiresAt=${expiresAt}`)
             
           });
           
@@ -204,41 +204,26 @@ const loadRegisterOTP=async(req,res)=>{
   try{
        if(req.session.userId)
        {
-       
-       
-        const nowObject = new Date(Date.now());
-
-        // Get the formatted date string
-       const nowString =nowObject.toString();
-       // Convert the date string to a Date object
-      const newnowObject = new Date(nowString.replace('+',' '));
-      // Format the date to ISO 8601 format
-      const nowisoFormattedDate = newnowObject.toISOString();
-      console.log(nowString)
-      // Get the current minutes
-     const newcurrentMinutes = newnowObject.getMinutes();
-
-     console.log('ISO Formatted Date:', nowisoFormattedDate);
-     console.log('Minutes:', newcurrentMinutes);
-     
-        
-
-      // Convert the date string to a Date object
-       const dateObject = new Date(req.query.expiresAt);
-
-      // Format the date to ISO 8601 format
-      const isoFormattedDate = dateObject.toISOString();
-
-      // Extract the minutes
-      const minutes = dateObject.getMinutes();
-
-      console.log('ISO Formatted Date:', isoFormattedDate);
-      console.log('Minutes:', minutes);
-
+        console.log(req.query.expiresAt)
       
-          const userId=req.session.userId
+        const dateString = req.query.expiresAt;
+
+// Convert the date string to a Date object
+const dateObject = new Date(dateString);
+
+// Format the date to ISO 8601 format
+const isoFormattedDate = dateObject.toISOString();
+
+// Extract the minutes
+const minutes = dateObject.getMinutes();
+
+console.log('ISO Formatted Date:', isoFormattedDate);
+console.log('Minutes:', minutes);
+
+
+          const userId=req.session.userI
           const message = req.query.message ||''
-          res.render('otp',{message,userId,isoFormattedDate,nowisoFormattedDate})
+          res.render('otp',{message,userId})
     
 
   }
@@ -267,7 +252,6 @@ const verifyUserOTP = async (req, res) => {
       const UserOTPVerificationRecords = await UserOTP.find({userId:req.session.userId});
       
       const { expiresAt } = UserOTPVerificationRecords[0];
-      const { createdAt } = UserOTPVerificationRecords[0];
       const hashedOTP = UserOTPVerificationRecords[0].otp;
      
       if (expiresAt < Date.now()) {
@@ -288,7 +272,7 @@ const verifyUserOTP = async (req, res) => {
         if (!validOTP) {
           // await User.deleteOne({ _id: userId })
           // await UserOTP.deleteMany({ userId }
-          res.redirect(`/registerpostotp?message=wrong otp,try again&expiresAt=${expiresAt}&createdAt=${createdAt}`)
+          res.redirect("/registerpostotp?message=wrong otp,try again")
           
         } else {
          
@@ -315,6 +299,7 @@ const verifyUserOTP = async (req, res) => {
 const resendUserOTP = async (req, res) => {
   try {
     const userId=req.session.userId
+    console.log(userId)
     if(!userId)
     {
       throw Error('empty user details are now allowed')
@@ -325,12 +310,8 @@ const resendUserOTP = async (req, res) => {
       await UserOTP.deleteMany({ userId:req.session.userId});
       const result=await User.findOne({_id:userId})
       
-      
-        const date=await sendOTPverifyEmail(result,res); 
-        
-        res.redirect(`/registerpostotp?message=new otp sent&userId=${userId}&expiresAt=${date.expiresAt}&createdAt=${date.createdAt}`)
-        
-      
+      const expiresAt=await sendOTPverifyEmail(result,res); 
+      res.redirect(`/registerpostotp?message=The new otp has been send?userId=${req.session.userId}&expiresAt=${expiresAt}`)
     }
   }
 catch (error) {
@@ -361,7 +342,7 @@ const PostLogin=async(req,res)=>{
   }
   else
   {
-    
+    console.log(req.session.checkuser)
     req.session.checkuser=UserLog.Fname
     res.redirect('/')
   }

@@ -20,7 +20,7 @@
 
 
                             <div class="form-footer">
-                                <button type="submit" class="btn btn-outline-dark-2">
+                                <button type="submit" class="btn btn-outline-dark-2" onclick=>
                                     <span>VERIFY OTP</span>
                                     <i class="icon-long-arrow-right"></i>
                                 </button>
@@ -36,7 +36,7 @@
             <h6 class="text-danger"><%=message%></h6>
 
             <a href="/resendOTP?userId=<%=userId%>" class="text-primary">resend otp</a>
-            <h6 id="timer-message" class="text-danger"><%=message%></h6>
+            <div id="countdown"></div>
         </div><!-- End .form-box -->
         
     </div><!-- End .container -->
@@ -91,28 +91,66 @@
         });
     }
 
-    // Set the timer for 2 minutes
-    const durationInMinutes = 2;
-    const durationInMilliseconds = durationInMinutes * 60 * 1000;
+    //TIMER
+    const startDate = '<%=nowisoFormattedDate%>';
+const endDate = '<%=isoFormattedDate%>';
 
-    // Set up the timer
-    let timer = durationInMilliseconds;
-    const countdownInterval = setInterval(() => {
-        const minutes = Math.floor((timer % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timer % (1000 * 60)) / 1000);
+const startDateObject = new Date(startDate);
+const endDateObject = new Date(endDate);
+const timeDifference = endDateObject - startDateObject;
 
-        updateTimer(minutes, seconds);
+let timer = timeDifference;
+const countdownElement = document.getElementById('countdown');
 
-        if (timer <= 0) {
-            // Timer expired, destroy the session
-            destroySession();
+function updateTimer(minutes, seconds) {
+    countdownElement.innerHTML = `Time Remaining: ${minutes} minutes and ${seconds} seconds`;
+}
 
-            // Clear the interval to stop the countdown
-            clearInterval(countdownInterval);
-        }
+const countdownInterval = setInterval(() => {
+    const minutes = Math.floor((timer % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timer % (1000 * 60)) / 1000);
 
-        timer -= 1000;
-    }, 1000);
+    updateTimer(minutes, seconds);
+
+    if (timer <= 0) {
+        clearInterval(countdownInterval);
+        countdownElement.innerHTML = 'Timer Expired';
+    }
+
+    timer -= 1000;
+}, 1000);
+    function verifyOTP() {
+  const otp = document.getElementById('otp').value;
+
+  fetch('/registerpostotp', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ otp }),
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log(data);
+      if (data.success) {
+        // Handle success if needed
+        window.location.href = '/register?message=Successfully registered';
+      } else {
+        // Handle failure
+        alert(data.message);
+        document.getElementById('error-message').innerText = data.message;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}
+
 </script>
 </body>
 

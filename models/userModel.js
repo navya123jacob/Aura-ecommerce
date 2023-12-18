@@ -33,6 +33,12 @@ const userSchema=new mongoose.Schema({
         type:Boolean,
         required:true
     },
+    
+    wallet:{
+        type:Number,
+        default: 0
+    }
+
 
 
 })

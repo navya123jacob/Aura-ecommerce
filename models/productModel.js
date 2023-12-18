@@ -37,6 +37,16 @@ const productSchema = new mongoose.Schema({
     type: [String], // Assuming pictures is an array of strings (file paths or URLs)
     required: true,
   },
+  
+    offer:{
+        type: Number,
+        default: 0,
+    },
+    expiryDate:{
+        type : Date ,
+        required : true
+    },
+
 });
 
 // Create a Product model using the product schema
