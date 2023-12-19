@@ -1,6 +1,10 @@
 // Import necessary modules
 const express = require('express');
-
+//models
+const User = require('./models/userModel');
+const UserOTP= require('./models/userOTPverify');
+const product = require('./models/productModel');
+const category = require('./models/categoryModel');
 
 // Login session middleware
 const UserNoSes = (req, res, next) => {
@@ -51,10 +55,36 @@ const adminloginNoSes = (req, res, next) => {
     
   };
 
+  let categories; // Declare categories outside the if block
+  const logiheader= async(req, res, next) => {
+    let ses = false; // If checkuser doesn't exists
+   
+    
+  const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
+      if(buser)
+        {
+          req.session.checkuser=''
+          
+        }
+        
+                
+          if (req.session.checkuser) {
+              // If checkuser exists in the session, set ses to true
+              ses = true;
+          }
+          
+          req.ses=ses
+        
+        req.categories= await category.find({'status': 'active'})
+      console.log('yes')
+      await next()
+    };
+
 module.exports = 
 {UserNoSes,
  adminloginSes,
  adminloginNoSes,
  UserNoSes,
- UserSes
+ UserSes,
+ logiheader
 }

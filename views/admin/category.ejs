@@ -11,7 +11,9 @@
         <div class="col-12 grid-margin">
           <div class="card">
             <div class="card-body">
-              <h4 class="card-title">Category Management</h4>
+              <div class="col-md-6">
+                <input type="text" class="form-control" id="searchInput" placeholder="Search by name" oninput="searchUsers()">
+              </div>
               <div class="table-responsive">
                 <table class="table">
                   <thead>
@@ -30,7 +32,7 @@
                         <td><%= category.name %></td>
                         <td><%= category.description %></td>
                         <td>
-                          <button class="btn btn-danger btn-sm" onclick="showConfirmationModal('Delete', '<%= category._id %>', '<%= category.name %>')">Delete</button>
+                          
                           <button class="btn btn-warning btn-sm" onclick="showConfirmationModal('Edit', '<%= category._id %>', '<%= category.name %>')">Edit</button>
                           <button class="btn btn-primary btn-sm" onclick="showConfirmationModal('Toggle', '<%= category._id %>', '<%= category.name %>')">
                             <%= category.status === 'active' ? 'Active' : 'Blocked' %>
@@ -96,9 +98,7 @@
 
       // Determine the URL based on the action
       switch (action) {
-        case 'Delete':
-          url = `/admin/categories/delete?categoryId=${categoryId}&name=${categoryName}`;
-          break;
+        
         case 'Edit':
           url = `/admin/categories/edit?categoryId=${categoryId}&name=${categoryName}`;
           break;
@@ -117,6 +117,30 @@
       $('#confirmationModal').modal('hide');
     });
   }
+
+  
+  function searchUsers() {
+    // Get the search query from the input field
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+
+    // Get all table rows in the tbody
+    const rows = document.querySelectorAll('tbody tr');
+
+    // Loop through each row and hide/show based on the first letter of the user's name
+    rows.forEach(row => {
+      // Extract the user's name from the row (adjust the index based on your table structure)
+      const userName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+      // Check if the first letter of the user's name matches the search query
+      if (userName.startsWith(searchQuery)) {
+        // If the first letter matches, display the row
+        row.style.display = '';
+      } else {
+        // If the first letter does not match, hide the row
+        row.style.display = 'none';
+      }
+    });
+  }   
 </script>
 
 <%- include('./layouts/footer.ejs') %>

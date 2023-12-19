@@ -12,7 +12,6 @@ const mid=require('../middleware.js');
 const Product = require('../models/productModel.js');
 
 
-
 //home page
 userRoute.get('/',userController.Home)
 
@@ -41,11 +40,16 @@ userRoute.post('/userLogin',userController.PostLogin)
 
 
 
-//categories products view
-userRoute.get('/category',mid.UserNoSes,userController.CatProductsView)
+
+
+// Categories products view
+userRoute.get('/category', mid.UserNoSes, mid.logiheader, userController.CatProductsView);
 
 //to view product details
-userRoute.get('/productdetails',mid.UserNoSes,userController.productdetails)
+userRoute.get('/productdetails',mid.UserNoSes,mid.logiheader,userController.productdetails)
+
+//to view account
+userRoute.get('/account',mid.UserNoSes,userController.account)
 
 
 

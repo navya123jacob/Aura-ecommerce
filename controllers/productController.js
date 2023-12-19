@@ -2,6 +2,7 @@
 const product = require('../models/productModel');
 const Category = require('../models/categoryModel');
 const path = require('path');
+const fs=require('fs')
 
 
 
@@ -44,21 +45,49 @@ const addProductpost=async(req,res)=>{
     }
 }
 
-//products view
-const Product=async(req,res)=>{
-    try{
-       const products=await product.find()
-        res.render('product',{products})
-    }
-    catch(error)
-    {
-        console.log(error.message)
-    }
-}
+// products view with pagination
+const Product = async (req, res) => {
+  try {
+    const pageSize = 4; // Number of products per page
+    const page = parseInt(req.query.page) || 1;
+
+    const totalProducts = await product.countDocuments();
+    const totalPages = Math.ceil(totalProducts / pageSize);
+
+    const products = await product
+      .find()
+      .populate({
+        path: 'category',
+      })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .exec();
+
+    res.render('product', { products, page, totalPages });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Internal Server Error');
+  }
+};
 
 //products delete
 const ProductDelete=async(req,res)=>{
     try{
+
+        // Find the product document to get the list of images
+        const productToDelete = await product.findOne({ _id: req.query.id });
+        console.log(productToDelete)
+        // Loop through each image and delete it from the public directory
+        for (const imagePath of productToDelete.pictures) {
+            const fullPath = path.join(__dirname, '..', 'public', imagePath);
+           fs.unlink(fullPath, (err) => {
+  if (err) {
+    console.error('Error deleting file:', err);
+  } else {
+    console.log('File deleted successfully');
+  }
+});
+        }
         await product.deleteOne({_id:req.query.id})
         res.redirect('/admin/products')
        
@@ -139,6 +168,17 @@ const ProductEdit=async(req,res)=>{
   const ProducteditDelete =async(req,res)=>{
     try{
         console.log(req.query.img)
+        
+        const imagePath = path.join(__dirname, '..',  req.query.img);
+        console.log(imagePath)
+        // Delete the image file from the public directory
+        fs.unlink(imagePath, (err) => {
+  if (err) {
+    console.error('Error deleting file:', err);
+  } else {
+    console.log('File deleted successfully');
+  }
+});
         await product.updateOne(
             { _id: req.query.id },
             {

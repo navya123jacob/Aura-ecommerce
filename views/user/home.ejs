@@ -45,21 +45,7 @@
                     </div><!-- End .header-left -->
 
                     <div class="header-right">
-                        
-                        <div class="header-search header-search-extended header-search-visible">
-                            <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
-                            <form action="#" method="get">
-                                <div class="header-search-wrapper">
-                                    <label for="q" class="sr-only">Search</label>
-                                    <input type="search" class="form-control" name="q" id="q" placeholder="Search product ..." required>
-                                    <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
-                                </div><!-- End .header-search-wrapper -->
-                            </form>
-                        </div><!-- End .header-search -->
-
-                        
-
-                        </a>
+                       
                         <a href="/wishlist" class="wishlist-link" <%= ses ? '' : 'hidden' %>>
                             <i class="icon-heart-o"></i>
                         </a>
@@ -73,6 +59,7 @@
                       
                                 <div class="dropdown-cart-action">
                                     <a href="/login" class="btn btn-outline-primary-2" <%= ses ? 'hidden' : '' %>>Login</a>
+                                    <a href="/account" class="btn btn-outline-primary "   <%= ses ? '' : 'hidden' %>>Account</a>
                                     <a href="/logout" class="btn btn-outline-primary-2 "   <%= ses ? '' : 'hidden' %>>Logout</a>
                                     <a href="/register" class="btn btn-outline-primary-2" <%= ses ? 'hidden' : '' %>><span>Sign in</span><i class="icon-long-arrow-right"></i></a>
 
@@ -278,7 +265,7 @@
                            
                             <% for (let i = 0; i < Math.min(products.length, 4); i++) { %>
                                 <div class="product product-2">
-                                    <figure class="product-media"  style="height:80%;">
+                                    <figure class="product-media"  style="height:70%;">
                                         <%  let s1=products[i].pictures[0].replace('public','') %>
                                         <%  let s2=products[i].pictures[1].replace('public','') %>
                                         <a href="/productdetails?id=<%=products[i]._id%>" style="display: block; height: 100%;">

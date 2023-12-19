@@ -36,22 +36,12 @@ const Home=async(req,res)=>{
     const categories= await category.find({'status': 'active'})
     
    
-    const products = await product.aggregate([
-      {
-          $lookup: {
-              from: 'categories', // Assuming your category collection is named 'categories'
-              localField: 'category',
-              foreignField: '_id',
-              as: 'categoryData'
-          }
-      },
-      {
-          $match: {
-              'status': 'active',
-              'categoryData.status': 'active'
-          }
-      }
-  ]);//The single quotes are used to treat the entire string 'category.status' as the key in the JavaScript object, indicating that it's a nested field. It helps the JavaScript interpreter to understand that it's a single property rather than two separate properties
+    const products = await product.find({ 'status': 'active' })
+  .populate({
+    path: 'category', //The path: 'category' specifies the field in the current document that you want to populate. In this case, you are populating the 'category' field of the 'Product' model.
+    match: { 'status': 'active' }
+  })
+  .exec(); //The .exec() method is used to execute the query
   const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
   if(buser)
     {
@@ -66,6 +56,7 @@ const Home=async(req,res)=>{
       }
       
     const user = req.session.checkuser|| '' 
+    console.log(products[0].category.name)
    
       res.render('home',{user,ses,products,categories})
   }
@@ -78,8 +69,25 @@ const Home=async(req,res)=>{
 //load user login
 const loadLogin=async(req,res)=>{
     try{
+      const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
+  if(buser)
+    {
+      req.session.checkuser=''
+      
+    }
+    let ses = false; // If checkuser doesn't exists
+            
+      if (req.session.checkuser) {
+          // If checkuser exists in the session, set ses to true
+          ses = true;
+      }
+      
+    const user = req.session.checkuser|| '' 
+    const categories= await category.find({'status': 'active'})
+        
+      
       const message = req.query.message || '' 
-        res.render('login',{message})
+        res.render('login',{message,categories,ses,user})
     }
     catch (error) {
         console.log(error.message);
@@ -90,8 +98,24 @@ const loadLogin=async(req,res)=>{
 //load user Register
 const loadRegister=async(req,res)=>{
     try{
+      const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
+      if(buser)
+        {
+          req.session.checkuser=''
+          
+        }
+        let ses = false; // If checkuser doesn't exists
+                
+          if (req.session.checkuser) {
+              // If checkuser exists in the session, set ses to true
+              ses = true;
+          }
+          
+        const user = req.session.checkuser|| '' 
+        const categories= await category.find({'status': 'active'})
+        
       const message = req.query.message || ''  //remember this always
-     res.render('register',{message})
+     res.render('register',{message,ses,user,categories})
 }
    catch (error) {
     console.log(error.message);
@@ -161,6 +185,7 @@ const transporter = nodemailer.createTransport({
 //post user Register
 const PostRegister=async(req,res)=>{
     try{ 
+      
         const foundUser=await User.findOne({email:req.body.regemail})
        
         if(foundUser)
@@ -205,7 +230,23 @@ const loadRegisterOTP=async(req,res)=>{
        if(req.session.userId)
        {
        
-       
+        const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
+        if(buser)
+          {
+            req.session.checkuser=''
+            
+          }
+          let ses = false; // If checkuser doesn't exists
+                  
+            if (req.session.checkuser) {
+                // If checkuser exists in the session, set ses to true
+                ses = true;
+            }
+            
+          const user = req.session.checkuser|| '' 
+          
+        const categories= await category.find({'status': 'active'})
+
         const nowObject = new Date(Date.now());
 
         // Get the formatted date string
@@ -238,7 +279,7 @@ const loadRegisterOTP=async(req,res)=>{
       
           const userId=req.session.userId
           const message = req.query.message ||''
-          res.render('otp',{message,userId,isoFormattedDate,nowisoFormattedDate})
+          res.render('otp',{message,userId,isoFormattedDate,nowisoFormattedDate,user,categories,ses})
     
 
   }
@@ -314,6 +355,7 @@ const verifyUserOTP = async (req, res) => {
 //resend otp verifaction form 
 const resendUserOTP = async (req, res) => {
   try {
+    
     const userId=req.session.userId
     if(!userId)
     {
@@ -363,6 +405,7 @@ const PostLogin=async(req,res)=>{
   {
     
     req.session.checkuser=UserLog.Fname
+    
     res.redirect('/')
   }
 }
@@ -380,42 +423,54 @@ catch(error){
 
 
 
-//view products
-const CatProductsView=async(req,res)=>{
-  try{
-      const cat=req.query.cat
-      const categories=await category.find({status:'active'})
-      const products = await product.aggregate([
-        {
-            $lookup: {
-                from: 'categories', // Assuming your category collection is named 'categories'
-                localField: 'category',
-                foreignField: '_id',
-                as: 'categoryData'
-            }
-        },
-        {
-            $match: {
-                'status': 'active',
-                'categoryData.status': 'active',
-                'categoryData.name':cat
+const CatProductsView = async (req, res) => {
+  try {
+     //for logi mid
+      categories=req.categories
+      ses=req.ses
+      const user = req.session.checkuser|| '' 
+      //logi mid end
 
-            }
-        }
-    ]);
-      res.render('categories',{products,categories})
+    const cat = req.query.cat;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 4; // Number of products per page
+
+
+    const totalProducts = await product.countDocuments({ 'status': 'active' });
+    const totalPages = Math.ceil(totalProducts / pageSize);
+
+    const products = await product
+      .find({ 'status': 'active' })
+      .populate({
+        path: 'category',
+        match: { 'status': 'active', 'name': cat }
+      })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .lean();
+
+    res.render('categories', { products, categories, page, totalPages,cat,ses,user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
   }
-  catch (error) {
-      console.log(error.message);
-    }
-}
+};
+
 
 //view product details
 const productdetails = async (req, res) => {
   try {
+    //for logi mid
+    categories=req.categories
+    ses=req.ses
+    const user = req.session.checkuser|| '' 
+    //logi mid end
+
     const id = req.query.id;
     const products = await product.findOne({ _id: id });
-
+   
+     
+      
     if (!products) {
       // Handle the case when no product is found
       return res.status(404).send('Product not found');
@@ -439,13 +494,43 @@ const productdetails = async (req, res) => {
   ]);
 
     console.log(productlist, req.query.id);
-    res.render('productdeets', { products ,productlist});
+    res.render('productdeets', { products ,productlist,categories,ses,user});
   } catch (error) {
     console.log(error.message);
     // Handle other errors as needed
     res.status(500).send('Internal Server Error');
   }
 };
+
+
+//user account
+//load Home Page
+const account=async(req,res)=>{
+  try{
+    const categories= await category.find({'status': 'active'})
+    
+  const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
+  if(buser)
+    {
+      req.session.checkuser=''
+      
+    }
+    let ses = false; // If checkuser doesn't exists
+            
+      if (req.session.checkuser) {
+          // If checkuser exists in the session, set ses to true
+          ses = true;
+      }
+      
+    const user = req.session.checkuser|| '' 
+    
+   
+      res.render('account',{user,ses,categories})
+  }
+  catch (error) {
+      console.log(error.message);
+    }
+}
 
 
 //logout
@@ -472,5 +557,6 @@ module.exports={
     logout,
     CatProductsView,
     productdetails,
-    resendUserOTP
+    resendUserOTP,
+    account
 }

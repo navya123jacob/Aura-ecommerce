@@ -20,21 +20,14 @@
                                 <li class="megamenu-container active">
                                     <a href="/" >Home</a>
                                 </li>
-                                <li>
-                                    <a href="category.html" class="sf-with-ul">Shop</a>
-
+                               <li>
+                                    <a class="sf-with-ul">Shop</a>
                                     <ul>
-                                        <li>
-                                            <a href="/skinCare" >Skin Care</a>
-
-                                        
-                                        </li>
-                                        <li>
-                                            <a href="/hairCare">Hair Care</a>
-
-                                        </li>
-                                        <li><a href="/BathBody">Bath & Body</a></li>
-                                     
+                                        <% categories.forEach(category => { %>
+                                            <li>
+                                                <a href="/category?cat=<%= category.name %>"><%= category.name %></a>
+                                            </li>
+                                        <% }); %>
                                     </ul>
                                 </li>
                                 <li>
@@ -49,32 +42,33 @@
                             </ul><!-- End .menu -->
                         </nav><!-- End .main-nav -->
                     </div><!-- End .header-left -->
-
                     <div class="header-right">
-                        
-
-                        </a>
-                        <a href="/wishlist" class="wishlist-link">
+                       
+                        <a href="/wishlist" class="wishlist-link" <%= ses ? '' : 'hidden' %>>
                             <i class="icon-heart-o"></i>
                         </a>
                         
-                     
-                        <div class="dropdown cart-dropdown" >
+                        <div class="dropdown cart-dropdown">
                             <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                                 <i class="fa-regular fa-user"></i>
                             </a>
 
-                            <div class="dropdown-menu dropdown-menu-right" style="background-color:rgba(255, 255, 255, 0.5)">
+                            <div class="dropdown-menu dropdown-menu-right d-flex" style="background-color:rgba(255, 255, 255, 0.5);justify-content: center;">
                       
                                 <div class="dropdown-cart-action">
-                                    <a href="/login" class="btn btn-outline-primary-2">Login</a>
-                                    <a href="/register" class="btn btn-outline-primary-2"><span>Sign in</span><i class="icon-long-arrow-right"></i></a>
+                                    <a href="/login" class="btn btn-outline-primary-2" <%= ses ? 'hidden' : '' %>>Login</a>
+                                    <a href="/account" class="btn btn-outline-primary "   <%= ses ? '' : 'hidden' %>>Account</a>
+                                    <a href="/logout" class="btn btn-outline-primary-2 "   <%= ses ? '' : 'hidden' %>>Logout</a>
+                                    <a href="/register" class="btn btn-outline-primary-2" <%= ses ? 'hidden' : '' %>><span>Sign in</span><i class="icon-long-arrow-right"></i></a>
+
                                 </div><!-- End .dropdown-cart-total -->
+                                
                             </div><!-- End .dropdown-menu -->
+                            <p class="greeting-message text-white mb-0" style="white-space: nowrap;">Hello <%=user%></p>
                         </div><!-- End .cart-dropdown -->
 
                         
-                        <a href="/cart" class="wishlist-link">
+                        <a href="/cart" class="wishlist-link" <%= ses ? '' : 'hidden' %>>
                             <i class="fa-solid fa-cart-shopping"></i>
                         </a>
                         
@@ -82,6 +76,7 @@
                 </div><!-- End .container-fluid -->
             </div><!-- End .header-middle -->
         </header><!-- End .header -->
+
 
         
 

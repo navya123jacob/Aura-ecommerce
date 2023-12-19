@@ -58,45 +58,68 @@ const dashboard=async(req,res)=>{
 }
 
 //user
-const users=async(req,res)=>{
-    try{
-        const message=req.query.message||'';
-        const users=await User.find()
-        res.render('users',{users})
-    }
-    catch (error) {
-        console.log(error.message);
+const users = async (req, res) => {
+    try {
+        
+      const page = parseInt(req.query.page) || 1;
+      const pageSize = 4; // Number of users per page
+      const searchQuery = req.query.search || ''; // Get the search query
+  
+      let query = {};
+  
+      // Add search query to the database query if it exists
+      if (searchQuery) {
+        query = {
+          $or: [
+            { Fname: { $regex: searchQuery, $options: 'i' } },
+            { Lname: { $regex: searchQuery, $options: 'i' } },
+            // Add other fields you want to search
+          ],
+        };
       }
-}
+  
+      const totalUsers = await User.countDocuments(query);
+      const totalPages = Math.ceil(totalUsers / pageSize);
+  
+      const users = await User.find(query)
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .exec();
+  
+      res.render('users', { users, page, totalPages, searchQuery });
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).send('Internal Server Error');
+    }
+  };
 
 //block user
-const userblock=async(req,res)=>{
-    try{
-        const email=req.query.email
-        const blockstatus=req.query.blockstatus
-       
+const userblock = async (req, res) => {
+    try { console.log('userblock route hit');
+    console.log(req.query.blockstatus)
+        console.log(req.query.email)
+        const email = req.query.email;
+        const blockstatus = req.query.blockstatus;
         
-        if(blockstatus==='false')
-        {
-            await User.updateOne({email},{$set:{is_blocked:true}})
-            
+        if (blockstatus === 'false') {
+            await User.updateOne({ email }, { $set: { is_blocked: true } });
         }
-        if(blockstatus==='true')
-        {
-            await User.updateOne({email},{$set:{is_blocked:false}})
+        if (blockstatus === 'true') {
+            await User.updateOne({ email }, { $set: { is_blocked: false } });
         }
-        
-        
-        res.redirect(`/admin/users`)
-    }
-    catch (error) {
-        console.log(error.message);
-      }
-}
 
+        const updatedUser = await User.findOne({ email }); // Fetch the updated user
+
+        res.json({ success: true, user: updatedUser });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+};
 //category view
 const CategoryView=async(req,res)=>{
     try{
+
         const categories=await Category.find()
         res.render('category',{categories})
     }
@@ -119,6 +142,15 @@ const CategoryAdd=async(req,res)=>{
 //category add post
 const CategoryAddpost=async(req,res)=>{
     try{
+        const categoryName = req.body.name;
+        
+        // Check if a category with the same name already exists (case-sensitive)
+        const existingCategory = await Category.findOne({ name: { $regex: new RegExp(`^${categoryName}$`, 'i') } });
+
+        if (existingCategory) {
+            // If a category with the same name exists, redirect with an error message
+            return res.redirect('/admin/categories/add?message=Category name already exists. Please choose another name.');
+        }
         const Categorylist = new Category({
             name:req.body.name,
               description:req.body.description,
@@ -132,19 +164,6 @@ const CategoryAddpost=async(req,res)=>{
         console.log(error.message);
       }
 }
-
-//category delete
-const CategoryDelete=async(req,res)=>{
-    try{
-        await Category.deleteOne({_id:req.query.categoryId})
-        res.redirect('/admin/categories')
-       
-    }
-    
-    catch (error) {
-        console.log(error.message);
-      }
-    }
 
 //category edit 
 const CategoryEdit=async(req,res)=>{
@@ -218,7 +237,7 @@ module.exports={
     CategoryView,
     CategoryAdd,
     CategoryAddpost,
-    CategoryDelete,
+    
     CategoryEdit,
     CategoryEditpost,
     CategoryToggle,

@@ -41,11 +41,7 @@ const productSchema = new mongoose.Schema({
     offer:{
         type: Number,
         default: 0,
-    },
-    expiryDate:{
-        type : Date ,
-        required : true
-    },
+    }
 
 });
 

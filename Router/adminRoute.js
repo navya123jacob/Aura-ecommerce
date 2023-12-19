@@ -46,7 +46,7 @@ adminRoute.get('/dashboard',mid.adminloginNoSes,mid.adminloginNoSes,adminControl
 adminRoute.get('/users',mid.adminloginNoSes,adminController.users)
 
 //user block
-adminRoute.get('/users/block',mid.adminloginNoSes,adminController.userblock)
+adminRoute.post('/users/block',mid.adminloginNoSes,adminController.userblock)
 
 //categories
 adminRoute.get('/categories',mid.adminloginNoSes,adminController.CategoryView)
@@ -57,8 +57,6 @@ adminRoute.get('/categories/add',mid.adminloginNoSes,adminController.CategoryAdd
 //categories add post
 adminRoute.post('/categories/addpost',mid.adminloginNoSes,adminController.CategoryAddpost)
 
-//categories delete get
-adminRoute.get('/categories/delete',mid.adminloginNoSes,adminController.CategoryDelete)
 
 //categories edit get
 adminRoute.get('/categories/edit',mid.adminloginNoSes,adminController.CategoryEdit)
