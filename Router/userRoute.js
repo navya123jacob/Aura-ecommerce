@@ -21,6 +21,8 @@ userRoute.get('/register',mid.UserSes,userController.loadRegister)
 //Post on Register page(redirects to otp page)
 userRoute.post('/registerpost',userController.PostRegister)
 
+
+
 //to load the signup otp page
 userRoute.get('/registerpostotp',userController.loadRegisterOTP)
 
@@ -49,7 +51,13 @@ userRoute.get('/category', mid.UserNoSes, mid.logiheader, userController.CatProd
 userRoute.get('/productdetails',mid.UserNoSes,mid.logiheader,userController.productdetails)
 
 //to view account
-userRoute.get('/account',mid.UserNoSes,userController.account)
+userRoute.get('/account',mid.UserNoSes,mid.logiheader,userController.account)
+
+//to view cart
+userRoute.get('/cart',mid.UserNoSes,mid.logiheader,userController.cartload)
+
+//to add product to cart
+userRoute.post('/productaddtocart',mid.UserNoSes,mid.logiheader,userController.productaddtocart)
 
 
 

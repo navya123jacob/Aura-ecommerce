@@ -5,6 +5,8 @@ const User = require('../models/userModel');
 const UserOTP= require('../models/userOTPverify');
 const product = require('../models/productModel');
 const category = require('../models/categoryModel');
+const cart = require('../models/cartModel');
+
 
 const dotenv = require('dotenv');  //for securing your creditials
 
@@ -56,7 +58,7 @@ const Home=async(req,res)=>{
       }
       
     const user = req.session.checkuser|| '' 
-    console.log(products[0].category.name)
+   
    
       res.render('home',{user,ses,products,categories})
   }
@@ -320,7 +322,11 @@ const verifyUserOTP = async (req, res) => {
           await User.deleteOne({ _id: req.session.userId});
         }
         req.session.destroy();
-        res.redirect('/register?message=otp expired')
+        data= {
+          success : true,
+          message:'otp expired'
+        }
+        res.json(data)
        
       } else {
         
@@ -329,27 +335,38 @@ const verifyUserOTP = async (req, res) => {
         if (!validOTP) {
           // await User.deleteOne({ _id: userId })
           // await UserOTP.deleteMany({ userId }
-          res.redirect(`/registerpostotp?message=wrong otp,try again&expiresAt=${expiresAt}&createdAt=${createdAt}`)
-          
+          data= {
+            success : false,
+            message:'wrong otp,try again'
+          }
+          res.json(data)
         } else {
          
             await User.updateOne({ _id: req.session.userId}, { verified: true });
             await UserOTP.deleteMany({ userId:req.session.userId});
             // Destroy the session
             req.session.destroy();    //Each tab or browser is treated as a separate client by the server, and they can have different interactions with the server. Logging out from one tab doesn't automatically log out from another tab because each tab maintains its own state.
-            res.redirect('/register?message=Successfully registered')
+            data= {
+              success : true,
+            message:'successfully registered'
+            }
+            res.json(data)
           
         }
       }
     }
   }
   else{
-    res.redirect('/register')
+    data= {
+      success : true
+    }
+    res.json(data)
   }
   } catch (error) {
    console.log(error.message)
   }
 };
+
 
 
 //resend otp verifaction form 
@@ -386,7 +403,7 @@ const PostLogin=async(req,res)=>{
   try{
     
   const UserLog=await User.findOne({email:req.body.reg_email})
-  console.log(req.body.reg_password)
+  console.log(req.body)
   if(UserLog )
   {
     
@@ -405,6 +422,7 @@ const PostLogin=async(req,res)=>{
   {
     
     req.session.checkuser=UserLog.Fname
+    req.session.email=UserLog.email
     
     res.redirect('/')
   }
@@ -447,9 +465,18 @@ const CatProductsView = async (req, res) => {
       })
       .skip((page - 1) * pageSize)
       .limit(pageSize)
-      .lean();
+      .lean() 
+      
+      if(products[0])
+      {
+        res.render('categories', { products, categories, page, totalPages,cat,ses,user });
+      }
+      else
+      {
+        res.redirect('/')
+      }
 
-    res.render('categories', { products, categories, page, totalPages,cat,ses,user });
+    
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
@@ -464,10 +491,15 @@ const productdetails = async (req, res) => {
     categories=req.categories
     ses=req.ses
     const user = req.session.checkuser|| '' 
+    const email=req.session.email
     //logi mid end
 
     const id = req.query.id;
-    const products = await product.findOne({ _id: id });
+    const products = await product.findOne({ _id: id })
+    .populate({
+      path: 'category'
+     
+    }).exec();
    
      
       
@@ -493,8 +525,8 @@ const productdetails = async (req, res) => {
       }
   ]);
 
-    console.log(productlist, req.query.id);
-    res.render('productdeets', { products ,productlist,categories,ses,user});
+    
+    res.render('productdeets', { products ,productlist,categories,ses,user,email});
   } catch (error) {
     console.log(error.message);
     // Handle other errors as needed
@@ -503,34 +535,79 @@ const productdetails = async (req, res) => {
 };
 
 
-//user account
-//load Home Page
-const account=async(req,res)=>{
+//to add products to cart
+const productaddtocart=async(req,res)=>{
   try{
-    const categories= await category.find({'status': 'active'})
-    
-  const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
-  if(buser)
-    {
-      req.session.checkuser=''
-      
-    }
-    let ses = false; // If checkuser doesn't exists
-            
-      if (req.session.checkuser) {
-          // If checkuser exists in the session, set ses to true
-          ses = true;
-      }
-      
+    //for logi mid
+    categories=req.categories
+    ses=req.ses
     const user = req.session.checkuser|| '' 
+    //logi mid end
+    console.log(req.query.name,req.query.email)
+    const pro=await product.findOne({name:req.query.name })
+    const currentuser=await User.findOne({email:req.query.email })
+    const cartadd = new cart({
+      user:currentuser._id ,
+    products:[{
+      products:pro._id,
+        price:pro.price,
+        
+    }]
+      });
+
+      cartadd.save()
+
+
     
+    res.json({success:false,message:'added'})
+
    
-      res.render('account',{user,ses,categories})
+    
   }
   catch (error) {
       console.log(error.message);
     }
 }
+
+
+//USER ACCOUNT
+//load user account
+const account=async(req,res)=>{
+  try{
+    //for logi mid
+    categories=req.categories
+    ses=req.ses
+    const user = req.session.checkuser|| '' 
+    //logi mid end
+    const myuser=await User.findOne({email:req.session.email})
+    
+   
+      res.render('account',{user,ses,categories,myuser})
+  }
+  catch (error) {
+      console.log(error.message);
+    }
+}
+//load cart
+const cartload=async(req,res)=>{
+  try{
+    //for logi mid
+    categories=req.categories
+    ses=req.ses
+    const user = req.session.checkuser|| '' 
+    //logi mid end
+    
+    
+   
+      res.render('cart',{user,ses,categories})
+  }
+  catch (error) {
+      console.log(error.message);
+    }
+}
+
+
+
 
 
 //logout
@@ -558,5 +635,7 @@ module.exports={
     CatProductsView,
     productdetails,
     resendUserOTP,
-    account
+    account,
+    cartload,
+    productaddtocart
 }

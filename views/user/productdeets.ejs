@@ -4,9 +4,10 @@
             <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
                 <div class="container d-flex align-items-center">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item"><a href="#">productsss</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Centered</li>
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#"><%=products.category.name%></a></li>
+                        <li class="breadcrumb-item active" aria-current="page"><%=products.name%></li>
+                       
                     </ol>
 
                     <nav class="productss-pager ml-auto" aria-label="productss">
@@ -30,8 +31,8 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="product-gallery product-gallery-vertical">
-                        <div class="row">
-                            <figure class="product-main-image">
+                        <div class="row" >
+                            <figure class="product-main-image"  >
                                 <% let mainImage = products.pictures[0].replace('public', ''); %>
                                 <img id="product-zoom" src="<%=mainImage%>" data-zoom-image="<%=mainImage%>" alt="product image">
 
@@ -41,11 +42,11 @@
                             </figure><!-- End .product-main-image -->
                              <!-- Additional images from the pictures array -->
                             
-                            <div id="product-zoom-gallery" class="product-image-gallery">
+                            <div id="product-zoom-gallery" class="product-image-gallery" >
                                 <% for (let i = 0; i < Math.min(products.pictures.length, 4); i++) { %>
                                     <% let additionalImage = products.pictures[i].replace('public', ''); %>
                                    
-                                <a class="product-gallery-item active" href="#" data-image="<%= additionalImage %>" data-zoom-image="<%= additionalImage %>">
+                                <a class="product-gallery-item active" href="#" data-image="<%= additionalImage %>" data-zoom-image="<%= additionalImage %>" >
                                     <img src="<%= additionalImage %>" alt="product side">
                                 </a>
                                 <% } %> 
@@ -60,12 +61,7 @@
                     <div class="product-details product-details-centered">
                         <h1 class="product-title"><%=products.name%></h1><!-- End .product-title -->
 
-                        <div class="ratings-container">
-                            <div class="ratings">
-                                <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
-                            </div><!-- End .ratings -->
-                            <a class="ratings-text" href="#product-review-link" id="review-link">( 2 Reviews )</a>
-                        </div><!-- End .rating-container -->
+                        
 
                         <div class="product-price">
                             ₹<%=products.price%>
@@ -75,37 +71,28 @@
                             <p><%=products.description%></p>
                         </div><!-- End .product-content -->
 
-                        <div class="details-filter-row details-row-size">
-                            <label>Color:</label>
-
-                            <div class="product-nav product-nav-dots">
-                                <a href="#" class="active" style="background: #cc9966;"><span class="sr-only">Color name</span></a>
-                                <a href="#" style="background: #333333;"><span class="sr-only">Color name</span></a>
-                            </div><!-- End .product-nav -->
-                        </div><!-- End .details-filter-row -->
-
+                        
 
                         <div class="product-details-action">
                             <div class="details-action-col">
                                 <div class="product-details-quantity">
                                     <input type="number" id="qty" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
                                 </div><!-- End .product-details-quantity -->
-
-                                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                <button class="btn-product btn-cart" onclick="addtocart('<%=products.name%>','<%=email%>')">add to cart</button>
+                               
                             </div><!-- End .details-action-col -->
 
                             <div class="details-action-wrapper">
                                 <a href="#" class="btn-product btn-wishlist" title="Wishlist"><span>Add to Wishlist</span></a>
-                                <a href="#" class="btn-product btn-compare" title="Compare"><span>Add to Compare</span></a>
+                               
                             </div><!-- End .details-action-wrapper -->
                         </div><!-- End .product-details-action -->
 
                         <div class="product-details-footer">
                             <div class="product-cat">
                                 <span>Category:</span>
-                                <a href="#">Women</a>,
-                                <a href="#">Dresses</a>,
-                                <a href="#">Yellow</a>
+                                <a href="/category?cat=<%= products.category.name %>"><%= products.category.name %></a>
+                                
                             </div><!-- End .product-cat -->
 
                             <div class="social-icons social-icons-sm">
@@ -125,4 +112,37 @@
             
         </main><!-- End .main -->
 
-    <%- include('../layouts/footer') %>
+        <%- include('../layouts/footer') %>
+
+        <script>
+            function addtocart(prodname,email)
+            {
+            fetch(`/productaddtocart?name=${prodname}&email=${email}`, {
+            method: 'POST', // Use POST or PATCH for updating data
+            headers: {
+            'Content-Type': 'application/json',
+             },
+        
+    }).then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            // You can handle the response if needed
+            return response.json();
+        })
+        .then(data => {
+            // Update the button text and class
+            alert('hi')
+ 
+            // $('#block').load('/admin/users #block')
+            
+           
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+            
+        </script>
+        <%- include('../layouts/Login/LoginMob') %>

@@ -9,7 +9,7 @@
                 <h3>OTP Verification</h3>
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
-                        <form action="/verifyOTP" style="color: black;" method="POST">
+                        <form action="#" style="color: black;" >
                             <div class="form-group">
                                 <label for="otp">Enter 4-digit OTP</label>
                                 <input type="text" class="form-control otp-box" id="otp" name="otp" maxlength="4" pattern="\d{4}" title="Please enter a 4-digit OTP" required>
@@ -20,7 +20,8 @@
 
 
                             <div class="form-footer">
-                                <button type="submit" class="btn btn-outline-dark-2" onclick=>
+                                <button type="submit" class="btn btn-outline-dark-2" onclick="verifyOTP()" >
+
                                     <span>VERIFY OTP</span>
                                     <i class="icon-long-arrow-right"></i>
                                 </button>
@@ -33,7 +34,7 @@
                     </div><!-- .End .tab-pane -->
                 </div><!-- End .tab-content -->
             </div><!-- End .form-tab -->
-            <h6 class="text-danger"><%=message%></h6>
+            <h6 class="text-danger" id="error-message"></h6>
 
             <a href="/resendOTP?userId=<%=userId%>" class="text-primary">resend otp</a>
             <div id="countdown"></div>
@@ -68,28 +69,7 @@
         document.getElementById('timer-message').textContent = `Session expires in ${minutes}m ${seconds}s`;
     }
 
-    // Function to destroy the session via AJAX
-    function destroySession() {
-        // Assuming you have access to the userId
-        const userId = '<%= userId %>';
-
-        // Send an AJAX request to destroy the session
-        fetch(`/destroySession?userId=${userId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            // Include any additional data if required
-            // body: JSON.stringify({ /* additional data */ }),
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            console.log(data);
-        })
-        .catch((error) => {
-            console.error('Error destroying session:', error);
-        });
-    }
+    
 
     //TIMER
     const startDate = '<%=nowisoFormattedDate%>';
@@ -113,7 +93,7 @@ const countdownInterval = setInterval(() => {
     updateTimer(minutes, seconds);
 
     if (timer <= 0) {
-        clearInterval(countdownInterval);
+        // clearInterval(countdownInterval);
         countdownElement.innerHTML = 'Timer Expired';
     }
 
@@ -121,8 +101,8 @@ const countdownInterval = setInterval(() => {
 }, 1000);
     function verifyOTP() {
   const otp = document.getElementById('otp').value;
-
-  fetch('/registerpostotp', {
+   console.log(otp)
+  fetch('/verifyOTP', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -137,12 +117,12 @@ const countdownInterval = setInterval(() => {
     })
     .then(data => {
       console.log(data);
-      if (data.success) {
+      if (data.success == true) {
         // Handle success if needed
-        window.location.href = '/register?message=Successfully registered';
+        window.location.href = `/register?message=${data.message}`;
       } else {
         // Handle failure
-        alert(data.message);
+       
         document.getElementById('error-message').innerText = data.message;
       }
     })

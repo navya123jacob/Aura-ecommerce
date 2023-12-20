@@ -48,7 +48,7 @@ const addProductpost=async(req,res)=>{
 // products view with pagination
 const Product = async (req, res) => {
   try {
-    const pageSize = 4; // Number of products per page
+    const pageSize = 3; // Number of products per page
     const page = parseInt(req.query.page) || 1;
 
     const totalProducts = await product.countDocuments();

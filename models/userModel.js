@@ -37,7 +37,37 @@ const userSchema=new mongoose.Schema({
     wallet:{
         type:Number,
         default: 0
-    }
+    },
+    addressField:[{
+        name:{
+            type:String,
+            required:true
+        },
+        phone:{
+            type:String,
+            required:true
+        },
+        state:{
+            type : String,
+            required:true  
+        },
+        district:{
+            type:String,
+            required:true
+        },
+        town:{
+            type:String,
+            required:true
+        },
+        pincode:{
+            type:String,
+            required:true
+        },
+        address:{
+            type:String,
+            required:true
+        }
+    }]
 
 
 

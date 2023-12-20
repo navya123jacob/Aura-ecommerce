@@ -68,15 +68,7 @@ const users = async (req, res) => {
       let query = {};
   
       // Add search query to the database query if it exists
-      if (searchQuery) {
-        query = {
-          $or: [
-            { Fname: { $regex: searchQuery, $options: 'i' } },
-            { Lname: { $regex: searchQuery, $options: 'i' } },
-            // Add other fields you want to search
-          ],
-        };
-      }
+     
   
       const totalUsers = await User.countDocuments(query);
       const totalPages = Math.ceil(totalUsers / pageSize);
@@ -181,8 +173,17 @@ const CategoryEdit=async(req,res)=>{
 //category edit post
 const CategoryEditpost=async(req,res)=>{
     try{
-        await Category.updateOne({_id:req.query._id},{$set:{name:req.body.name,description:req.body.description}})
-        res.redirect('/admin/categories')
+        const existingCategory = await Category.findOne({ name: { $regex: new RegExp(`^${categoryName}$`, 'i') } });
+
+        if (existingCategory) {
+            // If a category with the same name exists, redirect with an error message
+            return res.redirect('/admin/categories/edit?message=Category name already exists. Please choose another name.');
+        }
+        else{
+            await Category.updateOne({_id:req.query._id},{$set:{name:req.body.name,description:req.body.description}})
+            res.redirect('/admin/categories')
+        }
+      
     }
     catch (error) {
         console.log(error.message);
