@@ -543,19 +543,62 @@ const productaddtocart=async(req,res)=>{
     ses=req.ses
     const user = req.session.checkuser|| '' 
     //logi mid end
-    console.log(req.query.name,req.query.email)
+    
     const pro=await product.findOne({name:req.query.name })
     const currentuser=await User.findOne({email:req.query.email })
-    const cartadd = new cart({
-      user:currentuser._id ,
-    products:[{
-      products:pro._id,
-        price:pro.price,
-        
-    }]
-      });
-
-      cartadd.save()
+    const cartFind = await cart.findOne({
+      'products': {
+        $elemMatch: {
+          'products.name': pro.name
+        }
+      }
+    });
+    console.log(cartFind,pro.name)
+    
+    if(cartFind)
+    {
+       await cart.updateOne(
+        {
+          'products': {
+            $elemMatch: {
+              'products.name': pro.name
+            }
+          }
+        },
+        [
+          {
+            $inc: {
+              'products.$.quantity': 1
+            }
+          },
+          {
+            $set: {
+              'total': { $multiply: ['$products.quantity', '$products.price'] }
+            }
+          }
+        ]
+      );
+    }
+    // $ operator is used in the context of an update to refer to the array element that matches the positional query element.'products.$.quantity is used in the context of an update operation where you're updating a specific element within an array (products). 
+    //'$products.quantity' is used in the context of an aggregation expression, where you're referring to the quantity field within an array (products) in an aggregation pipeline.
+    else
+    {
+      const cartadd = new cart({
+        user:currentuser._id ,
+      products:[{
+        products:pro._id,
+          price:pro.price,
+          name:pro.name
+          
+      }]
+        });
+        cartadd.products.forEach(product => {
+          cartadd.total = product.quantity * product.price;
+        });
+  
+        cartadd.save()
+    }
+    
 
 
     

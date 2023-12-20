@@ -78,7 +78,7 @@
                                 <div class="product-details-quantity">
                                     <input type="number" id="qty" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
                                 </div><!-- End .product-details-quantity -->
-                                <button class="btn-product btn-cart" onclick="addtocart('<%=products.name%>','<%=email%>')">add to cart</button>
+                                <button class="btn-product btn-cart" onclick="addtocart('<%=products.name%>','<%=email%>')">Add to cart</button>
                                
                             </div><!-- End .details-action-col -->
 
@@ -132,7 +132,8 @@
         })
         .then(data => {
             // Update the button text and class
-            alert('hi')
+            document.querySelector('.btn-cart').textContent = 'Added to Cart';
+            document.querySelector('.btn-cart').classList.add('added-to-cart');
  
             // $('#block').load('/admin/users #block')
             
