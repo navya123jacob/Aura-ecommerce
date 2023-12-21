@@ -1,5 +1,6 @@
 <%- include('../layouts/header') %>    
 <%- include('../layouts/Login/loginHeader') %>
+
     <main class="main">
             <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
                 <div class="container d-flex align-items-center">
@@ -10,17 +11,7 @@
                        
                     </ol>
 
-                    <nav class="productss-pager ml-auto" aria-label="productss">
-                        <a class="productss-pager-link productss-pager-prev" href="#" aria-label="Previous" tabindex="-1">
-                            <i class="icon-angle-left"></i>
-                            <span>Prev</span>
-                        </a>
-
-                        <a class="productss-pager-link productss-pager-next" href="#" aria-label="Next" tabindex="-1">
-                            <span>Next</span>
-                            <i class="icon-angle-right"></i>
-                        </a>
-                    </nav><!-- End .pager-nav -->
+                    
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
 
@@ -31,29 +22,34 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="product-gallery product-gallery-vertical">
-                        <div class="row" >
-                            <figure class="product-main-image"  >
-                                <% let mainImage = products.pictures[0].replace('public', ''); %>
-                                <img id="product-zoom" src="<%=mainImage%>" data-zoom-image="<%=mainImage%>" alt="product image">
+                        <div class="row">
+                            <figure class="product-main-image" id="mainimage">
+                               
+                                <img id="product-zoom" src="<%= (products.pictures[0].replace('public', '')) %>" data-zoom-image="<%= (products.pictures[0].replace('public', '')) %>">
 
+                        
                                 <a href="#" id="btn-product-gallery" class="btn-product-gallery">
                                     <i class="icon-arrows"></i>
                                 </a>
                             </figure><!-- End .product-main-image -->
-                             <!-- Additional images from the pictures array -->
-                            
-                            <div id="product-zoom-gallery" class="product-image-gallery" >
+                        
+                            <!-- Additional images from the pictures array -->
+                            <div id="product-zoom-gallery" class="product-image-gallery">
                                 <% for (let i = 0; i < Math.min(products.pictures.length, 4); i++) { %>
                                     <% let additionalImage = products.pictures[i].replace('public', ''); %>
-                                   
-                                <a class="product-gallery-item active" href="#" data-image="<%= additionalImage %>" data-zoom-image="<%= additionalImage %>" >
-                                    <img src="<%= additionalImage %>" alt="product side">
-                                </a>
+                        
+                                    <a class="product-gallery-item" href="#" data-image="<%= additionalImage %>" data-zoom-image="<%= additionalImage %>" >
+                                        <img src="<%= additionalImage %>" alt="product side">
+                                    </a>
                                 <% } %> 
                             </div><!-- End .product-image-gallery -->
-                           
-                           
                         </div><!-- End .row -->
+
+
+                       
+
+
+
                     </div><!-- End .product-gallery -->
                 </div><!-- End .col-md-6 -->
 
@@ -98,9 +94,9 @@
                             <div class="social-icons social-icons-sm">
                                 <span class="social-label">Share:</span>
                                 <a href="#" class="social-icon" title="Facebook" target="_blank"><i class="icon-facebook-f"></i></a>
-                                <a href="#" class="social-icon" title="Twitter" target="_blank"><i class="icon-twitter"></i></a>
+                                
                                 <a href="#" class="social-icon" title="Instagram" target="_blank"><i class="icon-instagram"></i></a>
-                                <a href="#" class="social-icon" title="Pinterest" target="_blank"><i class="icon-pinterest"></i></a>
+                                
                             </div>
                         </div><!-- End .product-details-footer -->
                     </div><!-- End .product-details -->
@@ -115,9 +111,13 @@
         <%- include('../layouts/footer') %>
 
         <script>
+            // Get the value of the input with id "qty"
+           
             function addtocart(prodname,email)
             {
-            fetch(`/productaddtocart?name=${prodname}&email=${email}`, {
+                const qtyValue = document.getElementById('qty').value;
+           
+            fetch(`/productaddtocart?name=${prodname}&email=${email}&qtyValue=${qtyValue}`, {
             method: 'POST', // Use POST or PATCH for updating data
             headers: {
             'Content-Type': 'application/json',
@@ -132,9 +132,13 @@
         })
         .then(data => {
             // Update the button text and class
+            
             document.querySelector('.btn-cart').textContent = 'Added to Cart';
-            document.querySelector('.btn-cart').classList.add('added-to-cart');
- 
+            
+            setTimeout(() => {
+            document.querySelector('.btn-cart').textContent = 'Add to Cart';
+            
+        }, 1500);
             // $('#block').load('/admin/users #block')
             
            
@@ -142,8 +146,42 @@
         .catch(error => {
             console.error('Error:', error);
         });
-}
+    }
+
+       
+
+        document.addEventListener('DOMContentLoaded', function () {
+        // Get the main product image and product gallery
+        const mainImage = document.getElementById('product-zoom');
+        const productGalleryItems = document.querySelectorAll('.product-gallery-item');
+
+        // Add click event listener to each product gallery item
+        productGalleryItems.forEach(item => {
+            item.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                // Get the clicked image source
+                const clickedImage = this.getAttribute('data-image');
+
+                // Set the main product image source to the clicked image
+                mainImage.src = clickedImage;
+                mainImage.setAttribute('data-zoom-image', clickedImage);
+
+                // Remove the 'active' class from all items
+                productGalleryItems.forEach(galleryItem => {
+                    galleryItem.classList.remove('active');
+                });
+
+                // Add the 'active' class to the clicked item
+                this.classList.add('active');
+            });
+        });
+
+        
+    });
+
 
             
         </script>
-        <%- include('../layouts/Login/LoginMob') %>
+           <%- include('../layouts/footer') %>
+           <%- include('../layouts/Login/LoginMob') %>

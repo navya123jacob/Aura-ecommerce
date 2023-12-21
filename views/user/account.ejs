@@ -20,11 +20,11 @@
 								        <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="/account" role="tab" aria-controls="tab-dashboard" aria-selected="true">My Account</a>
 								    </li>
 								    <li class="nav-item">
-								        <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+								        <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="/account/orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
 								    </li>
 								   
 								    <li class="nav-item">
-								        <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
+								        <a class="nav-link" id="tab-address-link" data-toggle="tab" href="/account/address" role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
 								    </li>
 								    <li class="nav-item">
 								        <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
@@ -38,40 +38,40 @@
 	                		<div class="col-md-8 col-lg-9">
 	                			<div class="tab-content">
 								    <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
-								    	<form action="#">
-			                				<div class="row">
-			                					<div class="col-sm-6">
-			                						<label>First Name *</label>
-			                						<input type="text" class="form-control" value="<%=myuser.Fname%>" required>
-			                					</div><!-- End .col-sm-6 -->
-
-			                					<div class="col-sm-6">
-			                						<label>Last Name *</label>
-			                						<input type="text" class="form-control" value="<%=myuser.Lname%>" required>
-			                					</div><!-- End .col-sm-6 -->
-			                				</div><!-- End .row -->
-										
+								    	<form id="registerForm" action="/account/edit" style="color: black;" method="POST" onsubmit="return validateForm()">
 											<div class="form-group">
-												<label for="register-email-2">Your email address *</label>
-												<input type="email" class="form-control" id="register-email-2" name="regemail" value="<%=myuser.email%>"  required>
-												<small id="emailError" class="text-danger"></small>
+												<label for="register-first-name">First Name *</label>
+												<input type="text" class="form-control" id="register-first-name" name="Fname" value='<%=myuser.Fname%>' required>
+												<small id="firstNameError" class="text-danger"></small>
+											</div><!-- End .form-group -->
+				
+											<div class="form-group">
+												<label for="register-last-name">Last Name *</label>
+												<input type="text" class="form-control" id="register-last-name" name="Lname" value='<%=myuser.Lname %>' required>
+												<small id="lastNameError" class="text-danger"></small>
 											</div><!-- End .form-group -->
 				
 											<div class="form-group">
 												<label for="register-mobile">Mobile Number *</label>
-												<input type="tel" class="form-control" id="register-mobile" name="mobile" value="<%=myuser.mno%>" required>
+												<input type="tel" class="form-control" id="register-mobile" name="mobile" value='<%=myuser.mno%>' required>
 												<small id="mobileError" class="text-danger"></small>
 											</div><!-- End .form-group -->
 				
-											
-
-		                					
-		            						
-		                					<button type="submit" class="btn btn-outline-primary-2">
-			                					<span>SAVE CHANGES</span>
-			            						<i class="icon-long-arrow-right"></i>
-			                				</button>
-			                			</form>
+											<div class="form-group">
+												<label for="register-email-2">Your email address *</label>
+												<input type="email" class="form-control" id="register-email-2" name="regemail" value='<%=myuser.email%>'readonly required>
+												<small id="emailError" class="text-danger"></small>
+											</div><!-- End .form-group -->
+				
+				
+				
+											<div class="form-footer">
+												<button type="submit" class="btn btn-outline-dark-2">
+													<span>SAVE CHANGES</span>
+													<i class="icon-long-arrow-right"></i>
+												</button>
+											</div><!-- End .form-footer -->
+										</form>
 								    </div><!-- .End .tab-pane -->
 
 	                		</div><!-- End .col-lg-9 -->
@@ -80,5 +80,47 @@
                 </div><!-- End .dashboard -->
             </div><!-- End .page-content -->
         </main><!-- End .main -->
+
+		<script>
+			 function validateForm() {
+        var firstName = document.getElementById('register-first-name').value.trim();
+        var lastName = document.getElementById('register-last-name').value.trim();
+        var mobile = document.getElementById('register-mobile').value.trim();
+        
+
+        var firstNameError = document.getElementById('firstNameError');
+        var lastNameError = document.getElementById('lastNameError');
+        var mobileError = document.getElementById('mobileError');
+       
+        // Reset errors
+        firstNameError.textContent = '';
+        lastNameError.textContent = '';
+        mobileError.textContent = '';
+        
+
+        // Add your validation logic here
+        if (firstName.length < 2) {
+            firstNameError.textContent = 'First name must be at least 2 characters.';
+            return false;
+        }
+
+        if (lastName.length < 1) {
+            lastNameError.textContent = 'Last name must be at least 1 character.';
+            return false;
+        }
+
+        if (!/^\d{10}$/.test(mobile)) {
+            mobileError.textContent = 'Please enter a valid 10-digit mobile number.';
+            return false;
+        }
+
+        
+
+        // Form is valid
+        return true;
+    }
+		</script>
+		
     
-        <%- include('../layouts/footer') %>
+		<%- include('../layouts/footer') %>
+		<%- include('../layouts/Login/LoginMob') %>

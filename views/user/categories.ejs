@@ -11,16 +11,19 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                 <li class="breadcrumb-item"><a href="#">Shop</a></li>
-                <li class="breadcrumb-item active" aria-current="page"><%= products[0].category.name%></li>
+                <li class="breadcrumb-item active" aria-current="page"><%=cat%></li>
             </ol>
         </div><!-- End .container -->
     </nav><!-- End .breadcrumb-nav -->
-
+    
             <div class="page-content">
                 <div class="container">
+                    
                 	<div class="row">
+                       
                 		<div class="col-lg-9">
                 			<div class="toolbox">
+                                <input type="text" id="searchInput" placeholder="Search products..." oninput="searchProducts()">
                 				<div class="toolbox-left">
                 					<div class="toolbox-info">
                 						Showing <span>4 of <%=products.length%></span> Products
@@ -104,7 +107,7 @@
                                             </figure><!-- End .product-media -->
                                             <div class="product-body">
                                                 <div class="product-cat">
-                                                    <a href="<%= products[i].category ? '/category/' + products[i].category._id : '#' %>"><%= products[i].category.name %></a>
+                                                    <a href="<%= products[i].category ? '/category/' + products[i].category._id : '#' %>"><%= cat %></a>
                                                 </div><!-- End .product-cat -->
                                                 <h3 class="product-title"><a href="<%= '/product/' + products[i]._id %>"><%= products[i].name %></a></h3><!-- End .product-title -->
                                                 <div class="product-price">
@@ -114,13 +117,7 @@
                                             </div><!-- End .product-body -->
                                         </div><!-- End .product-2 -->
                             
-                                        <!-- Product 2 -->
-                                        <% if (i + 1 < products.length) { %>
-                                            <div class="product product-2">
-                                                <!-- Repeat the same structure for the second product -->
-                                                <!-- ... -->
-                                            </div><!-- End .product-2 -->
-                                        <% } %>
+                                       
                                     </div><!-- End .col-6 -->
                                 <% } %>
                             </div><!-- End .row -->
@@ -219,6 +216,33 @@
                 </div><!-- End .container -->
             </div><!-- End .page-content -->
         </main><!-- End .main -->
+        <script>
+          function searchProducts() {
+    // Get the search query from the input field
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
 
+    // Get all product cards
+    const productCards = document.querySelectorAll('.product-2');
+
+    // Loop through each product card and hide/show based on the product name
+    productCards.forEach(productCard => {
+      // Extract the product name from the product card
+      const productName = productCard.querySelector('.product-title a').textContent.toLowerCase();
+
+      // Check if the product name contains the search query
+      const productNameMatches = productName.startsWith(searchQuery);
+
+      // If the product name matches the search query or the query is empty, display the product card
+      if (productNameMatches || searchQuery === '') {
+        productCard.style.display = 'block';
+      } else {
+       
+        productCard.style.display = 'none';
+      }
+    });
+  }
+  
+          </script>
+          
         <%- include('../layouts/footer') %>
             <%- include('../layouts/Login/LoginMob') %>

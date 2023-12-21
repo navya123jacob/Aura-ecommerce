@@ -457,24 +457,25 @@ const CatProductsView = async (req, res) => {
     const totalProducts = await product.countDocuments({ 'status': 'active' });
     const totalPages = Math.ceil(totalProducts / pageSize);
 
-    const products = await product
-      .find({ 'status': 'active' })
+    let mycategory=await category.findOne({name:cat,'status':'active'})
+    let products=''
+    if(mycategory)
+    {
+      products = await product
+      .find({ 'status': 'active',category:mycategory._id })
       .populate({
-        path: 'category',
-        match: { 'status': 'active', 'name': cat }
+        path: 'category'
+       //The match option in populate is used to filter the documents from the original collection, not the documents from the referenced collection.
       })
       .skip((page - 1) * pageSize)
       .limit(pageSize)
       .lean() 
+    }
+
+   
       
-      if(products[0])
-      {
-        res.render('categories', { products, categories, page, totalPages,cat,ses,user });
-      }
-      else
-      {
-        res.redirect('/')
-      }
+        res.render('categories', { products, categories, page, totalPages,cat,ses,user});
+      
 
     
   } catch (error) {
@@ -525,8 +526,8 @@ const productdetails = async (req, res) => {
       }
   ]);
 
-    
-    res.render('productdeets', { products ,productlist,categories,ses,user,email});
+  var k=0;
+    res.render('productdeets', { products ,productlist,categories,ses,user,email,k});
   } catch (error) {
     console.log(error.message);
     // Handle other errors as needed
@@ -536,76 +537,96 @@ const productdetails = async (req, res) => {
 
 
 //to add products to cart
-const productaddtocart=async(req,res)=>{
+
+const productaddtocart = async (req, res) => {
+  try {
+    const pro=await product.findOne({name:req.query.name })
+   const currentuser=await User.findOne({email:req.query.email })
+   const quantity=req.query.qtyValue||1
+    
+
+    // Check if the user already has a cart document
+    const cartFind = await cart.findOne({ user: currentuser._id });
+    console.log(cartFind)
+    if (cartFind) {
+      // User already has a cart document
+   
+      const existingProduct = cartFind.Products.find(   // findOne is more suitable when you're querying the entire collection for a single document based on some conditions. Here looking for a product within an array, so find is appropriate.
+        (product) => product.name === pro.name
+      );
+      console.log(existingProduct)
+
+      if (existingProduct) {
+        // Product is already in the cart, increase the quantity
+        
+        existingProduct.quantity += parseInt(quantity);
+       
+        existingProduct.total = existingProduct.quantity *existingProduct.price
+        
+      } else {
+        // Product is not in the cart, add it to the product array
+        cartFind.Products.push({
+          products: pro._id,
+          price: pro.price,
+          name: pro.name,
+          quantity: quantity,
+          total:quantity* pro.price
+        });
+      }
+
+
+      await cartFind.save();
+    } else {
+      // User does not have a cart document, create a new one
+      const cartAdd = new cart({
+        user: currentuser._id,
+        Products: [
+          {
+            products: pro._id,
+            price: pro.price,
+            name: pro.name,
+            quantity: quantity,
+            total:pro.price*quantity
+          }
+        ],
+       
+      });
+
+      
+
+      await cartAdd.save();
+    }
+
+    res.json({ success: false, message: 'added' });
+  } catch (error) {
+    console.log(error.message);
+  }
+};//Once you retrieve a document from the collection, you can make changes to its properties and then call the .save() method to persist those changes to the database
+
+//load cart
+const cartload=async(req,res)=>{
   try{
     //for logi mid
     categories=req.categories
     ses=req.ses
     const user = req.session.checkuser|| '' 
     //logi mid end
-    
-    const pro=await product.findOne({name:req.query.name })
-    const currentuser=await User.findOne({email:req.query.email })
-    const cartFind = await cart.findOne({
-      'products': {
-        $elemMatch: {
-          'products.name': pro.name
-        }
-      }
-    });
-    console.log(cartFind,pro.name)
-    
-    if(cartFind)
+    const myuser=await User.findOne({email:req.session.email})
+    const usercart=await cart.findOne({user:myuser._id}).populate('Products.products').exec() // Use the actual field name you defined in your schema
+    let Total=0;let shipping=0;let grandtotal=0;
+    usercart.Products.forEach(product => {
+     Total=Total+product.total
+    })
+    if(Total<500)
     {
-       await cart.updateOne(
-        {
-          'products': {
-            $elemMatch: {
-              'products.name': pro.name
-            }
-          }
-        },
-        [
-          {
-            $inc: {
-              'products.$.quantity': 1
-            }
-          },
-          {
-            $set: {
-              'total': { $multiply: ['$products.quantity', '$products.price'] }
-            }
-          }
-        ]
-      );
-    }
-    // $ operator is used in the context of an update to refer to the array element that matches the positional query element.'products.$.quantity is used in the context of an update operation where you're updating a specific element within an array (products). 
-    //'$products.quantity' is used in the context of an aggregation expression, where you're referring to the quantity field within an array (products) in an aggregation pipeline.
-    else
-    {
-      const cartadd = new cart({
-        user:currentuser._id ,
-      products:[{
-        products:pro._id,
-          price:pro.price,
-          name:pro.name
-          
-      }]
-        });
-        cartadd.products.forEach(product => {
-          cartadd.total = product.quantity * product.price;
-        });
-  
-        cartadd.save()
+      shipping=40
     }
     
-
-
+    grandtotal=Total+shipping
     
-    res.json({success:false,message:'added'})
-
+    console.log(usercart)
    
-    
+      res.render('cart',{user,ses,categories,usercart,shipping,Total,grandtotal})
   }
   catch (error) {
       console.log(error.message);
@@ -631,26 +652,6 @@ const account=async(req,res)=>{
       console.log(error.message);
     }
 }
-//load cart
-const cartload=async(req,res)=>{
-  try{
-    //for logi mid
-    categories=req.categories
-    ses=req.ses
-    const user = req.session.checkuser|| '' 
-    //logi mid end
-    
-    
-   
-      res.render('cart',{user,ses,categories})
-  }
-  catch (error) {
-      console.log(error.message);
-    }
-}
-
-
-
 
 
 //logout

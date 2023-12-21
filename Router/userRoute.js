@@ -45,10 +45,10 @@ userRoute.post('/userLogin',userController.PostLogin)
 
 
 // Categories products view
-userRoute.get('/category', mid.UserNoSes, mid.logiheader, userController.CatProductsView);
+userRoute.get('/category',  mid.logiheader, userController.CatProductsView);
 
 //to view product details
-userRoute.get('/productdetails',mid.UserNoSes,mid.logiheader,userController.productdetails)
+userRoute.get('/productdetails',mid.logiheader,userController.productdetails)
 
 //to view account
 userRoute.get('/account',mid.UserNoSes,mid.logiheader,userController.account)
