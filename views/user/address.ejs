@@ -1,75 +1,72 @@
+
 <%- include('../layouts/header') %>
 <%- include('../layouts/Login/loginHeader') %>  
 
-   <main class="main">
-        	
-            <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
-                <div class="container">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">My Account</li>
-                    </ol>
-                </div><!-- End .container -->
-            </nav><!-- End .breadcrumb-nav -->
-             
-            
+<main class="main">
+    <div class="container">
+        <div class="row">
+            <!-- Left Sidebar -->
+            <aside class="col-md-4 col-lg-3">
+                <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link " id="tab-dashboard-link" href="/account" role="tab" aria-controls="tab-dashboard" aria-selected="true">My Account</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab-orders-link" href="/account/orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" id="tab-address-link" href="/address" role="tab" aria-controls="tab-address" aria-selected="false">Addresses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab-account-link" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout" id="sign-out-link">Sign Out</a>
+                    </li>
+                </ul>
+            </aside><!-- End .col-lg-3 -->
 
-            <div class="page-content">
-            	<div class="dashboard">
-	                <div class="container">
-	                	<div class="row">
-	                		<aside class="col-md-4 col-lg-3">
-	                			<ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
-									<li class="nav-item">
-										<a class="nav-link " id="tab-dashboard-link" href="/account" role="tab" aria-controls="tab-dashboard" aria-selected="true">My Account</a>
-									</li>
-									<li class="nav-item">
-										<a class="nav-link" id="tab-orders-link" href="/account/orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
-									</li>
-									<li class="nav-item">
-										<a class="nav-link active" id="tab-address-link" href="/address" role="tab" aria-controls="tab-address" aria-selected="false">Addresses</a>
-									</li>
-									<li class="nav-item">
-										<a class="nav-link" id="tab-account-link" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
-									</li>
-									<li class="nav-item">
-										<a class="nav-link" href="/logout" id="sign-out-link">Sign Out</a>
-									</li>
-								</ul>
-	                		</aside><!-- End .col-lg-3 -->
-                            <div class="tab-pane fade show active" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
-								<p>The following addresses will be used on the checkout page by default.</p>
-							
-								<div class="row">
-									<% if (myuser && myuser.addressField && myuser.addressField.length > 0) { %>
-										<% myuser.addressField.forEach(function(address, index) { %>
-											<div class="col-lg-6">
-												<div class="card card-dashboard">
-													<div class="card-body">
-														<h3 class="card-title"><%= index === 0 ? 'Billing Address' : 'Shipping Address' %></h3><!-- End .card-title -->
-							
-														<p>
-															<%= address.name %><br>
-															<%= address.phone %><br>
-															<%= address.state %><br>
-															<%= address.district %><br>
-															<%= address.town %>, <%= address.pincode %><br>
-															<%= address.address %><br>
-															<a href="#">Edit <i class="icon-edit"></i></a>
-														</p>
-													</div><!-- End .card-body -->
-												</div><!-- End .card-dashboard -->
-											</div><!-- End .col-lg-6 -->
-										<% }); %>
-									<% } else { %>
-										<p>No addresses available.</p>
-									<% } %>
-								</div><!-- End .row -->
-								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAddressModal">
-									Add New Address
-								</button>
-							</div><!-- .End .tab-pane -->
-							<!-- Add Address Modal -->
+            <!-- Right Content -->
+            <div class="col-md-8 col-lg-9">
+                <div class="tab-pane fade show active" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+                    <p>The following addresses will be used on the checkout page by default.</p>
+
+                    <div class="row">
+                        <% if (myuser && myuser.addressField && myuser.addressField.length > 0) { %>
+                            <% myuser.addressField.forEach(function(address, index) { %>
+                                <div class="col-lg-6">
+                                    <div class="card card-dashboard">
+                                        <div class="card-body">
+                                            <h3 class="card-title"><%= index === 0 ? 'Billing Address' : 'Shipping Address' %></h3><!-- End .card-title -->
+
+                                            <p>
+                                                <%= address.name %><br>
+                                                <%= address.phone %><br>
+                                                <%= address.state %><br>
+                                                <%= address.district %><br>
+                                                <%= address.town %>, <%= address.pincode %><br>
+                                                <%= address.address %><br>
+                                                <a href="#">Edit <i class="icon-edit"></i></a>
+                                            </p>
+                                        </div><!-- End .card-body -->
+                                    </div><!-- End .card-dashboard -->
+                                </div><!-- End .col-lg-6 -->
+                            <% }); %>
+                        <% } else { %>
+                            <p>No addresses available.</p>
+                        <% } %>
+                    </div><!-- End .row -->
+
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAddressModal">
+                        Add New Address
+                    </button>
+                </div><!-- .End .tab-pane -->
+            </div><!-- End .col-md-8 col-lg-9 -->
+        </div><!-- End .row -->
+    </div><!-- End .container -->
+</main>
+
+<!-- Add Address Modal -->
 <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog" aria-labelledby="addAddressModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -82,34 +79,38 @@
 			<div class="modal-body">
 				<!-- Address Form -->
 				<form id="addAddressForm">
-					<!-- Name -->
-					<div class="form-group m-5">
-						<label for="addressName">Name</label>
-						<input type="text" class="form-control" id="addressName" name="addressName" required>
-					</div>
-			
-					<!-- Phone -->
-					<div class="form-group m-5">
-						<label for="addressPhone">Phone</label>
-						<input type="tel" class="form-control" id="addressPhone" name="addressPhone" required>
-					</div>
+    <!-- Name -->
+    <div class="form-group m-5">
+        <label for="addressName">Name</label>
+        <input type="text" class="form-control" id="addressName" name="addressName" required>
+        <div class="text-danger" id="errorName"></div>
+    </div>
 
-					<!-- Address -->
-					<div class="form-group m-5">
-						<label for="addressDetails">Address</label>
-						<textarea class="form-control" id="addressDetails" name="addressDetails" rows="3" required></textarea>
-					</div>
-			
-					<!-- District -->
-					<div class="form-group m-5">
-						<label for="addressDistrict">District</label>
-						<input type="text" class="form-control" id="addressDistrict" name="addressDistrict" required>
-					</div>
-			
-					<!-- State -->
-<div class="form-group m-5">
-    <label for="addressState">State</label>
-    <select class="form-control" id="addressState" name="addressState" required>
+    <!-- Phone -->
+    <div class="form-group m-5">
+        <label for="addressPhone">Phone</label>
+        <input type="tel" class="form-control" id="addressPhone" name="addressPhone" required>
+        <div class="text-danger" id="errorPhone"></div>
+    </div>
+
+    <!-- Address -->
+    <div class="form-group m-5">
+        <label for="addressDetails">Address</label>
+        <textarea class="form-control" id="addressDetails" name="addressDetails" rows="3" required></textarea>
+        <div class="text-danger" id="errorDetails"></div>
+    </div>
+
+    <!-- District -->
+    <div class="form-group m-5">
+        <label for="addressDistrict">District</label>
+        <input type="text" class="form-control" id="addressDistrict" name="addressDistrict" required>
+        <div class="text-danger" id="errorDistrict"></div>
+    </div>
+
+    <!-- State -->
+    <div class="form-group m-5">
+        <label for="addressState">State</label>
+	    <select class="form-control" id="addressState" name="addressState" required>
         <option value="" disabled selected>Select State</option>
         <option value="Andhra Pradesh">Andhra Pradesh</option>
         <option value="Arunachal Pradesh">Arunachal Pradesh</option>
@@ -140,26 +141,28 @@
         <option value="Uttarakhand">Uttarakhand</option>
         <option value="West Bengal">West Bengal</option>
     </select>
-</div>
+ <div class="text-danger" id="errorState"></div>
+    </div>
 
-	
-					<!-- Pincode -->
-					<div class="form-group m-5">
-						<label for="addressPincode">Pincode</label>
-						<input type="text" class="form-control" id="addressPincode" name="addressPincode" required>
-					</div>
-			
-					
-			
-					<button type="button" class="btn btn-primary m-5" onclick="submitForm()">Save Address</button>
-				</form>
+    <!-- Pincode -->
+    <div class="form-group m-5">
+        <label for="addressPincode">Pincode</label>
+        <input type="text" class="form-control" id="addressPincode" name="addressPincode" required>
+        <div class="text-danger" id="errorPincode"></div>
+    </div>
+
+    <button type="button" class="btn btn-primary m-5" onclick="submitForm()">Save Address</button>
+</form>
 				<h6 class="text-success" id="message"></h6>
 			</div>
 		</div>
-	</div>
-	</div>
+		</div>
+		</div>
+	
 			
 <script>
+	//  globally
+    const digitRegex = /\d/;
     // Handle form submission
     document.getElementById('addAddressForm').addEventListener('submit', function (event) {
         event.preventDefault();
@@ -168,45 +171,137 @@
         // Close the modal after form submission
         $('#addAddressModal').modal('hide');
     });
-	function submitForm() {
-    // Collect form data
-    const formData = {
-        addressName: document.getElementById('addressName').value,
-        addressPhone: document.getElementById('addressPhone').value,
-        addressDetails: document.getElementById('addressDetails').value,
-        addressDistrict: document.getElementById('addressDistrict').value,
-        addressState: document.getElementById('addressState').value,
-        addressPincode: document.getElementById('addressPincode').value
-        // Add other form fields as needed
-    };
 
-    // Log form data to the console (you can send it to a server or use it as needed)
-    fetch('/submit-address', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-    })
-    .then(response => response.json())
-    .then((data) =>{
-		
-		  if(data.success==true)
-		  {
-			alert(data.success)
-			document.getElementById('message').innerText="added"
-		  }
-         else
-		 {
-			alert('false')
+	function submitForm() {
+        // Reset error messages
+        resetErrors();
+
+        // Validate inputs
+        if (!validateName()) return;
+        if (!validatePhone()) return;
+        if (!validateAddressDetails()) return;
+        if (!validateDistrict()) return;
+        if (!validateState()) return;
+        if (!validatePincode()) return;
+
+        // Collect form data
+        const formData = {
+            addressName: document.getElementById('addressName').value,
+            addressPhone: document.getElementById('addressPhone').value,
+            addressDetails: document.getElementById('addressDetails').value,
+            addressDistrict: document.getElementById('addressDistrict').value,
+            addressState: document.getElementById('addressState').value,
+            addressPincode: document.getElementById('addressPincode').value
+           
+        };
+
+        // Log form data to the console (you can send it to a server or use it as needed)
+        fetch('/submit-address', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(response => response.json())
+        .then((data) => {
+            if (data.success == true) {
+                alert(data.success);
+                document.getElementById('message').innerText = "Address added successfully";
+            } else {
+                alert('Failed to add address');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function resetErrors() {
+        document.getElementById('errorName').innerText = '';
+        document.getElementById('errorPhone').innerText = '';
+        document.getElementById('errorDetails').innerText = '';
+        document.getElementById('errorDistrict').innerText = '';
+        document.getElementById('errorState').innerText = '';
+        document.getElementById('errorPincode').innerText = '';
+    }
+
+    function validateName() {
+        const name = document.getElementById('addressName').value.trim();
+        if (!name) {
+            document.getElementById('errorName').innerText = 'Name is required';
+            return false;
+        }
+        return true;
+    }
+
+    function validatePhone() {
+    const phone = document.getElementById('addressPhone').value.trim();
+    const phoneRegex = /^\d{10}$/; // Validates 10 digits
+
+    if (!phone) {
+        document.getElementById('errorPhone').innerText = 'Phone is required';
+        return false;
+    }
+
+    if (!phoneRegex.test(phone)) {
+        document.getElementById('errorPhone').innerText = 'Invalid phone number. It should be 10 digits.';
+        return false;
+    }
+
+    return true;
+}
+
+    function validateAddressDetails() {
+        const details = document.getElementById('addressDetails').value.trim();
+        if (!details) {
+            document.getElementById('errorDetails').innerText = 'Address is required';
+            return false;
+        }
+        return true;
+    }
+
+    function validateDistrict() {
+        const district = document.getElementById('addressDistrict').value.trim();
+        if (!district) {
+            document.getElementById('errorDistrict').innerText = 'District is required';
+            return false;
+        }
+
+		 // Validate no digits in district
+		 if (digitRegex.test(district)) {
+
+			document.getElementById('errorDistrict').innerText = 'District should not contain digits';
+            return false;
 		 }
-		
-		
-	}
-	
-	 )
-    .catch(error => console.error('Error:', error));
-	}
+        return true;
+    }
+function validateState() {
+    const state = document.getElementById('addressState').value.trim();
+    if (!state) {
+        document.getElementById('errorState').innerText = 'State is required';
+        return false;
+    }
+    // Validate no digits in state
+    if (digitRegex.test(state)) {
+        document.getElementById('errorState').innerText = 'State should not contain digits';
+        return false;
+    }
+    return true;
+}
+
+function validatePincode() {
+    const pincode = document.getElementById('addressPincode').value.trim();
+    if (!pincode) {
+        document.getElementById('errorPincode').innerText = 'Pincode is required';
+        return false;
+    }
+    // Validate 5-digit pincode
+    const pincodeRegex = /^\d{6}$/;
+    if (!pincodeRegex.test(pincode)) { //The test method of the regular expression is used to check if the value of the variable pincode matches the pattern. 
+        document.getElementById('errorPincode').innerText = 'Invalid pincode (6 digits required)';
+        return false;
+    }
+    return true;
+}
 </script>						
 		
 		<%- include('../layouts/footer') %>

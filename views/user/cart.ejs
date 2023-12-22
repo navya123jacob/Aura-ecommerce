@@ -33,6 +33,7 @@
 									</thead>
 
 									<tbody>
+										<% if (b==1) { %>
 										<% usercart.Products.forEach(product => { %>
 											<tr>
 												<td class="product-col">
@@ -61,7 +62,12 @@
 													</button>
 												</td>
 											</tr>
-										<% }); %>
+											<% }); %>
+											<% } else { %>
+												<tr>
+													<td colspan="5" class="text-center">Your cart is empty. Add products to your cart.</td>
+												</tr>
+											<% } %>
 										
 									</tbody>
 								</table><!-- End .table table-wishlist -->

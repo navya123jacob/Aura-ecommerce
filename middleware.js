@@ -76,7 +76,7 @@ const adminloginNoSes = (req, res, next) => {
           req.ses=ses
         
         req.categories= await category.find({'status': 'active'})
-      console.log('yes')
+     
       await next()
     };
 

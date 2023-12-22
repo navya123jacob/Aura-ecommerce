@@ -65,9 +65,12 @@ userRoute.post('/submit-address',userController.addaddress)
 //to view cart
 userRoute.get('/cart',mid.UserNoSes,mid.logiheader,userController.cartload)
 
+//proceed to checkout
+userRoute.get('/checkout',mid.UserNoSes,mid.logiheader,userController.checkout)
+
 
 //to add product to cart
-userRoute.post('/productaddtocart',mid.UserNoSes,mid.logiheader,userController.productaddtocart)
+userRoute.post('/productaddtocart',userController.productaddtocart)
 
 
 

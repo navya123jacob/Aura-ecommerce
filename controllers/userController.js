@@ -541,13 +541,14 @@ const productdetails = async (req, res) => {
 const productaddtocart = async (req, res) => {
   try {
     const pro=await product.findOne({name:req.query.name })
+    
    const currentuser=await User.findOne({email:req.query.email })
    const quantity=req.query.qtyValue||1
     
 
     // Check if the user already has a cart document
     const cartFind = await cart.findOne({ user: currentuser._id });
-    console.log(cartFind)
+    
     if (cartFind) {
       // User already has a cart document
    
@@ -613,20 +614,62 @@ const cartload=async(req,res)=>{
     //logi mid end
     const myuser=await User.findOne({email:req.session.email})
     const usercart=await cart.findOne({user:myuser._id}).populate('Products.products').exec() // Use the actual field name you defined in your schema
-    let Total=0;let shipping=0;let grandtotal=0;
-    usercart.Products.forEach(product => {
-     Total=Total+product.total
-    })
-    if(Total<500)
-    {
-      shipping=40
+    let Total = 0;
+    let shipping = 0;
+    let grandtotal = 0;
+    let b=0;
+    
+    if (usercart && usercart.Products) {
+      b=1
+        usercart.Products.forEach(product => {
+            Total = Total + product.total;
+        });
+
+        if (Total < 500) {
+            shipping = 40;
+        }
+
+        grandtotal = Total + shipping;
     }
     
-    grandtotal=Total+shipping
     
-    console.log(usercart)
-   
-      res.render('cart',{user,ses,categories,usercart,shipping,Total,grandtotal})
+      res.render('cart',{user,ses,categories,usercart,shipping,Total,grandtotal,b})
+  }
+  catch (error) {
+      console.log(error.message);
+    }
+}
+
+//proceed to checkout page
+const checkout=async(req,res)=>{
+  try{
+    //for logi mid
+    categories=req.categories
+    ses=req.ses
+    const user = req.session.checkuser|| '' 
+    //logi mid end
+    const myuser=await User.findOne({email:req.session.email})
+    const usercart=await cart.findOne({user:myuser._id}).populate('Products.products').exec() // Use the actual field name you defined in your schema
+    let Total = 0;
+    let shipping = 0;
+    let grandtotal = 0;
+    let b=0;
+    
+    if (usercart && usercart.Products) {
+      b=1
+        usercart.Products.forEach(product => {
+            Total = Total + product.total;
+        });
+
+        if (Total < 500) {
+            shipping = 40;
+        }
+
+        grandtotal = Total + shipping;
+    }
+    
+    
+      res.render('checkout',{user,ses,categories,usercart,shipping,Total,grandtotal,b})
   }
   catch (error) {
       console.log(error.message);
@@ -741,5 +784,6 @@ module.exports={
     productaddtocart,
     accountpost,
     accountaddress,
-    addaddress
+    addaddress,
+    checkout
 }
