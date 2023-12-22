@@ -38,37 +38,65 @@ const userSchema=new mongoose.Schema({
         type:Number,
         default: 0
     },
-    addressField:[{
-        name:{
-            type:String,
-            required:true
+    addressField: [{
+        name: {
+            type: String,
+            required: true
         },
-        phone:{
-            type:String,
-            required:true
+        phone: {
+            type: String,
+            required: true
         },
-        state:{
-            type : String,
-            required:true  
+        
+        address: {
+            type: String,
+            required: true
         },
-        district:{
-            type:String,
-            required:true
+
+        district: {
+            type: String,
+            required: true
         },
-        town:{
-            type:String,
-            required:true
+        state: {
+            type: String,
+            required: true,
+            enum: [
+                'Andhra Pradesh',
+                'Arunachal Pradesh',
+                'Assam',
+                'Bihar',
+                'Chhattisgarh',
+                'Goa',
+                'Gujarat',
+                'Haryana',
+                'Himachal Pradesh',
+                'Jharkhand',
+                'Karnataka',
+                'Kerala',
+                'Madhya Pradesh',
+                'Maharashtra',
+                'Manipur',
+                'Meghalaya',
+                'Mizoram',
+                'Nagaland',
+                'Odisha',
+                'Punjab',
+                'Rajasthan',
+                'Sikkim',
+                'Tamil Nadu',
+                'Telangana',
+                'Tripura',
+                'Uttar Pradesh',
+                'Uttarakhand',
+                'West Bengal'
+              ]
         },
-        pincode:{
-            type:String,
-            required:true
-        },
-        address:{
-            type:String,
-            required:true
+        
+        pincode: {
+            type: Number,
+            required: true
         }
     }]
-
 
 
 })

@@ -1,10 +1,11 @@
 <%- include('../layouts/header') %>
-<%- include('../layouts/Login/loginHeader') %>        <main class="main">
+<%- include('../layouts/Login/loginHeader') %>        
+<main class="main">
         	
             <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
                 <div class="container">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">My Account</li>
                     </ol>
                 </div><!-- End .container -->
@@ -15,24 +16,26 @@
 	                <div class="container">
 	                	<div class="row">
 	                		<aside class="col-md-4 col-lg-3">
-	                			<ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
-								    <li class="nav-item">
-								        <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="/account" role="tab" aria-controls="tab-dashboard" aria-selected="true">My Account</a>
-								    </li>
-								    <li class="nav-item">
-								        <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="/account/orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
-								    </li>
-								   
-								    <li class="nav-item">
-								        <a class="nav-link" id="tab-address-link" data-toggle="tab" href="/account/address" role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
-								    </li>
-								    <li class="nav-item">
-								        <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
-								    </li>
-								    <li class="nav-item">
-								        <a class="nav-link" href="#">Sign Out</a>
-								    </li>
-								</ul>
+	                			
+									<ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+										<li class="nav-item">
+											<a class="nav-link active" id="tab-dashboard-link" href="/account" role="tab" aria-controls="tab-dashboard" aria-selected="true">My Account</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" id="tab-orders-link" href="/account/orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" id="tab-address-link" href="/address" role="tab" aria-controls="tab-address" aria-selected="false">Addresses</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" id="tab-account-link" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link" href="#" id="sign-out-link">Sign Out</a>
+										</li>
+									</ul>
+									
+								
 	                		</aside><!-- End .col-lg-3 -->
 
 	                		<div class="col-md-8 col-lg-9">
@@ -119,6 +122,9 @@
         // Form is valid
         return true;
     }
+ 
+	
+	
 		</script>
 		
     

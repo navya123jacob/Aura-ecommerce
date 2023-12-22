@@ -53,8 +53,18 @@ userRoute.get('/productdetails',mid.logiheader,userController.productdetails)
 //to view account
 userRoute.get('/account',mid.UserNoSes,mid.logiheader,userController.account)
 
+//to post on user account
+userRoute.post('/account/edit',mid.UserNoSes,userController.accountpost)
+
+//to get address 
+userRoute.get('/address',mid.UserNoSes,mid.logiheader,userController.accountaddress)
+
+//to submit new address
+userRoute.post('/submit-address',userController.addaddress)
+
 //to view cart
 userRoute.get('/cart',mid.UserNoSes,mid.logiheader,userController.cartload)
+
 
 //to add product to cart
 userRoute.post('/productaddtocart',mid.UserNoSes,mid.logiheader,userController.productaddtocart)

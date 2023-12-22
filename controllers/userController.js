@@ -653,10 +653,67 @@ const account=async(req,res)=>{
     }
 }
 
+//post on user account
+const accountpost=async(req,res)=>{
+  try{
+      await User.updateOne({email:req.session.email}
+        ,{$set:{Fname:req.body.Fname,
+                 Lname:req.body.Lname,
+                mno:req.body.mobile}})
+                res.redirect('/account')
+  }
+  catch (error) {
+      console.log(error.message);
+    }
+}
+
+//to view and add address
+const accountaddress=async(req,res)=>{
+  try{
+    //for logi mid
+    categories=req.categories
+    ses=req.ses
+    const user = req.session.checkuser|| '' 
+    //logi mid end
+    const myuser=await User.findOne({email:req.session.email})
+  
+      res.render('address',{user,ses,categories,myuser})
+  }
+  catch (error) {
+      console.log(error.message);
+    }
+}
+
+const addaddress=async(req,res)=>{
+  try{
+    await User.updateOne({email:req.session.email}
+      ,{$push: {
+        addressField: {
+            name: req.body.addressName,
+            phone: req.body.addressPhone,
+            district: req.body.addressDistrict,
+            state:req.body.addressState,
+            pincode:req.body.addressPincode
+
+            
+        }
+      }
+    })
+
+    
+    res.json({success:true})
+  }
+  catch (error) {
+    res.json({success:false})
+    }
+}
+
+
 
 //logout
 const logout=async(req,res)=>{
   try{
+    
     
      req.session.destroy()  //req.session.destroy is called, it destroys the session associated with the current request based on the session ID.
      
@@ -681,5 +738,8 @@ module.exports={
     resendUserOTP,
     account,
     cartload,
-    productaddtocart
+    productaddtocart,
+    accountpost,
+    accountaddress,
+    addaddress
 }

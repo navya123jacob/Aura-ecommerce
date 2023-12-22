@@ -1,5 +1,6 @@
 <%- include('../layouts/header') %>
-<%- include('../layouts/Login/loginHeader') %>     
+<%- include('../layouts/Login/loginHeader') %>  
+
    <main class="main">
         	
             <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
@@ -10,6 +11,8 @@
                     </ol>
                 </div><!-- End .container -->
             </nav><!-- End .breadcrumb-nav -->
+             
+            
 
             <div class="page-content">
             	<div class="dashboard">
@@ -17,118 +20,194 @@
 	                	<div class="row">
 	                		<aside class="col-md-4 col-lg-3">
 	                			<ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
-								    <li class="nav-item">
-								        <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="true">My Account</a>
-								    </li>
-								    <li class="nav-item">
-								        <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
-								    </li>
-								   
-								    <li class="nav-item">
-								        <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
-								    </li>
-								    <li class="nav-item">
-								        <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
-								    </li>
-								    <li class="nav-item">
-								        <a class="nav-link" href="#">Sign Out</a>
-								    </li>
+									<li class="nav-item">
+										<a class="nav-link " id="tab-dashboard-link" href="/account" role="tab" aria-controls="tab-dashboard" aria-selected="true">My Account</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" id="tab-orders-link" href="/account/orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link active" id="tab-address-link" href="/address" role="tab" aria-controls="tab-address" aria-selected="false">Addresses</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" id="tab-account-link" href="#tab-account" role="tab" aria-controls="tab-account" aria-selected="false">Account Details</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="/logout" id="sign-out-link">Sign Out</a>
+									</li>
 								</ul>
 	                		</aside><!-- End .col-lg-3 -->
+                            <div class="tab-pane fade show active" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+								<p>The following addresses will be used on the checkout page by default.</p>
+							
+								<div class="row">
+									<% if (myuser && myuser.addressField && myuser.addressField.length > 0) { %>
+										<% myuser.addressField.forEach(function(address, index) { %>
+											<div class="col-lg-6">
+												<div class="card card-dashboard">
+													<div class="card-body">
+														<h3 class="card-title"><%= index === 0 ? 'Billing Address' : 'Shipping Address' %></h3><!-- End .card-title -->
+							
+														<p>
+															<%= address.name %><br>
+															<%= address.phone %><br>
+															<%= address.state %><br>
+															<%= address.district %><br>
+															<%= address.town %>, <%= address.pincode %><br>
+															<%= address.address %><br>
+															<a href="#">Edit <i class="icon-edit"></i></a>
+														</p>
+													</div><!-- End .card-body -->
+												</div><!-- End .card-dashboard -->
+											</div><!-- End .col-lg-6 -->
+										<% }); %>
+									<% } else { %>
+										<p>No addresses available.</p>
+									<% } %>
+								</div><!-- End .row -->
+								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAddressModal">
+									Add New Address
+								</button>
+							</div><!-- .End .tab-pane -->
+							<!-- Add Address Modal -->
+<div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAddressModalLabel">Add New Address</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+			<div class="modal-body">
+				<!-- Address Form -->
+				<form id="addAddressForm">
+					<!-- Name -->
+					<div class="form-group m-5">
+						<label for="addressName">Name</label>
+						<input type="text" class="form-control" id="addressName" name="addressName" required>
+					</div>
+			
+					<!-- Phone -->
+					<div class="form-group m-5">
+						<label for="addressPhone">Phone</label>
+						<input type="tel" class="form-control" id="addressPhone" name="addressPhone" required>
+					</div>
 
-	                		<div class="col-md-8 col-lg-9">
-	                			<div class="tab-content">
-								    <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
-								    	<p>Hello <span class="font-weight-normal text-dark">User</span> (not <span class="font-weight-normal text-dark">User</span>? <a href="#">Log out</a>) 
-								    	<br>
-								    	From your account dashboard you can view your <a href="#tab-orders" class="tab-trigger-link link-underline">recent orders</a>, manage your <a href="#tab-address" class="tab-trigger-link">shipping and billing addresses</a>, and <a href="#tab-account" class="tab-trigger-link">edit your password and account details</a>.</p>
-								    </div><!-- .End .tab-pane -->
+					<!-- Address -->
+					<div class="form-group m-5">
+						<label for="addressDetails">Address</label>
+						<textarea class="form-control" id="addressDetails" name="addressDetails" rows="3" required></textarea>
+					</div>
+			
+					<!-- District -->
+					<div class="form-group m-5">
+						<label for="addressDistrict">District</label>
+						<input type="text" class="form-control" id="addressDistrict" name="addressDistrict" required>
+					</div>
+			
+					<!-- State -->
+<div class="form-group m-5">
+    <label for="addressState">State</label>
+    <select class="form-control" id="addressState" name="addressState" required>
+        <option value="" disabled selected>Select State</option>
+        <option value="Andhra Pradesh">Andhra Pradesh</option>
+        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+        <option value="Assam">Assam</option>
+        <option value="Bihar">Bihar</option>
+        <option value="Chhattisgarh">Chhattisgarh</option>
+        <option value="Goa">Goa</option>
+        <option value="Gujarat">Gujarat</option>
+        <option value="Haryana">Haryana</option>
+        <option value="Himachal Pradesh">Himachal Pradesh</option>
+        <option value="Jharkhand">Jharkhand</option>
+        <option value="Karnataka">Karnataka</option>
+        <option value="Kerala">Kerala</option>
+        <option value="Madhya Pradesh">Madhya Pradesh</option>
+        <option value="Maharashtra">Maharashtra</option>
+        <option value="Manipur">Manipur</option>
+        <option value="Meghalaya">Meghalaya</option>
+        <option value="Mizoram">Mizoram</option>
+        <option value="Nagaland">Nagaland</option>
+        <option value="Odisha">Odisha</option>
+        <option value="Punjab">Punjab</option>
+        <option value="Rajasthan">Rajasthan</option>
+        <option value="Sikkim">Sikkim</option>
+        <option value="Tamil Nadu">Tamil Nadu</option>
+        <option value="Telangana">Telangana</option>
+        <option value="Tripura">Tripura</option>
+        <option value="Uttar Pradesh">Uttar Pradesh</option>
+        <option value="Uttarakhand">Uttarakhand</option>
+        <option value="West Bengal">West Bengal</option>
+    </select>
+</div>
 
-								    <div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
-								    	<p>No order has been made yet.</p>
-								    	<a href="category.html" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
-								    </div><!-- .End .tab-pane -->
+	
+					<!-- Pincode -->
+					<div class="form-group m-5">
+						<label for="addressPincode">Pincode</label>
+						<input type="text" class="form-control" id="addressPincode" name="addressPincode" required>
+					</div>
+			
+					
+			
+					<button type="button" class="btn btn-primary m-5" onclick="submitForm()">Save Address</button>
+				</form>
+				<h6 class="text-success" id="message"></h6>
+			</div>
+		</div>
+	</div>
+	</div>
+			
+<script>
+    // Handle form submission
+    document.getElementById('addAddressForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        // Add your form submission logic here
 
-								    <div class="tab-pane fade" id="tab-downloads" role="tabpanel" aria-labelledby="tab-downloads-link">
-								    	<p>No downloads available yet.</p>
-								    	<a href="category.html" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
-								    </div><!-- .End .tab-pane -->
+        // Close the modal after form submission
+        $('#addAddressModal').modal('hide');
+    });
+	function submitForm() {
+    // Collect form data
+    const formData = {
+        addressName: document.getElementById('addressName').value,
+        addressPhone: document.getElementById('addressPhone').value,
+        addressDetails: document.getElementById('addressDetails').value,
+        addressDistrict: document.getElementById('addressDistrict').value,
+        addressState: document.getElementById('addressState').value,
+        addressPincode: document.getElementById('addressPincode').value
+        // Add other form fields as needed
+    };
 
-								    <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
-								    	<p>The following addresses will be used on the checkout page by default.</p>
-
-								    	<div class="row">
-								    		<div class="col-lg-6">
-								    			<div class="card card-dashboard">
-								    				<div class="card-body">
-								    					<h3 class="card-title">Billing Address</h3><!-- End .card-title -->
-
-														<p>User Name<br>
-														User Company<br>
-														John str<br>
-														New York, NY 10001<br>
-														1-234-987-6543<br>
-														yourmail@mail.com<br>
-														<a href="#">Edit <i class="icon-edit"></i></a></p>
-								    				</div><!-- End .card-body -->
-								    			</div><!-- End .card-dashboard -->
-								    		</div><!-- End .col-lg-6 -->
-
-								    		<div class="col-lg-6">
-								    			<div class="card card-dashboard">
-								    				<div class="card-body">
-								    					<h3 class="card-title">Shipping Address</h3><!-- End .card-title -->
-
-														<p>You have not set up this type of address yet.<br>
-														<a href="#">Edit <i class="icon-edit"></i></a></p>
-								    				</div><!-- End .card-body -->
-								    			</div><!-- End .card-dashboard -->
-								    		</div><!-- End .col-lg-6 -->
-								    	</div><!-- End .row -->
-								    </div><!-- .End .tab-pane -->
-
-								    <div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
-								    	<form action="#">
-			                				<div class="row">
-			                					<div class="col-sm-6">
-			                						<label>First Name *</label>
-			                						<input type="text" class="form-control" required>
-			                					</div><!-- End .col-sm-6 -->
-
-			                					<div class="col-sm-6">
-			                						<label>Last Name *</label>
-			                						<input type="text" class="form-control" required>
-			                					</div><!-- End .col-sm-6 -->
-			                				</div><!-- End .row -->
-
-		            						<label>Display Name *</label>
-		            						<input type="text" class="form-control" required>
-		            						<small class="form-text">This will be how your name will be displayed in the account section and in reviews</small>
-
-		                					<label>Email address *</label>
-		        							<input type="email" class="form-control" required>
-
-		            						<label>Current password (leave blank to leave unchanged)</label>
-		            						<input type="password" class="form-control">
-
-		            						<label>New password (leave blank to leave unchanged)</label>
-		            						<input type="password" class="form-control">
-
-		            						<label>Confirm new password</label>
-		            						<input type="password" class="form-control mb-2">
-
-		                					<button type="submit" class="btn btn-outline-primary-2">
-			                					<span>SAVE CHANGES</span>
-			            						<i class="icon-long-arrow-right"></i>
-			                				</button>
-			                			</form>
-								    </div><!-- .End .tab-pane -->
-								</div>
-	                		</div><!-- End .col-lg-9 -->
-	                	</div><!-- End .row -->
-	                </div><!-- End .container -->
-                </div><!-- End .dashboard -->
-            </div><!-- End .page-content -->
-        </main><!-- End .main -->
-    
-        <%- include('../layouts/footer') %>
+    // Log form data to the console (you can send it to a server or use it as needed)
+    fetch('/submit-address', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+    })
+    .then(response => response.json())
+    .then((data) =>{
+		
+		  if(data.success==true)
+		  {
+			alert(data.success)
+			document.getElementById('message').innerText="added"
+		  }
+         else
+		 {
+			alert('false')
+		 }
+		
+		
+	}
+	
+	 )
+    .catch(error => console.error('Error:', error));
+	}
+</script>						
+		
+		<%- include('../layouts/footer') %>
+		<%- include('../layouts/Login/LoginMob') %>
