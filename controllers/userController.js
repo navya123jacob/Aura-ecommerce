@@ -612,6 +612,23 @@ const productaddtocart = async (req, res) => {
   }
 };//Once you retrieve a document from the collection, you can make changes to its properties and then call the .save() method to persist those changes to the database
 
+//to remove products from cart
+
+const productremovefromcart = async (req, res) => {
+  try {
+    const pro=await product.findOne({name:req.query.name })
+    
+    const currentuser=await User.findOne({email:req.query.email })
+   
+    await cart.updateOne({user:currentuser._id}, { $pull: { 'Products': { 'products': pro._id} } })
+   res.json({success:true})
+
+  } catch (error) {
+    res.json({success:false})
+  }
+}
+
+
 //load cart
 const cartload=async(req,res)=>{
   try{
@@ -797,6 +814,7 @@ module.exports={
     account,
     cartload,
     productaddtocart,
+    productremovefromcart,
     accountpost,
     accountaddress,
     addaddress,

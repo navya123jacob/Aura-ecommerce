@@ -72,6 +72,9 @@ userRoute.get('/checkout',mid.UserNoSes,mid.logiheader,userController.checkout)
 //to add product to cart
 userRoute.post('/productaddtocart',userController.productaddtocart)
 
+//to remove from cart
+userRoute.post('/productremovefromcart',userController.productremovefromcart)
+
 
 
 
