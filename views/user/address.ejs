@@ -31,7 +31,7 @@
                 <div class="tab-pane fade show active" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
                     <p>The following addresses will be used on the checkout page by default.</p>
 
-                    <div class="row">
+                    <div class="row" id="addresspart">
                         <% if (myuser && myuser.addressField && myuser.addressField.length > 0) { %>
                             <% myuser.addressField.forEach(function(address, index) { %>
                                 <div class="col-lg-6">
@@ -206,7 +206,7 @@
         .then(response => response.json())
         .then((data) => {
             if (data.success == true) {
-                alert(data.success);
+                $('#addresspart').load('/address #addresspart')
                 document.getElementById('message').innerText = "Address added successfully";
             } else {
                 alert('Failed to add address');

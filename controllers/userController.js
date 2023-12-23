@@ -559,8 +559,16 @@ const productaddtocart = async (req, res) => {
 
       if (existingProduct) {
         // Product is already in the cart, increase the quantity
+        if(req.query.cart)
+        {
+          existingProduct.quantity = parseInt(quantity);
+        }
+        else
+        {
+          existingProduct.quantity += parseInt(quantity);
+        }
         
-        existingProduct.quantity += parseInt(quantity);
+        
        
         existingProduct.total = existingProduct.quantity *existingProduct.price
         
@@ -612,6 +620,7 @@ const cartload=async(req,res)=>{
     ses=req.ses
     const user = req.session.checkuser|| '' 
     //logi mid end
+    const email=req.session.email
     const myuser=await User.findOne({email:req.session.email})
     const usercart=await cart.findOne({user:myuser._id}).populate('Products.products').exec() // Use the actual field name you defined in your schema
     let Total = 0;
@@ -633,7 +642,7 @@ const cartload=async(req,res)=>{
     }
     
     
-      res.render('cart',{user,ses,categories,usercart,shipping,Total,grandtotal,b})
+      res.render('cart',{user,ses,categories,usercart,shipping,Total,grandtotal,b,email})
   }
   catch (error) {
       console.log(error.message);
@@ -653,7 +662,13 @@ const checkout=async(req,res)=>{
     let Total = 0;
     let shipping = 0;
     let grandtotal = 0;
-    let b=0;
+    let b=0;let c=0
+    console.log(myuser.addressField)
+    if (myuser &&  myuser.addressField.length > 0)
+    {
+      c=1
+      console.log(c)
+    }
     
     if (usercart && usercart.Products) {
       b=1
@@ -669,7 +684,7 @@ const checkout=async(req,res)=>{
     }
     
     
-      res.render('checkout',{user,ses,categories,usercart,shipping,Total,grandtotal,b})
+      res.render('checkout',{user,ses,categories,usercart,shipping,Total,grandtotal,b,myuser,c})
   }
   catch (error) {
       console.log(error.message);
