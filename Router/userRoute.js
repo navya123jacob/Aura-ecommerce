@@ -65,6 +65,9 @@ userRoute.post('/submit-address',userController.addaddress)
 //to delete address
 userRoute.post('/removeaddress',userController.removeaddress)
 
+//to edit address
+userRoute.post('/editaddress',userController.editaddress)
+
 //to view cart
 userRoute.get('/cart',mid.UserNoSes,mid.logiheader,userController.cartload)
 

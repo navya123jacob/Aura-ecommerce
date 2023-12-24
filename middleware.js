@@ -11,7 +11,7 @@ const UserNoSes = (req, res, next) => {
     // Check if the user is already logged in
     if (!req.session.checkuser) {
         // User is logged in, redirect to the home page
-        res.redirect('/');
+        res.redirect('/login');
     } else {
         // User is not logged in, allow the request to proceed to the next middleware
         next();

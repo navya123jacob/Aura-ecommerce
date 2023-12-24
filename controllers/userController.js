@@ -760,6 +760,7 @@ const accountaddress=async(req,res)=>{
     }
 }
 
+//to add new address
 const addaddress=async(req,res)=>{
   try{
     await User.updateOne({email:req.session.email}
@@ -775,6 +776,39 @@ const addaddress=async(req,res)=>{
         }
       }
     })
+
+    
+    res.json({success:true})
+  }
+  catch (error) {
+    res.json({success:false})
+    }
+}
+
+//to edit address
+const editaddress=async(req,res)=>{
+  try{
+    const addressfind=await User.findOne({ email: req.session.email})
+   
+    const specificaddress= addressfind.addressField.find((add) => add.address === req.body.realaddress);
+    console.log(specificaddress)
+   
+if (specificaddress) {
+  specificaddress.name = req.body.name;
+  specificaddress.district = req.body.district;
+  specificaddress.address = req.body.address;
+  specificaddress.state = req.body.state;
+  specificaddress.pincode = parseInt(req.body.pincode);
+  specificaddress.phone = req.body.phone;
+
+  try {
+    await addressfind.save();
+    
+} catch (error) {
+    console.error('Error saving address:', error);
+}
+}
+  
 
     
     res.json({success:true})
@@ -835,6 +869,7 @@ module.exports={
     accountpost,
     accountaddress,
     addaddress,
+    editaddress,
     removeaddress,
     checkout
 }
