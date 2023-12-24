@@ -542,7 +542,7 @@ const productaddtocart = async (req, res) => {
   try {
     const pro=await product.findOne({name:req.query.name })
     
-   const currentuser=await User.findOne({email:req.query.email })
+   const currentuser=await User.findOne({email:req.session.email })
    const quantity=req.query.qtyValue||1
     
 
@@ -618,7 +618,7 @@ const productremovefromcart = async (req, res) => {
   try {
     const pro=await product.findOne({name:req.query.name })
     
-    const currentuser=await User.findOne({email:req.query.email })
+    const currentuser=await User.findOne({email:req.session.email })
    
     await cart.updateOne({user:currentuser._id}, { $pull: { 'Products': { 'products': pro._id} } })
    res.json({success:true})
@@ -637,6 +637,8 @@ const cartload=async(req,res)=>{
     ses=req.ses
     const user = req.session.checkuser|| '' 
     //logi mid end
+    const checkmessage=req.query.checkmessage||''
+    
     const email=req.session.email
     const myuser=await User.findOne({email:req.session.email})
     const usercart=await cart.findOne({user:myuser._id}).populate('Products.products').exec() // Use the actual field name you defined in your schema
@@ -645,7 +647,7 @@ const cartload=async(req,res)=>{
     let grandtotal = 0;
     let b=0;
     
-    if (usercart && usercart.Products) {
+    if (usercart && usercart.Products[0]) {
       b=1
         usercart.Products.forEach(product => {
             Total = Total + product.total;
@@ -659,7 +661,9 @@ const cartload=async(req,res)=>{
     }
     
     
-      res.render('cart',{user,ses,categories,usercart,shipping,Total,grandtotal,b,email})
+      res.render('cart',{user,ses,categories,usercart,shipping,Total,grandtotal,b,email,checkmessage})
+   
+      
   }
   catch (error) {
       console.log(error.message);
@@ -668,6 +672,54 @@ const cartload=async(req,res)=>{
 
 //proceed to checkout page
 const checkout=async(req,res)=>{
+  try{
+    //for logi mid
+    categories=req.categories
+    ses=req.ses
+    const user = req.session.checkuser|| '' 
+    //logi mid end
+    const myuser=await User.findOne({email:req.session.email})
+    const usercart=await cart.findOne({user:myuser._id}).populate('Products.products').exec() // Use the actual field name you defined in your schema
+    let Total = 0;
+    let shipping = 0;
+    let grandtotal = 0;
+    let b=0;let c=0
+    
+    if (myuser &&  myuser.addressField.length > 0)
+    {
+      c=1
+      
+    }
+    
+    
+    if (usercart && usercart.Products[0]) {
+      b=1
+        usercart.Products.forEach(product => {
+            Total = Total + product.total;
+        });
+
+        if (Total < 500) {
+            shipping = 40;
+        }
+
+        grandtotal = Total + shipping;
+        res.render('checkout',{user,ses,categories,usercart,shipping,Total,grandtotal,b,myuser,c})
+    }
+    
+    else
+    {
+      res.redirect('/cart?checkmessage=Add products to checkout')
+    }
+    
+      
+  }
+  catch (error) {
+      console.log(error.message);
+    }
+}
+
+//proceed to checkout page
+const placeorder=async(req,res)=>{
   try{
     //for logi mid
     categories=req.categories
@@ -700,8 +752,16 @@ const checkout=async(req,res)=>{
         grandtotal = Total + shipping;
     }
     
-    
+    if(usercart)
+    {
       res.render('checkout',{user,ses,categories,usercart,shipping,Total,grandtotal,b,myuser,c})
+    }
+    else
+    {
+      res.redirect('/cart?checkmessage=Add products to checkout')
+    }
+    
+      
   }
   catch (error) {
       console.log(error.message);
@@ -871,5 +931,6 @@ module.exports={
     addaddress,
     editaddress,
     removeaddress,
-    checkout
+    checkout,
+    placeorder
 }
