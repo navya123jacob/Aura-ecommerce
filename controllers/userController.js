@@ -751,8 +751,9 @@ const accountaddress=async(req,res)=>{
     const user = req.session.checkuser|| '' 
     //logi mid end
     const myuser=await User.findOne({email:req.session.email})
+    const email=req.session.email
   
-      res.render('address',{user,ses,categories,myuser})
+      res.render('address',{user,ses,categories,myuser,email})
   }
   catch (error) {
       console.log(error.message);
@@ -768,14 +769,30 @@ const addaddress=async(req,res)=>{
             phone: req.body.addressPhone,
             district: req.body.addressDistrict,
             state:req.body.addressState,
-            pincode:req.body.addressPincode
-
-            
+            pincode:req.body.addressPincode,
+            address:req.body.addressDetails
+ 
         }
       }
     })
 
     
+    res.json({success:true})
+  }
+  catch (error) {
+    res.json({success:false})
+    }
+}
+
+//to remove address
+const removeaddress=async(req,res)=>{
+  try{
+    
+    const result = await User.updateOne(
+      { email: req.body.useremail },
+      { $pull: { addressField: { address: req.body.useraddress } } }
+    );
+  
     res.json({success:true})
   }
   catch (error) {
@@ -818,5 +835,6 @@ module.exports={
     accountpost,
     accountaddress,
     addaddress,
+    removeaddress,
     checkout
 }

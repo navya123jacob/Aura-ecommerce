@@ -27,7 +27,7 @@
             </aside><!-- End .col-lg-3 -->
 
             <!-- Right Content -->
-            <div class="col-md-8 col-lg-9">
+            <div class="col-md-8 col-lg-9" id="mainaddresspart">
                 <div class="tab-pane fade show active" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
                     <p>The following addresses will be used on the checkout page by default.</p>
 
@@ -36,16 +36,22 @@
                             <% myuser.addressField.forEach(function(address, index) { %>
                                 <div class="col-lg-6">
                                     <div class="card card-dashboard">
+                                        
+                                            <button class="btn-remove" onclick="removeItem('<%= address.address %>','<%=email%>')">
+                                                <i class="icon-close"></i>
+                                            </button>
+                                       
                                         <div class="card-body">
                                             <h3 class="card-title"><%= index === 0 ? 'Billing Address' : 'Shipping Address' %></h3><!-- End .card-title -->
 
                                             <p>
                                                 <%= address.name %><br>
                                                 <%= address.phone %><br>
-                                                <%= address.state %><br>
-                                                <%= address.district %><br>
-                                                <%= address.town %>, <%= address.pincode %><br>
                                                 <%= address.address %><br>
+                                                <%= address.district %><br>
+                                                <%= address.state %><br>
+                                                <%= address.pincode %><br>
+                                               
                                                 <a href="#">Edit <i class="icon-edit"></i></a>
                                             </p>
                                         </div><!-- End .card-body -->
@@ -206,7 +212,7 @@
         .then(response => response.json())
         .then((data) => {
             if (data.success == true) {
-                $('#addresspart').load('/address #addresspart')
+                $('#mainaddresspart').load('/address #mainaddresspart')
                 document.getElementById('message').innerText = "Address added successfully";
             } else {
                 alert('Failed to add address');
@@ -302,7 +308,31 @@ function validatePincode() {
     }
     return true;
 }
+
+
+
+
+function removeItem(address,email){
+    const AddressData = {  useremail:email,useraddress:address};
+    console.log(address,email)
+    fetch(`/removeaddress`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(AddressData),
+        }).then((response)=>{
+            response.json()
+        }).then((data)=>{
+           
+            $('#addresspart').load('/address #addresspart')
+        }).catch(error => console.error('Error:', error));
+}
+
+
+
 </script>						
 		
 		<%- include('../layouts/footer') %>
 		<%- include('../layouts/Login/LoginMob') %>
+        
