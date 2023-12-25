@@ -83,6 +83,9 @@ userRoute.get('/orderplaced',mid.UserNoSes,mid.logiheader,userController.orderpl
 //see orders
 userRoute.get('/orders',mid.UserNoSes,mid.logiheader,userController.orders)
 
+//see orders
+userRoute.put('/orders/status',mid.UserNoSes,mid.logiheader,userController.ordersstatus)
+
 
 //to add product to cart
 userRoute.post('/productaddtocart',userController.productaddtocart)

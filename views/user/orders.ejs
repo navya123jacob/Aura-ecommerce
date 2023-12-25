@@ -39,7 +39,7 @@
     <div class="col-md-8 col-lg-9">
         <div class="tab-content">
             <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
-        <table class="order-details">
+        <table class="order-details" id="tabletoload">
             <thead>
                 <tr>
                     <th>Order Date</th>
@@ -79,7 +79,7 @@
                                 <% } else if (['out for delivery', 'delivered'].includes(product.orderStatus)) { %>
                                     <!-- Return button for out for delivery or delivered products -->
                                     <button onclick="returnOrder('<%= order._id %>', '<%= product._id %>')" style="margin-bottom: 5px;">Return</button>
-                                <% } else if (['request return', 'request cancellation'].includes(product.orderStatus)) { %>
+                                <% } else if (['request return', 'request cancellation','returned','cancelled'].includes(product.orderStatus)) { %>
                                     <!-- Display the order status itself as the button -->
                                     <button disabled style="margin-bottom: 5px;"><%= product.orderStatus %></button>
                                 <% } %>
@@ -101,6 +101,48 @@
 </div><!-- End .dashboard -->
 </div><!-- End .page-content -->
 </main><!-- End .main -->
+<script>
 
+function cancelOrder(orderId, productId) {
+   
+    fetch(`/orders/status`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            newStatus: 'request cancellation',orderId, productId
+        }),
+    })
+    .then(response => {
+        response.json()
+    }).then(data => {
+        $('#tabletoload').load('/orders #tabletoload')
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function returnOrder(orderId, productId) {
+    fetch(`/orders/status`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            newStatus: 'request return',orderId, productId
+        }),
+    })
+    .then(response => {
+        response.json()
+    }).then(data => {
+        $('#tabletoload').load('/orders #tabletoload')
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+</script>
 <%- include('../layouts/footer') %>
 <%- include('../layouts/Login/LoginMob') %>

@@ -958,6 +958,23 @@ const orders = async (req, res) => {
   }
 }
 
+//to return or cancel a order
+//order section
+const ordersstatus = async (req, res) => {
+  try {
+      
+      const result = await order.updateOne(
+          { _id: req.body.orderId, 'Products._id': req.body.productId },
+          { $set: { 'Products.$.orderStatus': req.body.newStatus } }
+        );
+          
+
+      res.json({success:true});
+  } catch (error) {
+      console.log(error.message);
+  }
+}
+
 
 
 
@@ -1000,5 +1017,6 @@ module.exports={
     checkout,
     placeorder,
     orderplaced,
-    orders
+    orders,
+    ordersstatus
 }
