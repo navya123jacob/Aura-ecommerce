@@ -97,6 +97,9 @@ adminRoute.get('/products/editdelete',mid.adminloginNoSes,productController.Prod
 //orders view
 adminRoute.get('/orders',mid.adminloginNoSes,adminController.orders)
 
+//orders status change
+adminRoute.post('/orders/status',mid.adminloginNoSes,adminController.ordersstatus)
+
 
 //logout
 adminRoute.get('/logout',adminController.adminlogout)

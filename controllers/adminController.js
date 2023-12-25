@@ -241,6 +241,22 @@ const orders = async (req, res) => {
         console.log(error.message);
     }
 }
+
+//order section
+const ordersstatus = async (req, res) => {
+    try {
+        
+        const result = await order.updateOne(
+            { _id: req.body.orderId, 'Products._id': req.body.productId },
+            { $set: { 'Products.$.orderStatus': req.body.status } }
+          );
+            
+  
+        res.json({success:true});
+    } catch (error) {
+        console.log(error.message);
+    }
+}
   
   
 
@@ -272,5 +288,6 @@ module.exports={
     CategoryEditpost,
     CategoryToggle,
     orders,
+    ordersstatus,
     adminlogout
 }
