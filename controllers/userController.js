@@ -6,6 +6,7 @@ const UserOTP= require('../models/userOTPverify');
 const product = require('../models/productModel');
 const category = require('../models/categoryModel');
 const cart = require('../models/cartModel');
+const order = require('../models/orderModel');
 
 
 const dotenv = require('dotenv');  //for securing your creditials
@@ -551,17 +552,18 @@ const productaddtocart = async (req, res) => {
     
     if (cartFind) {
       // User already has a cart document
-   
+     
       const existingProduct = cartFind.Products.find(   // findOne is more suitable when you're querying the entire collection for a single document based on some conditions. Here looking for a product within an array, so find is appropriate.
         (product) => product.name === pro.name
       );
-      console.log(existingProduct)
+      console.log(pro.name)
 
       if (existingProduct) {
         // Product is already in the cart, increase the quantity
         if(req.query.cart)
         {
           existingProduct.quantity = parseInt(quantity);
+          
         }
         else
         {
@@ -732,12 +734,7 @@ const placeorder=async(req,res)=>{
     let shipping = 0;
     let grandtotal = 0;
     let b=0;let c=0
-    console.log(myuser.addressField)
-    if (myuser &&  myuser.addressField.length > 0)
-    {
-      c=1
-      console.log(c)
-    }
+   
     
     if (usercart && usercart.Products) {
       b=1
@@ -752,22 +749,34 @@ const placeorder=async(req,res)=>{
         grandtotal = Total + shipping;
     }
     
-    if(usercart)
-    {
-      res.render('checkout',{user,ses,categories,usercart,shipping,Total,grandtotal,b,myuser,c})
-    }
-    else
-    {
-      res.redirect('/cart?checkmessage=Add products to checkout')
-    }
     
-      
-  }
-  catch (error) {
-      console.log(error.message);
-    }
-}
+    const newOrderData = new order({
+      user: myuser._id,
+      paymentMode: req.body.paymentOption,
+      total: grandtotal,  
+      address: req.body.existingAddress,
+      date: new Date(),
+      Products: usercart.Products.map(product => ({
+          products: product.products,
+          name: product.name,
+          price: product.price,
+          quantity: product.quantity,
+          total: product.price * product.quantity,
+         
+      })),
+  });
 
+  
+await newOrderData.save();
+await cart.updateOne({user:myuser._id},{$set:{Products:[]}})
+res.redirect('/orderplaced')
+
+} catch (error) {
+console.error(error);
+res.status(500).json({ success: false, error: error.message });
+}
+}
+  
 
 //USER ACCOUNT
 //load user account

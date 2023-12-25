@@ -52,8 +52,7 @@
 												<td class="price-col">₹<%= product.price %></td>
 												<td class="quantity-col">
 													<div class="cart-product-quantity">
-														<input type="number" class="form-control" id="quantity" value="<%= product.quantity %>" step="1" data-decimals="0" onchange="addtocart('<%=product.name%>','<%=email%>')" required>
-													</div><!-- End .cart-product-quantity -->
+														<input type="number" class="form-control" id="quantity" value="<%= product.quantity %>" step="1" data-decimals="0" onchange="addtocart('<%=product.name%>','<%=email%>', this.value)" required></div><!-- End .cart-product-quantity -->
 												</td>
 												<td class="total-col">₹<%= product.total %></td>
 												<td class="remove-col">
@@ -153,9 +152,9 @@
 
 			//to remove product
 
-			function addtocart(prodname,email)
+			function addtocart(prodname,email,qtyValue)
             {
-                const qtyValue = document.getElementById('quantity').value;
+               
 				
            
             fetch(`/productaddtocart?name=${prodname}&email=${email}&qtyValue=${qtyValue}&cart='yes'`, {
@@ -196,7 +195,7 @@
     }).then((response)=>{
 		response.json()
 	}).then((data)=>{
-		alert('hi')
+		
 		$('#carttoload').load('/cart #carttoload')
 
 	})

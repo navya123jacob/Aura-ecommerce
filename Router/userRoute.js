@@ -75,7 +75,7 @@ userRoute.get('/cart',mid.UserNoSes,mid.logiheader,userController.cartload)
 userRoute.get('/checkout',mid.UserNoSes,mid.logiheader,userController.checkout)
 
 //place order
-userRoute.get('/placeorder',mid.UserNoSes,mid.logiheader,userController.placeorder)
+userRoute.post('/placeorder',mid.UserNoSes,mid.logiheader,userController.placeorder)
 
 
 //to add product to cart
