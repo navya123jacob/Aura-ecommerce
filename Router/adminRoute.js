@@ -94,6 +94,9 @@ adminRoute.post('/products/editpost',mid.adminloginNoSes,upload.array('newImages
 //products edit product delete
 adminRoute.get('/products/editdelete',mid.adminloginNoSes,productController.ProducteditDelete)
 
+//orders view
+adminRoute.get('/orders',mid.adminloginNoSes,adminController.orders)
+
 
 //logout
 adminRoute.get('/logout',adminController.adminlogout)

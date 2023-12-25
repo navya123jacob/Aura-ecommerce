@@ -3,6 +3,8 @@
 //models
 const User = require('../models/userModel');
 const Category = require('../models/categoryModel');
+const order = require('../models/orderModel');
+const product = require('../models/productModel');
 
 
 //module for hashing password
@@ -214,6 +216,33 @@ const CategoryToggle=async(req,res)=>{
 
 
 
+//order section
+const orders = async (req, res) => {
+    try {
+        // for login mid
+        categories = req.categories;
+        ses = req.ses;
+        const user = req.session.checkuser || '';
+        // login mid end
+
+        const orders = await order.find()
+            .populate({
+                path: 'Products.products', 
+                model: 'Product'
+            })
+            .populate({
+                path: 'user',
+                model: 'User'
+            })
+            .exec();
+  
+        res.render('adminorders', { user, orders, ses, categories });
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+  
+  
 
 
 //logout
@@ -242,5 +271,6 @@ module.exports={
     CategoryEdit,
     CategoryEditpost,
     CategoryToggle,
+    orders,
     adminlogout
 }

@@ -1,0 +1,87 @@
+<%- include('./layouts/header.ejs') %>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<div class="container-fluid page-body-wrapper">
+  <!-- partial:partials/_navbar.html -->
+  <%- include('./layouts/nav.ejs') %>
+  <!-- partial -->
+  <div class="main-panel">
+    <div class="content-wrapper">
+
+      <div class="row">
+        <div class="col-12 grid-margin">
+          <div class="card">
+           
+            <div class="table-responsive" id="blok">
+              <table class="order-details">
+                <thead>
+                    <tr>
+                        <th>Order Date</th>
+                        <th>Total</th>
+                        <th>Product</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orders.forEach(order => { %>
+                        <tr>
+                            <td rowspan="<%= order.Products.length %>"><%= new Date(order.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %></td>
+    
+    
+                            <td rowspan="<%= order.Products.length %>"><%= order.total %></td>
+                            <% order.Products.forEach((product, index) => { %>
+                                <% if (index !== 0) { %>
+                                    <tr>
+                                <% } %>
+                                <td>
+                                    <a href="/productdetails?id=<%=product.products._id%>">
+                                        <img src="<%= product.products.pictures[0].replace('public', '') %>" alt="<%= product.name %>" style="height:20vh">
+                                    </a>
+                                </td>
+                                <td><%= product.name %></td>
+                                <td><%= product.price %></td>
+                                <td><%= product.quantity %></td>
+                                <td><%= product.total %></td>
+                                <td>
+                                    <% if (['placed', 'shipped'].includes(product.orderStatus)) { %>
+                                        <!-- Cancel button for placed or shipped products -->
+                                        <button onclick="cancelOrder('<%= order._id %>', '<%= product._id %>')" style="margin-bottom: 5px;">Cancel</button>
+                                    <% } else if (['out for delivery', 'delivered'].includes(product.orderStatus)) { %>
+                                        <!-- Return button for out for delivery or delivered products -->
+                                        <button onclick="returnOrder('<%= order._id %>', '<%= product._id %>')" style="margin-bottom: 5px;">Return</button>
+                                    <% } else if (['request return', 'request cancellation'].includes(product.orderStatus)) { %>
+                                        <!-- Display the order status itself as the button -->
+                                        <button disabled style="margin-bottom: 5px;"><%= product.orderStatus %></button>
+                                    <% } %>
+                                </td>
+                                <% if (index !== 0) { %>
+                                    </tr>
+                                <% } %>
+                            <% }); %>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+            </div>
+
+           
+
+    <!-- partial:partials/_footer.html -->
+    <footer class="footer">
+      <div class="d-sm-flex justify-content-center justify-content-sm-between">
+        <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Aura beauty</span>
+      </div>
+    </footer>
+    <!-- partial -->
+  </div>
+  <!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+
+
+<%- include('./layouts/footer.ejs') %>
