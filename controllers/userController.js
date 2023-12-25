@@ -768,7 +768,7 @@ const placeorder=async(req,res)=>{
 
   
 await newOrderData.save();
-await cart.updateOne({user:myuser._id},{$set:{Products:[]}})
+
 res.redirect('/orderplaced')
 
 } catch (error) {
@@ -776,6 +776,39 @@ console.error(error);
 res.status(500).json({ success: false, error: error.message });
 }
 }
+
+//order placed
+const orderplaced=async(req,res)=>{
+  try{
+    //for logi mid
+    categories=req.categories
+    ses=req.ses
+    const user = req.session.checkuser|| '' 
+    //logi mid end
+    const myuser=await User.findOne({email:req.session.email})
+    const usercart=await cart.findOne({user:myuser._id}).populate('Products.products').exec() // Use the actual field name you defined in your schema
+    
+    
+    const email=req.session.email
+    if (usercart && usercart.Products[0]) {
+     
+
+        res.render('orderplaced',{user,ses,categories,usercart})
+        await cart.updateOne({user:myuser._id},{$set:{Products:[]}})
+    }
+    
+    else
+    {
+      res.redirect('/cart?checkmessage=Add products to checkout')
+    }
+    
+      
+  }
+  catch (error) {
+      console.log(error.message);
+    }
+}
+
   
 
 //USER ACCOUNT
@@ -903,6 +936,30 @@ const removeaddress=async(req,res)=>{
     }
 }
 
+//order section
+const orders = async (req, res) => {
+  try {
+      //for logi mid
+      categories = req.categories;
+      ses = req.ses;
+      const user = req.session.checkuser || '';
+      //logi mid end
+      const myuser = await User.findOne({ email: req.session.email });
+      const orders = await order.find({ user: myuser._id })
+          .populate({
+              path: 'Products.products', 
+              model: 'Product'
+          })
+          .exec();
+
+      res.render('orders', { user, orders, ses, categories });
+  } catch (error) {
+      console.log(error.message);
+  }
+}
+
+
+
 
 
 //logout
@@ -941,5 +998,7 @@ module.exports={
     editaddress,
     removeaddress,
     checkout,
-    placeorder
+    placeorder,
+    orderplaced,
+    orders
 }

@@ -1,83 +1,106 @@
 <%- include('../layouts/header') %>
-<%- include('../layouts/Login/loginHeader') %>    
-        <main class="main">
-        	<div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
-        		<div class="container">
-        			<h1 class="page-title">Shopping Cart<span>Shop</span></h1>
-        		</div><!-- End .container -->
-        	</div><!-- End .page-header -->
-            <nav aria-label="breadcrumb" class="breadcrumb-nav">
-                <div class="container">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="/">Home</a></li>
-                        
-                        <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
-                    </ol>
-                </div><!-- End .container -->
-            </nav><!-- End .breadcrumb-nav -->
+<%- include('../layouts/Login/loginHeader') %>
 
-            <div class="page-content" id="load">
-            	<div class="cart">
-	                <div class="container">
-	                	<div class="row">
-	                		<div class="col-lg-9">
-	                			<table class="table table-cart table-mobile" id="carttoload">
-									<thead>
-										<tr>
-											<th>Product</th>
-											<th>Price</th>
-											<th>Quantity</th>
-											<th>Total</th>
-											<th></th>
-										</tr>
-									</thead>
+<main class="main">
+        	
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">My Account</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
 
-									<tbody>
-										<% if (b==1) { %>
-										<% usercart.Products.forEach(product => { %>
-											<tr>
-												<td class="product-col">
-													<div class="product">
-														<figure class="product-media">
-															<a href="/productdetails?id=<%=product.products._id%>">
-																<img src="<%= (product.products.pictures[0].replace('public','')) %>" alt="Product image">
-															</a>
-														</figure>
-										
-														<h3 class="product-title">
-															<a href="#"><%= product.products.name %></a>
-														</h3><!-- End .product-title -->
-													</div><!-- End .product -->
-												</td>
-												<td class="price-col">₹<%= product.price %></td>
-												<td class="quantity-col">
-													<div class="cart-product-quantity">
-														<input type="number" class="form-control" id="quantity" value="<%= product.quantity %>" step="1" data-decimals="0" onchange="addtocart('<%=product.name%>','<%=email%>', this.value)" required></div><!-- End .cart-product-quantity -->
-												</td>
-												<td class="total-col">₹<%= product.total %></td>
-												<td class="remove-col">
-													<button class="btn-remove" onclick="removeCartItem('<%=product.name%>' ,'<%=email%>%>')">
-														<i class="icon-close"></i>
-													</button>
-												</td>
-											</tr>
-											<% }); %>
-											<% } else { %>
-												<tr>
-													<td colspan="5" class="text-center">Your cart is empty.<%=checkmessage%></td>
-												</tr>
-											<% } %>
-										
-									</tbody>
-								</table><!-- End .table table-wishlist -->
-
+    <div class="page-content">
+        <div class="dashboard">
+            <div class="container">
+                <div class="row">
+        <aside class="col-md-4 col-lg-3">
 	                			
-	                		</div><!-- End .col-lg-9 -->
-	                		
-	                	</div><!-- End .row -->
-	                </div><!-- End .container -->
-                </div><!-- End .cart -->
-            </div><!-- End .page-content -->
-        </main><!-- End .main -->
+            <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link " id="tab-dashboard-link" href="/account" role="tab" aria-controls="tab-dashboard" aria-selected="true">My Account</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" id="tab-orders-link" href="/orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="tab-address-link" href="/address" role="tab" aria-controls="tab-address" aria-selected="false">Addresses</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="sign-out-link">Sign Out</a>
+                </li>
+            </ul>
+            
+        
+    </aside><!-- End .col-lg-3 -->
+    <div class="col-md-8 col-lg-9">
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
+        <table class="order-details">
+            <thead>
+                <tr>
+                    <th>Order Date</th>
+                    <th>Total</th>
+                    <th>Product</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% orders.forEach(order => { %>
+                    <tr>
+                        <td rowspan="<%= order.Products.length %>"><%= new Date(order.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %></td>
 
-		<script>
+
+                        <td rowspan="<%= order.Products.length %>"><%= order.total %></td>
+                        <% order.Products.forEach((product, index) => { %>
+                            <% if (index !== 0) { %>
+                                <tr>
+                            <% } %>
+                            <td>
+                                <a href="/productdetails?id=<%=product.products._id%>">
+                                    <img src="<%= product.products.pictures[0].replace('public', '') %>" alt="<%= product.name %>" style="height:20vh">
+                                </a>
+                            </td>
+                            <td><%= product.name %></td>
+                            <td><%= product.price %></td>
+                            <td><%= product.quantity %></td>
+                            <td><%= product.total %></td>
+                            <td>
+                                <% if (['placed', 'shipped'].includes(product.orderStatus)) { %>
+                                    <!-- Cancel button for placed or shipped products -->
+                                    <button onclick="cancelOrder('<%= order._id %>', '<%= product._id %>')" style="margin-bottom: 5px;">Cancel</button>
+                                <% } else if (['out for delivery', 'delivered'].includes(product.orderStatus)) { %>
+                                    <!-- Return button for out for delivery or delivered products -->
+                                    <button onclick="returnOrder('<%= order._id %>', '<%= product._id %>')" style="margin-bottom: 5px;">Return</button>
+                                <% } else if (['request return', 'request cancellation'].includes(product.orderStatus)) { %>
+                                    <!-- Display the order status itself as the button -->
+                                    <button disabled style="margin-bottom: 5px;"><%= product.orderStatus %></button>
+                                <% } %>
+                            </td>
+                            <% if (index !== 0) { %>
+                                </tr>
+                            <% } %>
+                        <% }); %>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+
+    </div><!-- .End .tab-pane -->
+
+</div><!-- End .col-lg-9 -->
+</div><!-- End .row -->
+</div><!-- End .container -->
+</div><!-- End .dashboard -->
+</div><!-- End .page-content -->
+</main><!-- End .main -->
+
+<%- include('../layouts/footer') %>
+<%- include('../layouts/Login/LoginMob') %>

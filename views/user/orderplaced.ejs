@@ -1,0 +1,47 @@
+<%- include('../layouts/header') %>
+<style>
+	.centered-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Adjust as needed to center vertically on the viewport */
+}
+
+.order-placed-card {
+    background-color: rgba(0, 0, 0, 0.1);
+	
+	
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow effect */
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+body{
+	background-image: url('/assets/images/banners/pages/order_placed.jpg');
+	background-size: cover;
+}
+
+</style>
+<main class="main">
+    <div class="container">
+       
+        <div class="centered-card">
+            
+            <div class="order-placed-card">
+                <h2>Your order has been placed successfully!</h2>
+                
+            </div>
+
+            <!-- CONTINUE SHOPPING BUTTON -->
+            <div class="continue-shopping-button">
+                <a href="/" class="btn btn-outline-dark-2">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optionally, you can include additional content or styling as needed -->
+</main>
+<%- include('../layouts/Login/LoginMob') %>
