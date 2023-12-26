@@ -104,46 +104,81 @@
 </div><!-- End .dashboard -->
 </div><!-- End .page-content -->
 </main><!-- End .main -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-
 function cancelOrder(orderId, productId) {
-   
-    fetch(`/orders/status`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            newStatus: 'request cancellation',orderId, productId
-        }),
-    })
-    .then(response => {
-        response.json()
-    }).then(data => {
-        $('#tabletoload').load('/orders #tabletoload')
-    })
-    .catch(error => {
-        console.error('Error:', error);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you really want to cancel this order?',
+        icon: 'warning',
+        input: 'text',
+        inputLabel: 'Reason for cancellation',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, cancel it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const reason = result.value;
+
+            fetch(`/orders/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    newStatus: 'request cancellation',
+                    orderId,
+                    productId,
+                    reason, // Include the reason in the request
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    $('#tabletoload').load('/orders #tabletoload');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
     });
 }
 
 function returnOrder(orderId, productId) {
-    fetch(`/orders/status`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            newStatus: 'request return',orderId, productId
-        }),
-    })
-    .then(response => {
-        response.json()
-    }).then(data => {
-        $('#tabletoload').load('/orders #tabletoload')
-    })
-    .catch(error => {
-        console.error('Error:', error);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you really want to return this product?',
+        icon: 'warning',
+        input: 'text',
+        inputLabel: 'Reason for return',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, return it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const reason = result.value;
+
+            fetch(`/orders/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    newStatus: 'request return',
+                    orderId,
+                    productId,
+                    reason, // Include the reason in the request
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    $('#tabletoload').load('/orders #tabletoload');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
     });
 }
 </script>

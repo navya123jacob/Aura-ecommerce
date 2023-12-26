@@ -5,6 +5,7 @@ const User = require('../models/userModel');
 const Category = require('../models/categoryModel');
 const order = require('../models/orderModel');
 const product = require('../models/productModel');
+const coupon = require('../models/couponModel');
 
 
 //module for hashing password

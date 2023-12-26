@@ -7,6 +7,7 @@ const product = require('../models/productModel');
 const category = require('../models/categoryModel');
 const cart = require('../models/cartModel');
 const order = require('../models/orderModel');
+const coupon = require('../models/couponModel');
 
 
 const dotenv = require('dotenv');  //for securing your creditials
@@ -965,7 +966,7 @@ const ordersstatus = async (req, res) => {
       
       const result = await order.updateOne(
           { _id: req.body.orderId, 'Products._id': req.body.productId },
-          { $set: { 'Products.$.orderStatus': req.body.newStatus } }
+          { $set: { 'Products.$.orderStatus': req.body.newStatus,'Products.$.reason': req.body.reason} }
         );
           
 
