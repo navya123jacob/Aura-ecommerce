@@ -83,8 +83,11 @@ userRoute.get('/orderplaced',mid.UserNoSes,mid.logiheader,userController.orderpl
 //see orders
 userRoute.get('/orders',mid.UserNoSes,mid.logiheader,userController.orders)
 
-//see orders
+//to return or cancel a order
 userRoute.put('/orders/status',mid.UserNoSes,mid.logiheader,userController.ordersstatus)
+
+//see order details
+userRoute.get('/orderdetails',mid.UserNoSes,mid.logiheader,userController.orderdetails)
 
 
 //to add product to cart

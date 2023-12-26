@@ -83,6 +83,9 @@
                                     <!-- Display the order status itself as the button -->
                                     <button disabled style="margin-bottom: 5px;"><%= product.orderStatus %></button>
                                 <% } %>
+                                <a href='/orderdetails?orderId=<%= order._id %>&productId=<%= product._id %>' class="button-link">
+                                    <button style="margin-bottom: 5px;">Order details</button>
+                                  </a>
                             </td>
                             <% if (index !== 0) { %>
                                 </tr>

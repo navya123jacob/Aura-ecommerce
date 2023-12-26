@@ -1,0 +1,100 @@
+<%- include('../layouts/header') %>
+<%- include('../layouts/Login/loginHeader') %>
+<style>
+    .address {
+  font-size: 16px;
+  line-height: 1.5;
+  
+}
+
+.address-details,
+.name,
+.phone,
+.street,
+.location,
+.pincode {
+  margin-left: 20px;
+}
+</style>
+
+<main class="main">
+        	
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">My Account</li>
+            </ol>
+        </div><!-- End .container -->
+    </nav><!-- End .breadcrumb-nav -->
+
+    <div class="page-content">
+        <div class="dashboard">
+            <div class="container">
+                <div class="row">
+        <aside class="col-md-4 col-lg-3">
+	                			
+            <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link " id="tab-dashboard-link" href="/account" role="tab" aria-controls="tab-dashboard" aria-selected="true">My Account</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link " id="tab-orders-link" href="/orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="tab-address-link" href="/address" role="tab" aria-controls="tab-address" aria-selected="false">Addresses</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="sign-out-link">Sign Out</a>
+                </li>
+            </ul>
+            
+        
+    </aside><!-- End .col-lg-3 -->
+    <div class="col-md-8 col-lg-9">
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Order Date: <%= new Date(myorder.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %></h5>
+                        <p class="card-text">Total: <%= myorder.total %></p>
+                        <div class="media mb-3">
+                            
+                            <img src="<%= myorder.Products[i].products.pictures[0].replace('public', '') %>" class="mr-3" alt="<%= myorder.Products[0].name %>" style="width: 100px;">
+                            <div class="media-body">
+                                <h6 class="mt-0"><%= myorder.Products[i].name %></h6>
+                                <p>Price: <%= myorder.Products[i].price %></p>
+                                <p>Quantity: <%= myorder.Products[i].quantity %></p>
+                                <p>Total: <%= myorder.Products[i].total %></p>
+                                <p class="address">
+                                    <strong>Address:</strong><br>
+                                    <div class="address-details">
+                                      <span class="name"><%= myuser.addressField[j].name %></span><br>
+                                      <span class="phone"><%= myuser.addressField[j].phone %></span><br>
+                                      <span class="street"><%= myuser.addressField[j].address %></span><br>
+                                      <span class="location"><%= myuser.addressField[j].district %>, <%= myuser.addressField[j].state %></span><br>
+                                      <span class="pincode"><%= myuser.addressField[j].pincode %></span><br>
+                                    </div>
+                                  </p>
+                                  <p>Status: 
+                                    <% const orderStatus = myorder.Products[i].orderStatus; %>
+                                    
+                                        <span class="badge badge-danger"><%= orderStatus %></span>
+                                   
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </div><!-- .End .tab-pane -->
+
+</div><!-- End .col-lg-9 -->
+</div><!-- End .row -->
+</div><!-- End .container -->
+</div><!-- End .dashboard -->
+</div><!-- End .page-content -->
+</main><!-- End .main -->
+
+<%- include('../layouts/footer') %>
+<%- include('../layouts/Login/LoginMob') %>

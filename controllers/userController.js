@@ -975,6 +975,57 @@ const ordersstatus = async (req, res) => {
   }
 }
 
+//to see order details
+const orderdetails=async (req, res) => {
+  try {
+      //for logi mid
+      categories = req.categories;
+      ses = req.ses;
+      const user = req.session.checkuser || '';
+      //logi mid end
+      const myorder = await order.findOne(
+          { _id: req.query.orderId, 'Products._id': req.query.productId }
+         ).populate({
+          path: 'Products.products', 
+          model: 'Product'
+      }).populate({
+        path: 'user',
+        model: 'User'
+      })
+      .exec();
+
+    
+      let i=0
+      
+      for( i=0;i<myorder.Products.length;i++)
+      {
+        
+        if (myorder.Products[i]._id==req.query.productId)
+        {
+          break;
+        }
+      }
+
+      const myuser=await User.findOne({email:req.session.email})
+      let j=0;
+      
+      for(j=0;i<myuser.addressField.length;j++)
+      {
+        if(myorder.address==myuser.addressField[j]._id)
+        {
+         
+          break;
+        }
+      }
+     
+          
+
+         res.render('orderDetails', { user,  myorder, ses, categories ,i,j,myuser});
+  } catch (error) {
+      console.log(error.message);
+  }
+}
+
 
 
 
@@ -1018,5 +1069,6 @@ module.exports={
     placeorder,
     orderplaced,
     orders,
-    ordersstatus
+    ordersstatus,
+    orderdetails
 }
