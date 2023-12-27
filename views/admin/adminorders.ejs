@@ -21,14 +21,14 @@
               <table class="order-details">
                 <thead>
                   <tr>
+                      <th>Order Id</th>
                       <th>Order Date</th>
                       <th>Total</th>
                       <th>Product</th>
                       <th>Name</th>
-                      <th>Price</th>
-                      <th>Quantity</th>
-                      <th>Total</th>
-                      <th>Username</th>
+                      
+                    
+                   
                       <th>Email</th>
                       <th>Action</th>
                   </tr>
@@ -36,6 +36,7 @@
                 <tbody>
                   <% orders.forEach(order => { %>
                       <tr>
+                        <td rowspan="<%= order.Products.length %>"><%= order._id %></td>
                           <td rowspan="<%= order.Products.length %>"><%= new Date(order.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %></td>
                           <td rowspan="<%= order.Products.length %>"><%= order.total %></td>
               
@@ -49,14 +50,13 @@
                                   </a>
                               </td>
                               <td><%= product.name %></td>
-                              <td><%= product.price %></td>
-                              <td><%= product.quantity %></td>
-                              <td><%= product.total %></td>
+                              
                              
-                              <td><%= order.user.Fname %></td>
+                             
+                           
                               <td><%= order.user.email %></td>
                               <td>
-                                <select onchange="updateProductStatus('<%= order._id %>', '<%= product._id %>', this.value)">
+                                <select onchange="updateProductStatus('<%= order._id %>', '<%= product._id %>','<%= product.reason %>', this.value)">
                                     <option value="placed" <%= product.orderStatus === 'placed' ? 'selected' : '' %>>Placed</option>
                                     <option value="shipped" <%= product.orderStatus === 'shipped' ? 'selected' : '' %>>Shipped</option>
                                     <option value="delivered" <%= product.orderStatus === 'delivered' ? 'selected' : '' %>>Delivered</option>
@@ -65,6 +65,9 @@
                                     <option value="request cancellation" <%= product.orderStatus === 'request cancellation' ? 'selected' : '' %>>Request Cancellation</option>
                                     <option value="cancelled" <%= product.orderStatus === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
                                 </select>
+                                <a href='/admin/orderdetails?orderId=<%= order._id %>&productId=<%= product._id %>&email=<%= order.user.email %>' class="button-link">
+                                  <button style="margin-top: 5px;">Order Details</button>
+                              </a>
                             </td>
                               <% if (index !== 0) { %>
                                   </tr>
@@ -93,7 +96,7 @@
 <!-- container-scroller -->
 
 <script>
-   function updateProductStatus(orderId, productId, status) {
+   function updateProductStatus(orderId, productId,reason, status) {
         console.log('Function called with orderId:', orderId, 'productId:', productId, 'status:', status);
 
         const formData = { orderId, productId, status };
@@ -114,7 +117,7 @@
         .then(data => {
             // Update the button text and class
  
-           alert('hi')
+         console.log(data.success)
             
            
         })

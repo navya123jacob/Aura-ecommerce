@@ -100,6 +100,7 @@ const userSchema=new mongoose.Schema({
 
 
 })
+userSchema.index({ Fname: 'text' });
 const User=mongoose.model('User',userSchema)
 module.exports=User
 

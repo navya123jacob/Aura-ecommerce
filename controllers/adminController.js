@@ -8,6 +8,7 @@ const product = require('../models/productModel');
 const coupon = require('../models/couponModel');
 
 
+
 //module for hashing password
 const bcrypt = require('bcrypt');
 
@@ -63,30 +64,43 @@ const dashboard=async(req,res)=>{
 //user
 const users = async (req, res) => {
     try {
-        
-      const page = parseInt(req.query.page) || 1;
-      const pageSize = 4; // Number of users per page
-      const searchQuery = req.query.search || ''; // Get the search query
-  
-      let query = {};
-  
-      // Add search query to the database query if it exists
-     
-  
-      const totalUsers = await User.countDocuments(query);
-      const totalPages = Math.ceil(totalUsers / pageSize);
-  
-      const users = await User.find(query)
-        .skip((page - 1) * pageSize)
-        .limit(pageSize)
-        .exec();
-  
-      res.render('users', { users, page, totalPages, searchQuery });
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = 4; // Number of users per page
+        const searchQuery = req.query.search || ''; // Get the search query
+
+        let query = {};
+
+        // Add search query to the database query if it exists
+        if (searchQuery) {
+            const regex = new RegExp(`^${searchQuery}`, 'i');
+            query = { Fname: regex };
+        }
+
+        const totalUsers = await User.countDocuments(query);
+        const totalPages = Math.ceil(totalUsers / pageSize);
+
+        let users;
+        if (searchQuery) {
+            // Fetch all users matching the search query
+            users = await User.find(query).exec();
+            console.log(users)
+            res.json({ users: users });
+        } else {
+            // Fetch users with pagination
+            users = await User.find(query)
+                .skip((page - 1) * pageSize)
+                .limit(pageSize)
+                .exec();
+                res.render('users', { users, page, totalPages, searchQuery });
+        }
+
+       
     } catch (error) {
-      console.log(error.message);
-      res.status(500).send('Internal Server Error');
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
     }
-  };
+};
+
 
 //block user
 const userblock = async (req, res) => {
@@ -259,8 +273,57 @@ const ordersstatus = async (req, res) => {
     }
 }
   
+ 
+//order details
+const orderdetails=async (req, res) => {
+    try {
+        //for logi mid
+        categories = req.categories;
+        ses = req.ses;
+        const user = req.session.checkuser || '';
+        //logi mid end
+        const myorder = await order.findOne(
+            { _id: req.query.orderId, 'Products._id': req.query.productId }
+           ).populate({
+            path: 'Products.products', 
+            model: 'Product'
+        }).populate({
+          path: 'user',
+          model: 'User'
+        })
+        .exec();
   
-
+      
+        let i=0
+        
+        for( i=0;i<myorder.Products.length;i++)
+        {
+          
+          if (myorder.Products[i]._id==req.query.productId)
+          {
+            break;
+          }
+        }
+  
+        const myuser=await User.findOne({email:req.query.email})
+        let j=0;
+        
+        for(j=0;i<myuser.addressField.length;j++)
+        {
+          if(myorder.address==myuser.addressField[j]._id)
+          {
+           
+            break;
+          }
+        }
+       
+            
+  
+           res.render('adminorderDetails', { user,  myorder, ses, categories ,i,j,myuser});
+    } catch (error) {
+        console.log(error.message);
+    }
+  }
 
 //logout
 const adminlogout=async(req,res)=>{
@@ -290,5 +353,6 @@ module.exports={
     CategoryToggle,
     orders,
     ordersstatus,
+    orderdetails,
     adminlogout
 }

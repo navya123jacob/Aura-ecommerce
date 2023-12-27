@@ -1,0 +1,108 @@
+<%- include('./layouts/header.ejs') %>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<div class="container-fluid page-body-wrapper">
+  <!-- partial:partials/_navbar.html -->
+  <%- include('./layouts/nav.ejs') %>
+  <!-- partial -->
+  
+</style>
+
+  <div class="main-panel">
+    <div class="content-wrapper">
+
+      <div class="row">
+        <div class="col-12 grid-margin">
+          <div class="card">
+           
+            <div class="table-responsive" id="blok">
+              <div class="card " >
+                <div class="card-body" style="margin-left: 15vh;">
+                    <h5 class="card-title">Order Date: <%= new Date(myorder.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %></h5>
+                    <p class="card-text">Total: <%= myorder.total %></p>
+                    <div class="media mb-3">
+                        
+                        <img src="<%= myorder.Products[i].products.pictures[0].replace('public', '') %>" class="mr-3" alt="<%= myorder.Products[0].name %>" style="width: 40vh;">
+                        <div class="media-body">
+                            <h6 class="mt-0"><%= myorder.Products[i].name %></h6>
+                            <p>Price: <%= myorder.Products[i].price %></p>
+                            <p>Quantity: <%= myorder.Products[i].quantity %></p>
+                            <p>Total: <%= myorder.Products[i].total %></p>
+                            <p class="address">
+                                <strong>Address:</strong><br>
+                                <div class="address-details">
+                                  <span class="name"><%= myuser.addressField[j].name %></span><br>
+                                  <span class="phone"><%= myuser.addressField[j].phone %></span><br>
+                                  <span class="street"><%= myuser.addressField[j].address %></span><br>
+                                  <span class="location"><%= myuser.addressField[j].district %>, <%= myuser.addressField[j].state %></span><br>
+                                  <span class="pincode"><%= myuser.addressField[j].pincode %></span><br>
+                                </div>
+                              </p>
+                            
+                              <p>Status: 
+                                <% const orderStatus = myorder.Products[i].orderStatus; %>
+                                
+                                    <span class="badge badge-danger"><%= orderStatus %></span>
+                               
+                            </p>
+                            <% if (myorder.Products[i].reason) { %>
+                              <div style="background-color: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px;">
+                                  <p style="color: white;">Reason for <%= myorder.Products[i].orderStatus %>: <%= myorder.Products[i].reason %></p>
+                              </div>
+                          <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+           
+
+    <!-- partial:partials/_footer.html -->
+    <footer class="footer">
+      <div class="d-sm-flex justify-content-center justify-content-sm-between">
+        <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Aura beauty</span>
+      </div>
+    </footer>
+    <!-- partial -->
+  </div>
+  <!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+
+<script>
+   function updateProductStatus(orderId, productId, status) {
+        console.log('Function called with orderId:', orderId, 'productId:', productId, 'status:', status);
+
+        const formData = { orderId, productId, status };
+    fetch(`/admin/orders/status`, {
+        method: 'POST', // Use POST or PATCH for updating data
+        headers: {
+            'Content-Type': 'application/json',
+        },
+         body: JSON.stringify(formData),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            // You can handle the response if needed
+            return response.json();
+        })
+        .then(data => {
+            // Update the button text and class
+ 
+           alert('hi')
+            
+           
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+
+  }
+</script>
+
+
+<%- include('./layouts/footer.ejs') %>

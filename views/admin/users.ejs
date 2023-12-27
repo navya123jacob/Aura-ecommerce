@@ -12,10 +12,10 @@
           <div class="card">
             
             <div class="col-md-6">
-              <input type="text" class="form-control" id="searchInput" placeholder="Search by name" oninput="searchUsers()" value="<%= searchQuery %>">
+              <input type="text" class="form-control" id="searchInput" placeholder="Search by name" oninput="searchUsers(this.value)" value="<%= searchQuery %>">
             </div>
             <div class="table-responsive" id="blok">
-              <table class="table">
+              <table class="table" id="toload">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -34,7 +34,7 @@
                         <% i++ %>
                       </td>
                       <td>
-                        <span class="pl-2"><%= user.Fname %> <%= user.Lname %></span>
+                        <span class="pl-2"><%= user.Fname %> </span>
                       </td>
                       <td><%= user.mno %></td>
                       <td><%= user.email %></td>
@@ -53,6 +53,7 @@
             </div>
 
             <!-- Pagination -->
+            <% if (!searchQuery) { %>
             <nav aria-label="Page navigation">
               <ul class="pagination justify-content-center">
                 <% if (page > 1) { %>
@@ -90,6 +91,7 @@
                 <% } %>
               </ul>
             </nav>
+            <% } %>
             <!-- End Pagination -->
 
           </div>
@@ -195,28 +197,37 @@ console.log(action);
 
 
 
-  function searchUsers() {
-    // Get the search query from the input field
-    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+function searchUsers(searchvalue) {
+    fetch(`/admin/users?search=${searchvalue}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.users); // Log the entire data object
+        const tableBody = document.querySelector('tbody');
+        tableBody.innerHTML = ''; // Clear existing rows
 
-    // Get all table rows in the tbody
-    const rows = document.querySelectorAll('tbody tr');
-
-    // Loop through each row and hide/show based on the first letter of the user's name
-    rows.forEach(row => {
-      // Extract the user's name from the row (adjust the index based on your table structure)
-      const userName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-      
-      
-      if (userName.trim().startsWith(searchQuery)) {
-        // If the first letter matches, display the row
-        row.style.display = '';
-      } else {
-        // If the first letter does not match, hide the row
-        row.style.display = 'none';
-      }
+        // Assuming the 'users' property is directly on the data object
+        
+            data.users.forEach(user => {
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${user.Fname}</td>
+                    <td>${user.Lname}</td>
+                    <!-- Add other fields as needed -->
+                `;
+                tableBody.appendChild(newRow);
+            });
+       
+        // Update other UI elements (pagination, etc.) if needed
+    })
+    .catch(error => {
+        console.error('Error:', error);
     });
-  }
+}
 </script>
 
 <%- include('./layouts/footer.ejs') %>

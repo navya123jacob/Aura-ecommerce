@@ -100,6 +100,9 @@ adminRoute.get('/orders',mid.adminloginNoSes,adminController.orders)
 //orders status change
 adminRoute.post('/orders/status',mid.adminloginNoSes,adminController.ordersstatus)
 
+//orders details on admin side
+adminRoute.get('/orderdetails',mid.adminloginNoSes,adminController.orderdetails)
+
 
 //logout
 adminRoute.get('/logout',adminController.adminlogout)
