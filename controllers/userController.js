@@ -73,25 +73,29 @@ const Home=async(req,res)=>{
 //load user login
 const loadLogin=async(req,res)=>{
     try{
-      const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
-  if(buser)
-    {
-      req.session.checkuser=''
       
-    }
-    let ses = false; // If checkuser doesn't exists
+        const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
+        if(buser)
+          {
+            req.session.checkuser=''
             
-      if (req.session.checkuser) {
-          // If checkuser exists in the session, set ses to true
-          ses = true;
-      }
+          }
+          let ses = false; // If checkuser doesn't exists
+                  
+            if (req.session.checkuser) {
+                // If checkuser exists in the session, set ses to true
+                ses = true;
+            }
+            
+          const user = req.session.checkuser|| '' 
+          const categories= await category.find({'status': 'active'})
+              
+            
+            const message = req.query.message || '' 
+              res.render('login',{message,categories,ses,user})
+       
       
-    const user = req.session.checkuser|| '' 
-    const categories= await category.find({'status': 'active'})
-        
       
-      const message = req.query.message || '' 
-        res.render('login',{message,categories,ses,user})
     }
     catch (error) {
         console.log(error.message);
@@ -102,6 +106,17 @@ const loadLogin=async(req,res)=>{
 //load user Register
 const loadRegister=async(req,res)=>{
     try{
+      if(req.session.userId)
+       {
+        const UserOTPVerificationRecords = await UserOTP.find({userId:req.session.userId});
+      
+      const { expiresAt } = UserOTPVerificationRecords[0];
+      const { createdAt } = UserOTPVerificationRecords[0];
+
+        res.redirect(`/registerpostotp?expiresAt=${expiresAt}&createdAt=${createdAt}`)
+       }
+       else
+       {
       const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
       if(buser)
         {
@@ -117,9 +132,11 @@ const loadRegister=async(req,res)=>{
           
         const user = req.session.checkuser|| '' 
         const categories= await category.find({'status': 'active'})
+
         
-      const message = req.query.message || ''  //remember this always
+      const message = req.query.message || ''  
      res.render('register',{message,ses,user,categories})
+        }
 }
    catch (error) {
     console.log(error.message);
@@ -458,6 +475,7 @@ const CatProductsView = async (req, res) => {
 
     const totalProducts = await product.countDocuments({ 'status': 'active' });
     const totalPages = Math.ceil(totalProducts / pageSize);
+    const email=req.session.email
 
     let mycategory=await category.findOne({name:cat,'status':'active'})
     let products=''
@@ -476,7 +494,7 @@ const CatProductsView = async (req, res) => {
 
    
       
-        res.render('categories', { products, categories, page, totalPages,cat,ses,user});
+        res.render('categories', { products, categories, page, totalPages,cat,ses,user,email});
       
 
     
@@ -557,7 +575,7 @@ const productaddtocart = async (req, res) => {
       const existingProduct = cartFind.Products.find(   // findOne is more suitable when you're querying the entire collection for a single document based on some conditions. Here looking for a product within an array, so find is appropriate.
         (product) => product.name === pro.name
       );
-      console.log(pro.name)
+      
 
       if (existingProduct) {
         // Product is already in the cart, increase the quantity

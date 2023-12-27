@@ -60,7 +60,7 @@
                                                     <a href="#" class="btn-product-icon btn-wishlist btn-expandable" title="Add to wishlist"><span>add to wishlist</span></a>
                                                 </div><!-- End .product-action -->
                                                 <div class="product-action product-action-transparent">
-                                                    <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                                  <button class="btn-product btn-cart" id="cart<%=i%>" onclick="addtocart('<%=products[i].name%>','<%=email%>',<%=i%>)">Add to cart</button>
                                                 </div><!-- End .product-action -->
                                             </figure><!-- End .product-media -->
                                             <div class="product-body">
@@ -200,6 +200,44 @@
     });
   }
   
+  
+  function addtocart(prodname,email,i)
+            {
+                const qtyValue = 1;
+           
+            fetch(`/productaddtocart?name=${prodname}&email=${email}&qtyValue=${qtyValue}`, {
+            method: 'POST', // Use POST or PATCH for updating data
+            headers: {
+            'Content-Type': 'application/json',
+             },
+        
+    }).then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            // You can handle the response if needed
+            return response.json();
+        })
+        .then(data => {
+            // Update the button text and class
+            
+            
+            document.getElementById(`cart${i}`).textContent = 'Added to Cart';
+            
+            setTimeout(() => {
+              document.getElementById(`cart${i}`).textContent = 'Add to Cart';
+            
+        }, 1000);
+            
+            
+           
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+       
           </script>
           
         <%- include('../layouts/footer') %>

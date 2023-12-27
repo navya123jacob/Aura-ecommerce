@@ -156,7 +156,7 @@ const CategoryAddpost=async(req,res)=>{
         const categoryName = req.body.name;
         
         // Check if a category with the same name already exists (case-sensitive)
-        const existingCategory = await Category.findOne({ name: { $regex: new RegExp(`^${categoryName}$`, 'i') } });
+        const existingCategory = await Category.findOne({ name: { $regex: new RegExp(req.body.name, 'i') } });
 
         if (existingCategory) {
             // If a category with the same name exists, redirect with an error message
@@ -192,7 +192,7 @@ const CategoryEdit=async(req,res)=>{
 //category edit post
 const CategoryEditpost=async(req,res)=>{
     try{
-        const existingCategory = await Category.findOne({ name: { $regex: new RegExp(`^${categoryName}$`, 'i') } });
+        const existingCategory = await Category.findOne({ name: req.body.name });
 
         if (existingCategory) {
             // If a category with the same name exists, redirect with an error message
@@ -327,6 +327,110 @@ const orderdetails=async (req, res) => {
     }
   }
 
+
+//coupons
+const coupons= async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = 4; // Number of users per page
+        const searchQuery = req.query.search || ''; // Get the search query
+
+        let query = {};
+
+        // Add search query to the database query if it exists
+        if (searchQuery) {
+            const regex = new RegExp(`^${searchQuery}`, 'i');
+            query = { Fname: regex };
+        }
+
+        const totalUsers = await User.countDocuments(query);
+        console.log(totalUsers)
+        const totalPages = Math.ceil(totalUsers / pageSize);
+
+        let users;
+        if (searchQuery) {
+            // Fetch all users matching the search query
+            users = await User.find(query).exec();
+            
+           
+        } else {
+            // Fetch users with pagination
+            users = await User.find(query)
+                .skip((page - 1) * pageSize)
+                .limit(pageSize)
+                .exec();
+                
+        }
+        res.render('coupons', { users, page, totalPages, searchQuery });
+
+       
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
+//add coupons
+const addcoupons= async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = 4; // Number of users per page
+        const searchQuery = req.query.search || ''; // Get the search query
+        const message=''
+        let query = {};
+
+        // Add search query to the database query if it exists
+        if (searchQuery) {
+            const regex = new RegExp(`^${searchQuery}`, 'i');
+            query = { Fname: regex };
+        }
+
+        const totalUsers = await User.countDocuments(query);
+        console.log(totalUsers)
+        const totalPages = Math.ceil(totalUsers / pageSize);
+
+        let users;
+        if (searchQuery) {
+            // Fetch all users matching the search query
+            users = await User.find(query).exec();
+            
+           
+        } else {
+            // Fetch users with pagination
+            users = await User.find(query)
+                .skip((page - 1) * pageSize)
+                .limit(pageSize)
+                .exec();
+                
+        }
+        res.render('addcoupon', { users, page, totalPages, searchQuery, message });
+
+       
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
+//add coupon post 
+const addcouponpost=async (req, res) => {
+    try {
+        const couponData = req.body;
+        const newCoupon = new coupon(couponData);
+
+    newCoupon.save() 
+    res.json({success:true})          
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
+
+
 //logout
 const adminlogout=async(req,res)=>{
     try{
@@ -356,5 +460,9 @@ module.exports={
     orders,
     ordersstatus,
     orderdetails,
+    coupons,
+    addcoupons,
+    addcouponpost,
+    
     adminlogout
 }

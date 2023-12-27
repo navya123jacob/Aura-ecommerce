@@ -106,6 +106,16 @@ adminRoute.post('/orders/status',mid.adminloginNoSes,adminController.ordersstatu
 //orders details on admin side
 adminRoute.get('/orderdetails',mid.adminloginNoSes,adminController.orderdetails)
 
+//to view coupons
+adminRoute.get('/coupons',mid.adminloginNoSes,adminController.coupons)
+
+//to add coupons
+adminRoute.get('/couponsadd',mid.adminloginNoSes,adminController.addcoupons)
+
+//add coupon post 
+adminRoute.get('/addcouponpost',mid.adminloginNoSes,adminController.addcouponpost)
+
+
 
 //logout
 adminRoute.get('/logout',adminController.adminlogout)

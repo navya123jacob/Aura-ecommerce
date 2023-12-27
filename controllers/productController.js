@@ -139,6 +139,7 @@ const ProductEdit=async(req,res)=>{
 
     const ProductEditpost = async (req, res) => {
         try {
+           
            const newarr = req.files.map(file => file.path);
            await product.updateOne(
             { _id: req.query.id },

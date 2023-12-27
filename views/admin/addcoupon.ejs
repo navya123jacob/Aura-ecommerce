@@ -1,0 +1,130 @@
+<%- include('./layouts/header.ejs') %>
+
+<div class="container-fluid page-body-wrapper">
+    <!-- partial:partials/_navbar.html -->
+    <%- include('./layouts/nav.ejs') %>
+    <!-- partial -->
+    <div class="main-panel">
+        <div class="content-wrapper">
+            <div class="card">
+                <div class="card-body">
+                    <form class="forms-sample">
+                        <!-- Update the form action endpoint accordingly -->
+            
+                        <div class="form-group row">
+                            <label for="couponName" class="col-sm-3 col-form-label" >Coupon Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="couponName" name="couponName" placeholder="Coupon Name" required>
+                                <!-- Add error message element if needed -->
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="couponCode" class="col-sm-3 col-form-label">Coupon Code</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="couponCode" name="couponCode" placeholder="Coupon Code" required>
+                                <!-- Add error message element if needed -->
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="discountAmount" class="col-sm-3 col-form-label">Discount Percentage</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" id="discountAmount" name="discountAmount" placeholder="Discount Amount" required>
+                                <!-- Add error message element if needed -->
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="minAmount" class="col-sm-3 col-form-label">Minimum Amount</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" id="minAmount" name="minAmount" placeholder="Minimum Amount" required>
+                                <!-- Add error message element if needed -->
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="couponDescription" class="col-sm-3 col-form-label">Coupon Description</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="couponDescription" name="couponDescription" placeholder="Coupon Description" required></textarea>
+                                <!-- Add error message element if needed -->
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="expiryDate" class="col-sm-3 col-form-label">Expiry Date</label>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control" id="expiryDate" name="expiryDate" placeholder="Expiry Date" required>
+                                <!-- Add error message element if needed -->
+                            </div>
+                        </div>
+            
+                        <!-- Add other form fields for coupon details -->
+            
+                        <button type="submit" class="btn btn-primary mr-2" onclick="addcoupon()">Submit</button>
+                        <button class="btn btn-dark">Cancel</button>
+                    </form>
+                    <p class="text-success"> <%= message %></p>
+                </div>
+            </div>
+            
+    <!-- content-wrapper ends -->
+    <!-- partial:partials/_footer.html -->
+    <footer class="footer">
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Aura Beauty</span>
+        </div>
+    </footer>
+    <!-- partial -->
+    </div>
+    <!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+<script>
+function addcoupon() {
+    // Retrieve form field values
+    const couponName = document.getElementById('couponName').value;
+    const couponCode = document.getElementById('couponCode').value;
+    const discountAmount = document.getElementById('discountAmount').value;
+    const minAmount = document.getElementById('minAmount').value;
+    const couponDescription = document.getElementById('couponDescription').value;
+    const expiryDate = document.getElementById('expiryDate').value;
+
+    const formData = {
+        couponName,
+        couponCode,
+        discountAmount,
+        minAmount,
+        couponDescription,
+        expiryDate,
+    };
+   fetch('/addcouponpost',, {
+        method: 'POST', 
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+    })
+        .then(response => {
+            
+           
+            return response.json();
+        })
+        .then(data => {
+            
+            alert('hi')
+           
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+
+    
+
+</script>
+
+<%- include('./layouts/footer.ejs') %>
