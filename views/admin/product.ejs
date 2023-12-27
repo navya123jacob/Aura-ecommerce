@@ -17,7 +17,7 @@
                 </div>
               </div>
               <div class="table-responsive">
-                <table class="table">
+                <table class="table"id="toload">
                   <thead>
                     <tr>
                       <th>#</th>
@@ -166,11 +166,11 @@
           break;
         case 'delete':
           // Redirect to delete route
-          window.location.href = `/admin/products/delete?id=${productId}`;
+          $('#toload').load(`/admin/products/delete?id=${productId} #toload`);
           break;
         case 'toggle':
           // Redirect to toggle route
-          window.location.href = `/admin/products/toggle?id=${productId}`;
+          $('#toload').load(`/admin/products/toggle?id=${productId} #toload`);
           break;
         // Add more cases for other actions if needed
         default:

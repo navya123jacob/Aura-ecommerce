@@ -45,6 +45,9 @@ adminRoute.get('/dashboard',mid.adminloginNoSes,mid.adminloginNoSes,adminControl
 //users
 adminRoute.get('/users',mid.adminloginNoSes,adminController.users)
 
+//users
+adminRoute.post('/users',mid.adminloginNoSes,adminController.users)
+
 //user block
 adminRoute.post('/users/block',mid.adminloginNoSes,adminController.userblock)
 

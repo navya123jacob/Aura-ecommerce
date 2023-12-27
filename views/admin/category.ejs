@@ -15,7 +15,7 @@
                 <input type="text" class="form-control" id="searchInput" placeholder="Search by name" oninput="searchUsers()">
               </div>
               <div class="table-responsive">
-                <table class="table">
+                <table class="table" id="toload">
                   <thead>
                     <tr>
                       <th>#</th>
@@ -100,18 +100,17 @@
       switch (action) {
         
         case 'Edit':
-          url = `/admin/categories/edit?categoryId=${categoryId}&name=${categoryName}`;
+        window.location.href = `/admin/categories/edit?categoryId=${categoryId}&name=${categoryName}`;
           break;
         case 'Toggle':
-          url = `/admin/categories/toggle?categoryId=${categoryId}&name=${categoryName}`;
+          $('#toload').load(`/admin/categories/toggle?categoryId=${categoryId}&name=${categoryName} #toload`);
           break;
         default:
           // Handle other actions if needed
           break;
       }
 
-      // You may want to perform additional actions or send requests to the server here
-      window.location.href = url;
+      
 
       // Hide the modal after confirming
       $('#confirmationModal').modal('hide');

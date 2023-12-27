@@ -77,22 +77,24 @@ const users = async (req, res) => {
         }
 
         const totalUsers = await User.countDocuments(query);
+        console.log(totalUsers)
         const totalPages = Math.ceil(totalUsers / pageSize);
 
         let users;
         if (searchQuery) {
             // Fetch all users matching the search query
             users = await User.find(query).exec();
-            console.log(users)
-            res.json({ users: users });
+            
+           
         } else {
             // Fetch users with pagination
             users = await User.find(query)
                 .skip((page - 1) * pageSize)
                 .limit(pageSize)
                 .exec();
-                res.render('users', { users, page, totalPages, searchQuery });
+                
         }
+        res.render('users', { users, page, totalPages, searchQuery });
 
        
     } catch (error) {
