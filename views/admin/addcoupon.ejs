@@ -6,8 +6,8 @@
     <!-- partial -->
     <div class="main-panel">
         <div class="content-wrapper">
-            <div class="card">
-                <div class="card-body">
+            <div class="card" id="toload">
+                <div class="card-body" >
                     <form class="forms-sample">
                         <!-- Update the form action endpoint accordingly -->
             
@@ -87,7 +87,7 @@ function addcoupon() {
     // Retrieve form field values
     const couponName = document.getElementById('couponName').value;
     const couponCode = document.getElementById('couponCode').value;
-    const discountAmount = document.getElementById('discountAmount').value;
+    const discountPercent = document.getElementById('discountAmount').value;
     const minAmount = document.getElementById('minAmount').value;
     const couponDescription = document.getElementById('couponDescription').value;
     const expiryDate = document.getElementById('expiryDate').value;
@@ -95,12 +95,13 @@ function addcoupon() {
     const formData = {
         couponName,
         couponCode,
-        discountAmount,
+        discountPercent,
         minAmount,
         couponDescription,
         expiryDate,
     };
-   fetch('/addcouponpost',, {
+    console.log(formData)
+   fetch('/admin/addcouponpost', {
         method: 'POST', 
         headers: {
             'Content-Type': 'application/json',
@@ -114,8 +115,7 @@ function addcoupon() {
         })
         .then(data => {
             
-            alert('hi')
-           
+           window.location.href='/admin/couponsadd?message=added'
         })
         .catch(error => {
             console.error('Error:', error);

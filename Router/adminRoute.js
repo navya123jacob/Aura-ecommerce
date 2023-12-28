@@ -113,7 +113,7 @@ adminRoute.get('/coupons',mid.adminloginNoSes,adminController.coupons)
 adminRoute.get('/couponsadd',mid.adminloginNoSes,adminController.addcoupons)
 
 //add coupon post 
-adminRoute.get('/addcouponpost',mid.adminloginNoSes,adminController.addcouponpost)
+adminRoute.post('/addcouponpost',mid.adminloginNoSes,adminController.addcouponpost)
 
 
 

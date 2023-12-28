@@ -331,37 +331,9 @@ const orderdetails=async (req, res) => {
 //coupons
 const coupons= async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const pageSize = 4; // Number of users per page
-        const searchQuery = req.query.search || ''; // Get the search query
-
-        let query = {};
-
-        // Add search query to the database query if it exists
-        if (searchQuery) {
-            const regex = new RegExp(`^${searchQuery}`, 'i');
-            query = { Fname: regex };
-        }
-
-        const totalUsers = await User.countDocuments(query);
-        console.log(totalUsers)
-        const totalPages = Math.ceil(totalUsers / pageSize);
-
-        let users;
-        if (searchQuery) {
-            // Fetch all users matching the search query
-            users = await User.find(query).exec();
-            
-           
-        } else {
-            // Fetch users with pagination
-            users = await User.find(query)
-                .skip((page - 1) * pageSize)
-                .limit(pageSize)
-                .exec();
-                
-        }
-        res.render('coupons', { users, page, totalPages, searchQuery });
+        const message=req.query.message||''
+       const coupons=await coupon.find()
+        res.render('coupons', { message,coupons});
 
        
     } catch (error) {
@@ -374,37 +346,11 @@ const coupons= async (req, res) => {
 //add coupons
 const addcoupons= async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const pageSize = 4; // Number of users per page
-        const searchQuery = req.query.search || ''; // Get the search query
-        const message=''
-        let query = {};
-
-        // Add search query to the database query if it exists
-        if (searchQuery) {
-            const regex = new RegExp(`^${searchQuery}`, 'i');
-            query = { Fname: regex };
-        }
-
-        const totalUsers = await User.countDocuments(query);
-        console.log(totalUsers)
-        const totalPages = Math.ceil(totalUsers / pageSize);
-
-        let users;
-        if (searchQuery) {
-            // Fetch all users matching the search query
-            users = await User.find(query).exec();
-            
-           
-        } else {
-            // Fetch users with pagination
-            users = await User.find(query)
-                .skip((page - 1) * pageSize)
-                .limit(pageSize)
-                .exec();
-                
-        }
-        res.render('addcoupon', { users, page, totalPages, searchQuery, message });
+     
+        const message=req.query.message||''
+        
+        
+        res.render('addcoupon', { message });
 
        
     } catch (error) {
@@ -417,10 +363,18 @@ const addcoupons= async (req, res) => {
 //add coupon post 
 const addcouponpost=async (req, res) => {
     try {
-        const couponData = req.body;
-        const newCoupon = new coupon(couponData);
+        const couponData = new coupon({couponName:req.body.couponName,
+          couponCode:req.body.couponCode,
+          discountPercent:req.body.discountPercent,
+            minAmount:req.body.minAmount,
+          couponDescription:req.body.couponDescription,
+          
+          expiryDate:req.body.expiryDate,
+          })
 
-    newCoupon.save() 
+          couponData.save()
+        
+        
     res.json({success:true})          
     } catch (error) {
         console.log(error.message);
