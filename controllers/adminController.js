@@ -65,7 +65,7 @@ const dashboard=async(req,res)=>{
 const users = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const pageSize = 4; // Number of users per page
+        const pageSize = 6; // Number of users per page
         const searchQuery = req.query.search || ''; // Get the search query
 
         let query = {};
@@ -196,7 +196,7 @@ const CategoryEditpost=async(req,res)=>{
 
         if (existingCategory) {
             // If a category with the same name exists, redirect with an error message
-            return res.redirect('/admin/categories/edit?message=Category name already exists. Please choose another name.');
+        return res.redirect('/admin/categories/edit?message=Category name already exists. Please choose another name.');
         }
         else{
             await Category.updateOne({_id:req.query._id},{$set:{name:req.body.name,description:req.body.description}})

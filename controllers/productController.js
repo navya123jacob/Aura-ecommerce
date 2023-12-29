@@ -50,11 +50,35 @@ const Product = async (req, res) => {
   try {
     const pageSize = 3; // Number of products per page
     const page = parseInt(req.query.page) || 1;
-
-    const totalProducts = await product.countDocuments();
+    const searchQuery = req.query.search || '';
+    console.log(searchQuery)
+    let query = {};
+    if (searchQuery) {
+      const regex = new RegExp(`^${searchQuery}`, 'i');
+      query = {name: regex};
+      
+  }
+  const totalProducts = await product.countDocuments(query);
     const totalPages = Math.ceil(totalProducts / pageSize);
 
-    const products = await product
+
+    let products;
+    if (searchQuery) {
+      
+      products = await product
+      .find(query)
+      .populate({
+        path: 'category',
+      })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .exec();
+      
+     
+  }
+  else
+  {
+    products = await product
       .find()
       .populate({
         path: 'category',
@@ -62,8 +86,11 @@ const Product = async (req, res) => {
       .skip((page - 1) * pageSize)
       .limit(pageSize)
       .exec();
+  }
 
-    res.render('product', { products, page, totalPages });
+     
+
+    res.render('product', { products, page, totalPages,searchQuery});
   } catch (error) {
     console.error(error.message);
     res.status(500).send('Internal Server Error');
