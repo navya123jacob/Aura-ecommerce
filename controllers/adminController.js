@@ -77,13 +77,15 @@ const users = async (req, res) => {
         }
 
         const totalUsers = await User.countDocuments(query);
-        console.log(totalUsers)
+       
         const totalPages = Math.ceil(totalUsers / pageSize);
 
         let users;
         if (searchQuery) {
             // Fetch all users matching the search query
-            users = await User.find(query).exec();
+            users = await User.find(query).skip((page - 1) * pageSize)
+            .limit(pageSize)
+            .exec();
             
            
         } else {
@@ -107,8 +109,7 @@ const users = async (req, res) => {
 //block user
 const userblock = async (req, res) => {
     try { console.log('userblock route hit');
-    console.log(req.query.blockstatus)
-        console.log(req.query.email)
+   
         const email = req.query.email;
         const blockstatus = req.query.blockstatus;
         
@@ -242,18 +243,61 @@ const orders = async (req, res) => {
         const user = req.session.checkuser || '';
         // login mid end
 
-        const orders = await order.find()
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = 3; // Number of users per page
+        const searchQuery = req.query.search || ''; // Get the search query
+
+        
+        
+
+          let orders;
+          let query={}
+
+          if (searchQuery) {
+            const regex = new RegExp(`^${searchQuery}`, 'i');
+           query={
+            'Products': {
+                $elemMatch: {
+                  'name': regex
+                }
+          }
+        }
+            orders = await order.find(query)
             .populate({
-                path: 'Products.products', 
-                model: 'Product'
+              path: 'Products.products',
+              model: 'Product'
             })
             .populate({
-                path: 'user',
-                model: 'User'
+              path: 'user',
+              model: 'User'
             })
             .exec();
+            console.log(orders)
+          }
+
+       else{
+        orders = await order.find()
+        .populate({
+            path: 'Products.products', 
+            model: 'Product'
+        })
+        .populate({
+            path: 'user',
+            model: 'User'
+        })
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .exec();
+       }
+    
+      
+
+            const totalProducts = await order.countDocuments(query);
+            const totalPages = Math.ceil(totalProducts / pageSize);
+
+        
   
-        res.render('adminorders', { user, orders, ses, categories });
+        res.render('adminorders', { user, orders, ses, categories ,searchQuery,page, totalPages,});
     } catch (error) {
         console.log(error.message);
     }
@@ -284,6 +328,7 @@ const orderdetails=async (req, res) => {
         ses = req.ses;
         const user = req.session.checkuser || '';
         //logi mid end
+        
         const myorder = await order.findOne(
             { _id: req.query.orderId, 'Products._id': req.query.productId }
            ).populate({
@@ -332,8 +377,27 @@ const orderdetails=async (req, res) => {
 const coupons= async (req, res) => {
     try {
         const message=req.query.message||''
-       const coupons=await coupon.find()
-        res.render('coupons', { message,coupons});
+
+        const pageSize = 5; // Number of products per page
+        const page = parseInt(req.query.page) || 1;
+        const searchQuery = req.query.search || '';
+        let query = {};
+        let coupons;
+        if (searchQuery) {
+          const regex = new RegExp(`^${searchQuery}`, 'i');
+          query = {couponName: regex};
+          
+      }
+      
+      
+      const totalProducts = await coupon.countDocuments(query);
+     
+    const totalPages = Math.ceil(totalProducts / pageSize);
+       coupons=await coupon.find(query).skip((page - 1) * pageSize)
+       .limit(pageSize)
+       .exec();
+       console.log(coupons)
+        res.render('coupons', { message,coupons,searchQuery, page, totalPages});
 
        
     } catch (error) {

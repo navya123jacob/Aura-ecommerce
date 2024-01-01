@@ -422,7 +422,7 @@ const PostLogin=async(req,res)=>{
   try{
     
   const UserLog=await User.findOne({email:req.body.reg_email})
-  console.log(req.body)
+ 
   if(UserLog )
   {
     

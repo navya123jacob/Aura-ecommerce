@@ -48,10 +48,10 @@ const addProductpost=async(req,res)=>{
 // products view with pagination
 const Product = async (req, res) => {
   try {
-    const pageSize = 3; // Number of products per page
+    const pageSize = 5; // Number of products per page
     const page = parseInt(req.query.page) || 1;
     const searchQuery = req.query.search || '';
-    console.log(searchQuery)
+   
     let query = {};
     if (searchQuery) {
       const regex = new RegExp(`^${searchQuery}`, 'i');
@@ -60,7 +60,7 @@ const Product = async (req, res) => {
   }
   const totalProducts = await product.countDocuments(query);
     const totalPages = Math.ceil(totalProducts / pageSize);
-
+   
 
     let products;
     if (searchQuery) {
@@ -195,7 +195,6 @@ const ProductEdit=async(req,res)=>{
   //to delete product inside post form
   const ProducteditDelete =async(req,res)=>{
     try{
-        console.log(req.query.img)
         
         const imagePath = path.join(__dirname, '..',  req.query.img);
         console.log(imagePath)
