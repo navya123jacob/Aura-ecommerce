@@ -44,8 +44,24 @@
 										<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAddressModal">
 											Add New Address
 										</button>
+                                        
+                                        <div class="cart-bottom mt-5">
+                                            <div class="cart-discount">
+                                                <form action="#">
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control" required placeholder="coupon code">
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-outline-primary-2" type="submit"><i class="icon-long-arrow-right"></i></button>
+                                                        </div><!-- .End .input-group-append -->
+                                                    </div><!-- End .input-group -->
+                                                </form>
+                                            </div><!-- End .cart-discount -->
+        
+                                            
+                                        </div><!-- End .cart-bottom -->
             					
 		                		</div><!-- End .col-lg-9 -->
+                                
 		                		<aside class="col-lg-3">
 		                			<div class="summary">
 		                				<h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
@@ -65,6 +81,7 @@
                                                             <td>$<%= product.total %></td>
                                                         </tr>
                                                     <% }); %>
+                                                    
                                                     <tr class="summary-subtotal">
                                                         <td>Subtotal:</td>
                                                         <td>$<%= Total %></td>
@@ -84,6 +101,7 @@
                                                 <% } %>
                                             </tbody>
                                         </table>
+                                    
 		                				<div class="accordion-summary" id="accordion-payment">
 										   
                                             <label for="paymentOption">Select Payment Option:</label>

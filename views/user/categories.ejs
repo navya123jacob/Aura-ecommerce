@@ -134,13 +134,20 @@
                                     <div class="collapse show" id="widget-category">
                                         <div class="widget-body">
                                             <div class="filter-items filter-items-count">
-                                                <% categories.forEach(category => { %>
+                                                
+
+                                              <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="allCheckbox" onchange="handleCheckboxChange('all')" >
+                                                <label class="custom-control-label" for="allCheckbox">All</label>
+                                            </div>
                                                     <div class="filter-item">
-                                                        <div class="custom-control custom-checkbox">
-                                                          <input type="checkbox" class="custom-control-input" id="<%= 'cat-' + category._id %>" onchange="handleCheckboxChange(this)">
-                                                            <label class="custom-control-label" for="<%= 'cat-' + category._id %>"><%= category.name %></label>
-                                                        </div>
-                                                        <span class="item-count"><%= category.count %></span>
+                                                      <% categories.forEach(category => { %>
+                                                      <div class="custom-control custom-checkbox">
+                                                        
+                                                        <input type="checkbox" class="custom-control-input" id="<%= 'cat-' + category._id %>" onchange="handleCheckboxChange('<%= category.name %>')" >
+                                                        <label class="custom-control-label" for="<%= 'cat-' + category._id %>"><%= category.name %></label>
+                                                    </div>
+                                                        
                                                     </div>
                                                 <% }); %>
                                             </div>
@@ -203,7 +210,21 @@
     console.log(sortvalue)
     $('#toload').load(`/category?sort=${sortvalue}&cat=<%=cat%> #toload`)}
 
-   
+    
+  function handleCheckboxChange(checked)
+  {
+    console.log(checked)
+    if(checked=='all')
+    {
+      window.location.href =`/category`
+     
+    }
+    else
+    {
+      window.location.href =`/category?cat=${checked}`
+    }
+    
+  }
   
           </script>
           

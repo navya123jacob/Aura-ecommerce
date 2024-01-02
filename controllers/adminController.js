@@ -396,7 +396,7 @@ const coupons= async (req, res) => {
        coupons=await coupon.find(query).skip((page - 1) * pageSize)
        .limit(pageSize)
        .exec();
-       console.log(coupons)
+       
         res.render('coupons', { message,coupons,searchQuery, page, totalPages});
 
        
@@ -427,12 +427,13 @@ const addcoupons= async (req, res) => {
 //add coupon post 
 const addcouponpost=async (req, res) => {
     try {
+        
         const couponData = new coupon({couponName:req.body.couponName,
           couponCode:req.body.couponCode,
           discountPercent:req.body.discountPercent,
             minAmount:req.body.minAmount,
           couponDescription:req.body.couponDescription,
-          
+          Availability:req.body.availability,
           expiryDate:req.body.expiryDate,
           })
 
