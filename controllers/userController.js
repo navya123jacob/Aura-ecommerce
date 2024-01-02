@@ -786,7 +786,28 @@ const placeorder=async(req,res)=>{
   });
 
   
-await newOrderData.save();
+await newOrderData.save()
+.then(order => {
+  
+  const productsToUpdate = order.Products.map(product => ({
+    _id: product._id,
+    name:product.name,
+    quantity: product.quantity
+  }));
+
+ 
+  productsToUpdate.forEach(async(pro) => {
+   
+    await product.updateOne(
+      { name: pro.name }, { $inc: { quantity: -pro.quantity } });
+   
+   
+  });
+ 
+})
+.catch(error => {
+  console.error(error);
+});
 
 res.redirect('/orderplaced')
 
