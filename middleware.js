@@ -29,7 +29,7 @@ const UserSes = (req, res, next) => {
     }
 };
 const adminloginNoSes = (req, res, next) => {
-    console.log(req.session.admincheck)
+    
     if(!req.session.admincheck)
     {
 

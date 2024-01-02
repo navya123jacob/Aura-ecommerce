@@ -9,13 +9,14 @@
             <div class="card" id="toload">
                 <div class="card-body" >
                     <form class="forms-sample">
-                        <!-- Update the form action endpoint accordingly -->
+                      
             
                         <div class="form-group row">
                             <label for="couponName" class="col-sm-3 col-form-label" >Coupon Name</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="couponName" name="couponName" placeholder="Coupon Name" required>
-                                <!-- Add error message element if needed -->
+                                <h6 class="text-danger error-message" id="couponNameError"></h6>
+                              
                             </div>
                         </div>
             
@@ -23,14 +24,14 @@
                             <label for="couponCode" class="col-sm-3 col-form-label">Coupon Code</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="couponCode" name="couponCode" placeholder="Coupon Code" required>
-                                <!-- Add error message element if needed -->
+                                <p class="text-danger error-message" id="couponCodeError"></p>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="couponAvailability" class="col-sm-3 col-form-label">Available coupons</label>
                             <div class="col-sm-9">
                                 <input type=number class="form-control" id="availability" name="availability" placeholder="Availability" required>
-                                <!-- Add error message element if needed -->
+                                <p class="text-danger error-message" id="couponavailabilityError"></p>
                             </div>
                         </div>
             
@@ -38,7 +39,7 @@
                             <label for="discountAmount" class="col-sm-3 col-form-label">Discount Percentage</label>
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" id="discountAmount" name="discountAmount" placeholder="Discount Amount" required>
-                                <!-- Add error message element if needed -->
+                                <p class="text-danger error-message" id="coupondiscountError"></p>
                             </div>
                         </div>
             
@@ -46,7 +47,7 @@
                             <label for="minAmount" class="col-sm-3 col-form-label">Minimum Amount</label>
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" id="minAmount" name="minAmount" placeholder="Minimum Amount" required>
-                                <!-- Add error message element if needed -->
+                                <p class="text-danger error-message" id="couponminError"></p>
                             </div>
                         </div>
             
@@ -54,7 +55,7 @@
                             <label for="couponDescription" class="col-sm-3 col-form-label">Coupon Description</label>
                             <div class="col-sm-9">
                                 <textarea class="form-control" id="couponDescription" name="couponDescription" placeholder="Coupon Description" required></textarea>
-                                <!-- Add error message element if needed -->
+                                <p class="text-danger error-message" id="coupondescError"></p>
                             </div>
                         </div>
             
@@ -62,11 +63,11 @@
                             <label for="expiryDate" class="col-sm-3 col-form-label">Expiry Date</label>
                             <div class="col-sm-9">
                                 <input type="date" class="form-control" id="expiryDate" name="expiryDate" placeholder="Expiry Date" required>
-                                <!-- Add error message element if needed -->
+                                <p class="text-danger error-message" id="couponexpiryError"></p>
                             </div>
                         </div>
             
-                        <!-- Add other form fields for coupon details -->
+                      
             
                         <button type="submit" class="btn btn-primary mr-2" onclick="addcoupon()">Submit</button>
                         <button class="btn btn-dark">Cancel</button>
@@ -91,13 +92,67 @@
 <!-- container-scroller -->
 <script>
 function addcoupon() {
-    // Retrieve form field values
+   
     const couponName = document.getElementById('couponName').value;
     const couponCode = document.getElementById('couponCode').value;
     const discountPercent = document.getElementById('discountAmount').value;
     const minAmount = document.getElementById('minAmount').value;
     const couponDescription = document.getElementById('couponDescription').value;
     const expiryDate = document.getElementById('expiryDate').value;
+    const availability = document.getElementById('availability').value;
+     // Validate couponName (should contain only letters and cannot be empty)
+     const nameRegex = /^[a-zA-Z]+$/;
+    const nameError = document.getElementById('couponNameError');
+    if (!nameRegex.test(couponName) || couponName === '') {
+        nameError.innerText = 'Invalid name';
+        return;
+    }
+
+    
+    const codeRegex = /^[a-zA-Z]+$/;
+    const codeError = document.getElementById('couponCodeError');
+    if ( couponCode === '') {
+        codeError.innerText = 'Invalid code';
+        return;
+    }
+
+    
+    const discountError = document.getElementById('coupondiscountError');
+    if (isNaN(discountPercent) || parseInt(discountPercent) < 1) {
+        discountError.innerText = 'invalid discount';
+        return;
+    }
+
+   
+    const minError = document.getElementById('couponminError');
+    if (isNaN(minAmount) || parseInt(minAmount) < 1) {
+        minError.innerText = 'invalid min value';
+        return;
+    }
+
+   
+    const descError = document.getElementById('coupondescError');
+    if (couponDescription === '') {
+        descError.innerText = 'invalid description ';
+        return;
+    }
+
+  
+    const expiryError = document.getElementById('couponexpiryError');
+    if (expiryDate === '') {
+        expiryError.innerText = 'invalid date';
+        return;
+    }
+
+    
+    const availabilityError = document.getElementById('couponavailabilityError');
+    if (isNaN(availability) || parseInt(availability) < 1) {
+        availabilityError.innerText = 'invalid number';
+        return;
+    }
+
+  
+
 
     const formData = {
         couponName,
@@ -106,6 +161,7 @@ function addcoupon() {
         minAmount,
         couponDescription,
         expiryDate,
+        availability
     };
    
    fetch('/admin/addcouponpost', {

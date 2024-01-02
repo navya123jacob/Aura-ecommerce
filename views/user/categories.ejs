@@ -207,13 +207,13 @@
 
   function sortProducts(sortvalue)
   {
-    console.log(sortvalue)
+    
     $('#toload').load(`/category?sort=${sortvalue}&cat=<%=cat%> #toload`)}
 
     
   function handleCheckboxChange(checked)
   {
-    console.log(checked)
+   
     if(checked=='all')
     {
       window.location.href =`/category`
