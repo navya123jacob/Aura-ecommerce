@@ -60,9 +60,9 @@ const Home=async(req,res)=>{
       }
       
     const user = req.session.checkuser|| '' 
+    const email=req.session.email
    
-   
-      res.render('home',{user,ses,products,categories})
+      res.render('home',{user,ses,products,categories,email})
   }
   catch (error) {
       console.log(error.message);
@@ -467,34 +467,46 @@ const CatProductsView = async (req, res) => {
       ses=req.ses
       const user = req.session.checkuser|| '' 
       //logi mid end
-
+      
     const cat = req.query.cat;
-    const page = parseInt(req.query.page) || 1;
+    const page = req.query.page || 1;
     const pageSize = 4; // Number of products per page
 
+    const searchQuery = req.query.search || ''; 
+    
 
-    const totalProducts = await product.countDocuments({ 'status': 'active' });
-    const totalPages = Math.ceil(totalProducts / pageSize);
-    const email=req.session.email
+   let sortvalue=parseInt(req.query.sort)||1
+   
 
     let mycategory=await category.findOne({name:cat,'status':'active'})
     let products=''
+    let query={}
     if(mycategory)
     {
+      query = { 'status': 'active',category:mycategory._id };
+    }
+   
+    if (searchQuery) {
+      const regex = new RegExp(`^${searchQuery}`, 'i');
+      query.name = regex
+  }
+    
       products = await product
-      .find({ 'status': 'active',category:mycategory._id })
+      .find(query)
       .populate({
         path: 'category'
-       //The match option in populate is used to filter the documents from the original collection, not the documents from the referenced collection.
       })
+      .sort({ price: sortvalue})
       .skip((page - 1) * pageSize)
       .limit(pageSize)
       .lean() 
-    }
-
+    
+    const totalProducts = await product.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / pageSize);
+    const email=req.session.email
    
       
-        res.render('categories', { products, categories, page, totalPages,cat,ses,user,email});
+        res.render('categories', { products, categories, page, totalPages,cat,ses,user,email,searchQuery});
       
 
     
