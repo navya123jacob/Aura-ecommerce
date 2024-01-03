@@ -716,7 +716,9 @@ const checkout=async(req,res)=>{
     let Total = 0;
     let shipping = 0;
     let grandtotal = 0;
-    let b=0;let c=0
+    let b=0;let c=0;
+    
+    let coupons=await coupon.find({'status':true})
     
     if (myuser &&  myuser.addressField.length > 0)
     {
@@ -736,7 +738,7 @@ const checkout=async(req,res)=>{
         }
 
         grandtotal = Total + shipping;
-        res.render('checkout',{user,ses,categories,usercart,shipping,Total,grandtotal,b,myuser,c})
+        res.render('checkout',{user,ses,categories,usercart,shipping,Total,grandtotal,b,myuser,c,coupons})
     }
     
     else

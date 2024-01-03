@@ -49,16 +49,25 @@
                                             <div class="cart-discount">
                                                 <form action="#">
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" required placeholder="coupon code">
+                                                        <input type="text" class="form-control" id="couponCodeInput" required placeholder="Coupon code">
                                                         <div class="input-group-append">
-                                                            <button class="btn btn-outline-primary-2" type="submit"><i class="icon-long-arrow-right"></i></button>
+                                                            <button class="btn btn-outline-primary-2" type="button" id="openCouponDropdown"><i class="icon-long-arrow-right"></i></button>
                                                         </div><!-- .End .input-group-append -->
                                                     </div><!-- End .input-group -->
+                                        
+                                                    <!-- Dropdown Container -->
+                                                    <div class="dropdown" id="couponDropdown">
+                                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="couponDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            Select a Coupon
+                                                        </button>
+                                                        <div class="dropdown-menu" aria-labelledby="couponDropdownButton">
+                                                            <!-- Coupons will be dynamically added here -->
+                                                        </div>
+                                                    </div>
                                                 </form>
                                             </div><!-- End .cart-discount -->
-        
-                                            
                                         </div><!-- End .cart-bottom -->
+                                        
             					
 		                		</div><!-- End .col-lg-9 -->
                                 
@@ -363,7 +372,44 @@ function validatePincode() {
 
 
 
-    
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const couponInput = document.getElementById('couponCodeInput');
+        const couponDropdown = document.getElementById('couponDropdown');
+        const couponDropdownButton = document.getElementById('couponDropdownButton');
+
+        // Replace 'coupons' with the actual array of available coupons you passed during rendering
+        const coupons = ['Coupon1', 'Coupon2', 'Coupon3'];
+
+        coupons.forEach(coupon => {
+            const couponOption = document.createElement('a');
+            couponOption.classList.add('dropdown-item');
+            couponOption.href = '#'; // You can add a link or an action for each coupon
+            couponOption.textContent = coupon;
+
+            couponOption.addEventListener('click', function () {
+                couponInput.value = coupon;
+                couponDropdownButton.textContent = coupon;
+                couponDropdown.classList.remove('show');
+            });
+
+            couponDropdown.querySelector('.dropdown-menu').appendChild(couponOption);
+        });
+
+        // Show/hide the dropdown on button click
+        document.getElementById('openCouponDropdown').addEventListener('click', function () {
+            couponDropdown.classList.toggle('show');
+        });
+
+        // Close the dropdown when clicking outside
+        window.addEventListener('click', function (event) {
+            if (!event.target.matches('#openCouponDropdown') && !event.target.matches('.dropdown-menu a')) {
+                couponDropdown.classList.remove('show');
+            }
+        });
+    });
+
+ 
 
 </script>
 
