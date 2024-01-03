@@ -72,13 +72,15 @@
                         <button type="submit" class="btn btn-primary mr-2" onclick="addcoupon()">Submit</button>
                         <button class="btn btn-dark">Cancel</button>
                     </form>
-                    <p class="text-success"> <%= message %></p>
+                    
+                    <p class="text-success" id="messageid"> <%= message %></p>
                 </div>
+                
             </div>
             
     <!-- content-wrapper ends -->
     <!-- partial:partials/_footer.html -->
-    <footer class="footer">
+    <footer class="footer" >
         <div class="d-sm-flex justify-content-center justify-content-sm-between">
             <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Aura Beauty</span>
         </div>
@@ -90,70 +92,86 @@
 <!-- page-body-wrapper ends -->
 </div>
 <!-- container-scroller -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
 function addcoupon() {
    
     const couponName = document.getElementById('couponName').value;
-    const couponCode = document.getElementById('couponCode').value;
-    const discountPercent = document.getElementById('discountAmount').value;
-    const minAmount = document.getElementById('minAmount').value;
-    const couponDescription = document.getElementById('couponDescription').value;
-    const expiryDate = document.getElementById('expiryDate').value;
-    const availability = document.getElementById('availability').value;
-     // Validate couponName (should contain only letters and cannot be empty)
-     const nameRegex = /^[a-zA-Z]+$/;
-    const nameError = document.getElementById('couponNameError');
-    if (!nameRegex.test(couponName) || couponName === '') {
-        nameError.innerText = 'Invalid name';
-        return;
-    }
+const couponCode = document.getElementById('couponCode').value;
+const discountPercent = document.getElementById('discountAmount').value;
+const minAmount = document.getElementById('minAmount').value;
+const couponDescription = document.getElementById('couponDescription').value;
+const expiryDate = document.getElementById('expiryDate').value;
+const availability = document.getElementById('availability').value;
 
-    
-    const codeRegex = /^[a-zA-Z]+$/;
-    const codeError = document.getElementById('couponCodeError');
-    if ( couponCode === '') {
-        codeError.innerText = 'Invalid code';
-        return;
-    }
+let count=0;
+// Validate couponName (should contain only letters and cannot be empty)
+const nameRegex = /^[a-zA-Z]+$/;
+const nameError = document.getElementById('couponNameError');
+if ( couponName.trim() === '') {
+    nameError.innerText = 'Invalid name (should contain only letters and cannot be empty)';
+   count=1;
+} else {
+    nameError.innerText = ''; // Clear error message if validation passes
+}
 
-    
-    const discountError = document.getElementById('coupondiscountError');
-    if (isNaN(discountPercent) || parseInt(discountPercent) < 1) {
-        discountError.innerText = 'invalid discount';
-        return;
-    }
+// Validate couponCode (should not be empty)
+const codeError = document.getElementById('couponCodeError');
+if (couponCode.trim() === '') {
+    codeError.innerText = 'Invalid code (cannot be empty)';
+    count=1;
+} else {
+    codeError.innerText = ''; // Clear error message if validation passes
+}
 
-   
-    const minError = document.getElementById('couponminError');
-    if (isNaN(minAmount) || parseInt(minAmount) < 1) {
-        minError.innerText = 'invalid min value';
-        return;
-    }
+// Validate discountPercent (should be a positive number)
+const discountError = document.getElementById('coupondiscountError');
+if (isNaN(discountPercent) || parseFloat(discountPercent) <= 0) {
+    discountError.innerText = 'Invalid discount (should be a positive number)';
+    count=1;
+} else {
+    discountError.innerText = ''; // Clear error message if validation passes
+}
 
-   
-    const descError = document.getElementById('coupondescError');
-    if (couponDescription === '') {
-        descError.innerText = 'invalid description ';
-        return;
-    }
+// Validate minAmount (should be a positive number)
+const minError = document.getElementById('couponminError');
+if (isNaN(minAmount) || parseFloat(minAmount) <= 0) {
+    minError.innerText = 'Invalid min value (should be a positive number)';
+    count=1;
+} else {
+    minError.innerText = ''; // Clear error message if validation passes
+}
 
-  
-    const expiryError = document.getElementById('couponexpiryError');
-    if (expiryDate === '') {
-        expiryError.innerText = 'invalid date';
-        return;
-    }
+// Validate couponDescription (should not be empty)
+const descError = document.getElementById('coupondescError');
+if (couponDescription.trim() === '') {
+    descError.innerText = 'Invalid description (cannot be empty)';
+    count=1;
+} else {
+    descError.innerText = ''; // Clear error message if validation passes
+}
 
-    
-    const availabilityError = document.getElementById('couponavailabilityError');
-    if (isNaN(availability) || parseInt(availability) < 1) {
-        availabilityError.innerText = 'invalid number';
-        return;
-    }
+// Validate expiryDate (should not be empty, and you may want to check if it's a valid date)
+const expiryError = document.getElementById('couponexpiryError');
+if (expiryDate.trim() === '' || isNaN(Date.parse(expiryDate))) {
+    expiryError.innerText = 'Invalid date (should not be empty, and should be a valid date)';
+    count=1;
+} else {
+    expiryError.innerText = ''; // Clear error message if validation passes
+}
 
-  
+// Validate availability (should be a positive number)
+const availabilityError = document.getElementById('couponavailabilityError');
+if (isNaN(availability) || parseInt(availability) <= 0) {
+    availabilityError.innerText = 'Invalid number (should be a positive number)';
+    count=1;
+} else {
+    availabilityError.innerText = ''; // Clear error message if validation passes
+}
 
 
+if(count==0)
+{
     const formData = {
         couponName,
         couponCode,
@@ -178,11 +196,21 @@ function addcoupon() {
         })
         .then(data => {
             
-           window.location.href='/admin/couponsadd?message=added'
+            Swal.fire({
+               title: 'Added!',
+               html: '<h5 style="color: #4CAF50;">The coupon has been removed.</h5>',
+               icon: 'success'
+                });
+                alert('hi')
+            $('#toload').load('/admin/couponsadd?message=added #toload')
         })
         .catch(error => {
             console.error('Error:', error);
         });
+}
+
+
+   
 }
 
 

@@ -26,11 +26,12 @@
                         <th>Coupon Code</th>
                         <th>Discount Percentage</th>
                         <th>Minimum Amount</th>
-                        <th>Coupon Description</th>
-                        <th>Coupon Availability</th>
+                        <th>Description</th>
+                        <th>Availability</th>
                        
                         <th>Expiry Date</th>
                         <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,6 +53,11 @@
 
                             <td><%= formattedExpiryDate %></td>
                             <td><%= coupon.status %></td>
+                            <td class="remove-col">
+                              <button class="btn btn-danger" onclick="removeCoupon('<%= coupon.couponName %>')">
+                                  Remove
+                              </button>
+                          </td>
                         </tr>
                     <% }); %>
                 </tbody>
@@ -121,13 +127,56 @@
 <!-- page-body-wrapper ends -->
 </div>
 <!-- container-scroller -->
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
   function searchUsers(search){
 
     $('#toload').load(`/admin/coupons?search=${search} #toload`)
 
   }
+
+  //to remove coupon item
+	function removeCoupon(name) {
+    // Show SweetAlert confirmation dialog
+    Swal.fire({
+        title: 'Are you sure?',
+        html: '<h5 style="color: #333;">You are about to remove the coupon. This action cannot be undone!</h5>',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, remove it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // If the user confirms, proceed with the removal
+            fetch(`/admin/couponremove?name=${name}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).then((response) => {
+                return response.json();
+            }).then((data) => {
+                // Alert user after successful removal
+                Swal.fire({
+               title: 'Removed!',
+               html: '<h5 style="color: #4CAF50;">The coupon has been removed.</h5>',
+               icon: 'success'
+                });
+                // Reload the coupons section
+                $('#toload').load('/admin/coupons #toload');
+            }).catch((error) => {
+                // Handle errors
+                console.error('Error:', error);
+                Swal.fire(
+                    'Error!',
+                    'An error occurred while removing the coupon.',
+                    'error'
+                );
+            });
+        }
+    });
+}
 </script>
 
 <%- include('./layouts/footer.ejs') %>

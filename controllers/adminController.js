@@ -272,7 +272,7 @@ const orders = async (req, res) => {
               model: 'User'
             })
             .exec();
-            console.log(orders)
+            
           }
 
        else{
@@ -414,7 +414,8 @@ const addcoupons= async (req, res) => {
         const message=req.query.message||''
         
         
-        res.render('addcoupon', { message });
+       
+        res.render('addcoupon', { message});
 
        
     } catch (error) {
@@ -439,6 +440,21 @@ const addcouponpost=async (req, res) => {
 
           couponData.save()
         
+        
+    res.json({success:true})          
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
+//remove coupon
+const couponremove=async (req, res) => {
+    try {
+        
+        const pro=await coupon.deleteOne({couponName:req.query.name })
+    
         
     res.json({success:true})          
     } catch (error) {
@@ -482,6 +498,7 @@ module.exports={
     coupons,
     addcoupons,
     addcouponpost,
+    couponremove,
     
     adminlogout
 }

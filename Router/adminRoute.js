@@ -115,6 +115,9 @@ adminRoute.get('/couponsadd',mid.adminloginNoSes,adminController.addcoupons)
 //add coupon post 
 adminRoute.post('/addcouponpost',mid.adminloginNoSes,adminController.addcouponpost)
 
+//to remove coupon
+adminRoute.post('/couponremove',mid.adminloginNoSes,adminController.couponremove)
+
 
 
 //logout
