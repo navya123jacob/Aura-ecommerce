@@ -49,11 +49,14 @@
                                             <div class="cart-discount">
                                                 <form action="#">
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" id="couponCodeInput" placeholder="Coupon code">
+                                                        <input type="text" class="form-control" id="couponCodeInput" name="couponCodeInput" placeholder="Coupon code" <% if (applied_coupon &&(!couponmessage)) { %> value="<%= applied_coupon %>" readonly <% } %>>
                                                         <div class="input-group-append">
                                                             <button class="btn btn-outline-primary-2" type="button" id="openCouponDropdown" onclick="couponcheck(document.getElementById('couponCodeInput').value)"><i class="icon-long-arrow-right"></i></button>
+                                                           
                                                         </div><!-- .End .input-group-append -->
+                                                        
                                                     </div><!-- End .input-group -->
+                                                    <p class="coupon-message text-danger"><%= couponmessage %></p>
                                         
                                                     <div class="dropdown" id="couponDropdown">
                                                         <button class="btn btn-secondary dropdown-toggle" type="button" id="couponDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

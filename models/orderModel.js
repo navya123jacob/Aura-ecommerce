@@ -55,7 +55,14 @@ const ordersSchema = mongoose.Schema({
         
         type: String,
         default:''
-    }
+    },
+    Totalbefore: {
+        
+        type: Number,
+        default:0
+        
+    },
+
 });
 
 module.exports = mongoose.model('orders', ordersSchema);

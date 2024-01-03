@@ -726,7 +726,7 @@ const checkout=async(req,res)=>{
       c=1
       
     }
-    let applied_coupon=req.query.couponapplied
+    let applied_coupon=req.query.couponapplied||''
     
     
     
@@ -741,13 +741,29 @@ const checkout=async(req,res)=>{
         }
    
         grandtotal = Total + shipping;
+        let couponmessage=''
+
         if(applied_coupon)
     {
       const currentcoupon=await coupon.findOne({'status':true,'couponCode':applied_coupon})
-      console.log()
-      grandtotal = grandtotal-((currentcoupon.discountPercent/100)*grandtotal)
+      if(currentcoupon)
+      {
+        if(currentcoupon.minAmount<=grandtotal)
+        {
+          grandtotal = grandtotal-((currentcoupon.discountPercent/100)*grandtotal)          
+        }
+        else{
+          couponmessage=`minimum amount is ${currentcoupon.minAmount}`
+        }
+       
+      }
+      else{
+        couponmessage=`invalid coupon code`;
+        applied_coupon=''
+      }
+      
     }
-        res.render('checkout',{user,ses,categories,usercart,shipping,Total,grandtotal,b,myuser,c,coupons})
+        res.render('checkout',{user,ses,categories,usercart,shipping,Total,grandtotal,b,myuser,c,coupons,applied_coupon,couponmessage})
     }
     
     else
@@ -807,6 +823,13 @@ const placeorder=async(req,res)=>{
          
       })),
   });
+  if(req.body.couponCodeInput)
+  {
+    const currentcoupon=await coupon.findOne({'status':true,'couponCode':req.body.couponCodeInput})
+    newOrderData.couponcode=req.body.couponCodeInput;
+    newOrderData.Totalbefore=grandtotal
+    newOrderData.total=grandtotal-((currentcoupon.discountPercent/100)*grandtotal)
+  }
 
   
 await newOrderData.save()
