@@ -95,11 +95,8 @@ userRoute.post('/productaddtocart',userController.productaddtocart)
 
 //to remove from cart
 userRoute.post('/productremovefromcart',userController.productremovefromcart)
-
-
-
-
-
+//to add to cart
+userRoute.post('/productaddtocart',userController.productaddtocart)
 
 
 //logout page post

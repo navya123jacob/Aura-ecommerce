@@ -50,8 +50,11 @@ const ordersSchema = mongoose.Schema({
     address: {
         type: Object
     },
-    couponName: {
-        type: String
+    
+    couponcode: {
+        
+        type: String,
+        default:''
     }
 });
 

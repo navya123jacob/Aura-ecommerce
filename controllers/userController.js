@@ -718,6 +718,7 @@ const checkout=async(req,res)=>{
     let grandtotal = 0;
     let b=0;let c=0;
     
+    
     let coupons=await coupon.find({'status':true})
     
     if (myuser &&  myuser.addressField.length > 0)
@@ -725,6 +726,8 @@ const checkout=async(req,res)=>{
       c=1
       
     }
+    let applied_coupon=req.query.couponapplied
+    
     
     
     if (usercart && usercart.Products[0]) {
@@ -736,8 +739,14 @@ const checkout=async(req,res)=>{
         if (Total < 500) {
             shipping = 40;
         }
-
+   
         grandtotal = Total + shipping;
+        if(applied_coupon)
+    {
+      const currentcoupon=await coupon.findOne({'status':true,'couponCode':applied_coupon})
+      console.log()
+      grandtotal = grandtotal-((currentcoupon.discountPercent/100)*grandtotal)
+    }
         res.render('checkout',{user,ses,categories,usercart,shipping,Total,grandtotal,b,myuser,c,coupons})
     }
     
@@ -862,6 +871,7 @@ const orderplaced=async(req,res)=>{
       console.log(error.message);
     }
 }
+
 
   
 
@@ -1125,4 +1135,5 @@ module.exports={
     orders,
     ordersstatus,
     orderdetails
+   
 }
