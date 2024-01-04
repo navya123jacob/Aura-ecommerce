@@ -8,6 +8,21 @@ const category = require('../models/categoryModel');
 const cart = require('../models/cartModel');
 const order = require('../models/orderModel');
 const coupon = require('../models/couponModel');
+const Razorpay = require('razorpay');
+const crypto=require('crypto');//to use SHA256 algorithm
+
+// This razorpayInstance will be used to 
+// access any resource from razorpay  
+var instance = new Razorpay({ 
+  
+  key_id: process.env.RAZORPAY_ID_KEY, 
+
+  key_secret: process.env.RAZORPAY_SECRET_KEY
+}); 
+
+
+
+
 
 
 const dotenv = require('dotenv');  //for securing your creditials
@@ -703,6 +718,8 @@ const cartload=async(req,res)=>{
     }
 }
 
+
+
 //proceed to checkout page
 const checkout=async(req,res)=>{
   try{
@@ -776,6 +793,22 @@ const checkout=async(req,res)=>{
   catch (error) {
       console.log(error.message);
     }
+}
+
+//razorpay function
+function generateRazorpay(orderId,total){
+  return new Promise((resolve,reject)=>{
+    var options={
+      amount:total,
+      currency:"INR",
+      receipt:orderId
+    }
+    instance.orders.create(options,function(err,order){
+      console.log("new order",order)
+      resolve(order)
+    })
+
+  })
 }
 
 //proceed to checkout page
@@ -855,12 +888,57 @@ await newOrderData.save()
   console.error(error);
 });
 
-res.redirect('/orderplaced')
+if(req.body.paymentOption=='cashOnDelivery')
+{
+  res.json({success:true})
+  
+}
+else
+{
+
+ generateRazorpay(newOrderData._id,newOrderData.total).then((response)=>{
+  response.success=false
+  res.json(response)})
+}
+
 
 } catch (error) {
 console.error(error);
 res.status(500).json({ success: false, error: error.message });
 }
+}
+
+//verifying razorpay payment
+const verifyrazorpayment=async(req,res)=>{
+  try{
+    console.log(req.body)
+const {order_id, payment_id} = req.body;      
+    const razorpay_signature =  req.headers['x-razorpay-signature']; 
+  
+    
+    const key_secret = process.env.RAZORPAY_SECRET_KEY      
+  
+    // STEP 8: Verification & Send Response to User 
+      
+    // Creating hmac object  
+    let hmac = crypto.createHmac('sha256', key_secret);  
+  
+    // Passing the data to be hashed 
+    hmac.update(order_id + "|" + payment_id); 
+      
+    // Creating the hmac in the required format 
+    const generated_signature = hmac.digest('hex'); 
+      
+      
+    if(razorpay_signature===generated_signature){ 
+        res.json({success:true, message:"Payment has been verified"}) 
+    } 
+    else
+    res.json({success:false, message:"Payment verification failed"}) 
+  }
+  catch (error) {
+      console.log(error.message);
+    }
 }
 
 //order placed
@@ -1157,6 +1235,7 @@ module.exports={
     orderplaced,
     orders,
     ordersstatus,
-    orderdetails
+    orderdetails,
+    verifyrazorpayment
    
 }

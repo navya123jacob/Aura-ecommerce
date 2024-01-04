@@ -11,7 +11,6 @@ const userController = require('../controllers/userController.js');
 const mid=require('../middleware.js');
 const Product = require('../models/productModel.js');
 
-
 //home page
 userRoute.get('/',userController.Home)
 
@@ -79,6 +78,9 @@ userRoute.post('/placeorder',mid.UserNoSes,mid.logiheader,userController.placeor
 
 //placed order
 userRoute.get('/orderplaced',mid.UserNoSes,mid.logiheader,userController.orderplaced)
+
+//verify razorpay payment
+userRoute.post('/verify-payment',mid.UserNoSes,mid.logiheader,userController.verifyrazorpayment)
 
 //see orders
 userRoute.get('/orders',mid.UserNoSes,mid.logiheader,userController.orders)

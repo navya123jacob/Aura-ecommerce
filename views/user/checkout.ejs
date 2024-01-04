@@ -21,7 +21,7 @@
 	                <div class="container">
             			<div class="checkout-discount">
             			</div><!-- End .checkout-discount -->
-            			<form action="/placeorder" method="POST">
+            			<form  id="checkoutform" >
 		                	<div class="row">
 		                		<div class="col-lg-9">
 		                			<h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->
@@ -231,6 +231,7 @@
 		</div>
 		</div>
 		</div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 	
 <script>
 
@@ -408,7 +409,85 @@ function selectCoupon(couponCode, discountPercent, minAmount, event) {
        console.log(couponCode)
        $('#toload').load(`/checkout?couponapplied=${couponCode} #toload`)
     }
+
+
+    //RAZOR PAY 
+    var orderId ;
+    
+    document.getElementById('checkoutform').addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    fetch('/placeorder', {
+        method: 'POST',
+        body: new FormData(document.getElementById('checkoutform')),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status==true) {
+            // COD
+            window.location.href = '/orderplaced';
+        } else {
+            // RazorPay
+            razorpayPayment(data)
+        }
+    })
+    .catch(error => {
+       
+        alert('Fetch request failed: ' + error.message);
+    });
+});
+  
+
+function razorpayPayment(order)
+{
+    var options = {
+    "key": "rzp_test_rhkvfmHNrTHBBX", // Enter the Key ID generated from the Dashboard
+    "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "AURA",
+    "description": "Test Transaction",
+    "image": "/assets/images/logo.jpg",
+    "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+        alert(response.razorpay_payment_id);
+        alert(response.razorpay_order_id);
+        alert(response.razorpay_signature);
+        verifyPayment(response,order)
+    },
+    "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#ffffff"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.open();
+}
+
+function verifyPayment(payment,order)
+{ 
+ $.ajax({
+    url:'/verify-payment',
+    data:{
+        payment,order
+    },
+    method:'post'
+ })
+}
     </script>
+
+
 
 
 
