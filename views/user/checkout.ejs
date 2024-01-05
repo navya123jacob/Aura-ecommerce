@@ -17,16 +17,16 @@
             </nav><!-- End .breadcrumb-nav -->
 
             <div class="page-content">
-            	<div class="checkout" id="toload">
-	                <div class="container">
+            	<div class="checkout" >
+	                <div class="container" >
             			<div class="checkout-discount">
             			</div><!-- End .checkout-discount -->
             			<form id="checkoutform" >
-		                	<div class="row">
+		                	<div class="row" id="toload" >
 		                		<div class="col-lg-9">
 		                			<h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->
 		                				<div class="row">
-		                					<div class="form-group" id="selectaddress">
+		                					<div class="form-group" id="selectaddress" >
 												<label for="existingAddresses">Select Existing Address:</label>
 												<select id="existingAddresses" name="existingAddress" class="form-control">
 													<% if (c == 1) { %>
@@ -88,7 +88,7 @@
                                                     <th>Total</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody >
                                                 <% if (b  > 0) { %>
                                                     <% usercart.Products.forEach(product => { %>
                                                         <tr>
@@ -105,7 +105,7 @@
                                                         <td>Shipping:</td>
                                                         <td>$<%= shipping %></td>
                                                     </tr>
-                                                    <tr class="summary-total">
+                                                    <tr class="summary-total" >
                                                         <td>Total:</td>
                                                         <td>$<%= grandtotal %></td>
                                                     </tr>
@@ -122,7 +122,7 @@
                                             <label for="paymentOption">Select Payment Option:</label>
                                             <select id="paymentOption" name="paymentOption" class="form-control">
                                               <option value="cashOnDelivery">Cash on Delivery</option>
-                                              <option value="paypal">Razor pay</option>
+                                              <option value="razorpay">Razor pay</option>
                                               <!-- Add more options if needed -->
                                             </select>
                                         	</div><!-- End .accordion -->
@@ -232,6 +232,7 @@
 		</div>
 		</div>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	
 <script>
@@ -417,9 +418,9 @@ function selectCoupon(couponCode, discountPercent, minAmount, event) {
     
     document.getElementById('checkoutform').addEventListener('submit', (e) => {
     e.preventDefault();
-       const paymentOption = document.getElementById('paymentOption').value;
-        const existingAddress = document.getElementById('existingAddresses').value;
-        const couponCodeInput = document.getElementById('couponCodeInput').value;
+    const paymentOption = document.getElementById('paymentOption').value;
+    const existingAddress = document.getElementById('existingAddresses').value;
+    const couponCodeInput = document.getElementById('couponCodeInput').value;
         
 
         const data = {
@@ -427,6 +428,7 @@ function selectCoupon(couponCode, discountPercent, minAmount, event) {
     existingAddress: existingAddress,
     couponCodeInput: couponCodeInput
 };
+console.log(data)
 
 fetch('/placeorder', {
     method: 'POST',
@@ -442,12 +444,11 @@ fetch('/placeorder', {
         return response.json();
     })
     .then(data => {
-        console.log('in data')
-        console.log(data.success)
+       
         if (data.success==true) {
             // COD
             console.log('yes')
-            window.location.href = '/orderplaced';
+            window.location.href = `/orderplaced`;
         } else {
             // RazorPay
             razorpayPayment(data)
@@ -462,9 +463,10 @@ fetch('/placeorder', {
 
 function razorpayPayment(order)
 {
+    
     var options = {
     "key": "rzp_test_rhkvfmHNrTHBBX", // Enter the Key ID generated from the Dashboard
-    "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "amount": (order.amount), // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     "currency": "INR",
     "name": "AURA",
     "description": "Test Transaction",
@@ -491,6 +493,7 @@ rzp1.open();
 }
 
 function verifyPayment(payment, order) {
+    console.log('inside')
     fetch('/verify-payment', {
         method: 'POST',
         headers: {
@@ -507,26 +510,37 @@ function verifyPayment(payment, order) {
     .then(data => {
         console.log(data.success)
         if (data.success == true) {
-            
-            window.location.href = '/orderplaced';
-        } else {
+            // Show success alert
             Swal.fire({
-         icon: 'error',
-        title: 'Payment has failed',
-    showConfirmButton: false,
-    timer: 1500,
-    html: '<button class="my-styled-button">Beautiful Button</button>',
-    didClose: () => {
-        // Code to execute after the modal is closed (optional)
-        console.log('Modal closed');
-    }
-});
+                icon: 'success',
+                title: 'Payment Successful',
+                showConfirmButton: false,
+                timer: 1500,
+            }).then(() => {
+                // Redirect to '/orderplaced' after the alert
+                window.location.href = `/orderplaced`;
+            });
+        } else {
+            // Show error alert
+            Swal.fire({
+                icon: 'error',
+                title: 'Payment has failed',
+                showConfirmButton: false,
+                timer: 1500,
+            });
         }
     })
     .catch(error => {
         console.error('Error:', error);
+        // Show error alert in case of network or server error
+        Swal.fire({
+            icon: 'error',
+            title: 'An error occurred',
+            text: 'Please try again later.',
+        });
     });
 }
+
     </script>
 
 

@@ -248,7 +248,7 @@ const orders = async (req, res) => {
         const searchQuery = req.query.search || ''; // Get the search query
 
         
-        
+        await order.deleteMany({paymentstatus:'pending'})
 
           let orders;
           let query={}
@@ -306,12 +306,62 @@ const orders = async (req, res) => {
 //order section
 const ordersstatus = async (req, res) => {
     try {
-        
-        const result = await order.updateOne(
+        const mongoose = require('mongoose');
+       const ObjectId = mongoose.Types.ObjectId;
+        await order.updateOne(
             { _id: req.body.orderId, 'Products._id': req.body.productId },
             { $set: { 'Products.$.orderStatus': req.body.status } }
           );
-            
+            if(req.body.status=='returned'||req.body.status=='cancelled')
+            {
+                const result = await order.aggregate([
+                    {
+                      $match: {
+                        _id: new ObjectId(req.body.orderId),
+                        'Products._id': new ObjectId(req.body.productId)
+                      }
+                    },
+                    {
+                      $project: {
+                        'Products': {
+                          $filter: {
+                            input: '$Products',
+                            as: 'product',
+                            cond: { $eq: ['$$product._id', new ObjectId(req.body.productId)] }
+                          }
+                        },
+                        total: 1,
+                        couponcode: 1,
+                        user:1
+                      }
+                    },
+                    {
+                      $unwind: '$Products'
+                    },
+                    {
+                      $project: {
+                        productTotal: '$Products.total',
+                        total: 1,
+                        couponcode: 1,
+                        user:1
+                      }
+                    }
+                  ]);
+                  
+                  let walletmoney=0;
+                 const appliedcoupon= await coupon.findOne({couponCode:result[0].couponcode})
+                 if(appliedcoupon)
+                 {
+                    walletmoney=result[0].productTotal-((result[0].productTotal)*(appliedcoupon.discountPercent)/100)
+                    
+                    console.log(walletmoney)
+                    
+                    await User.updateOne(
+                        { _id: result[0].user },
+                        { $inc: { wallet: walletmoney } }
+                      );
+                 }
+            }
   
         res.json({success:true});
     } catch (error) {

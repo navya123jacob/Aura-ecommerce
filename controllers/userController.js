@@ -52,6 +52,8 @@ const hashPassword = async (password) => {
 //load Home Page
 const Home=async(req,res)=>{
   try{
+   
+    
     const categories= await category.find({'status': 'active'})
     
    
@@ -89,6 +91,7 @@ const Home=async(req,res)=>{
 const loadLogin=async(req,res)=>{
     try{
       
+      
         const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
         if(buser)
           {
@@ -107,6 +110,7 @@ const loadLogin=async(req,res)=>{
               
             
             const message = req.query.message || '' 
+           
               res.render('login',{message,categories,ses,user})
        
       
@@ -121,6 +125,12 @@ const loadLogin=async(req,res)=>{
 //load user Register
 const loadRegister=async(req,res)=>{
     try{
+      const notverified=await User.findOne({verified:false})
+      
+        await User.deleteMany({verified:false})
+       
+      
+      
       if(req.session.userId)
        {
         const UserOTPVerificationRecords = await UserOTP.find({userId:req.session.userId});
@@ -799,7 +809,7 @@ const checkout=async(req,res)=>{
 function generateRazorpay(orderId,total){
   return new Promise((resolve,reject)=>{
     var options={
-      amount:total,
+      amount:total*100,
       currency:"INR",
       receipt:orderId
     }
@@ -891,12 +901,14 @@ await newOrderData.save()
 
 
 if (req.body.paymentOption === 'cashOnDelivery') {
+  await order.updateOne({ _id: newOrderData._id }, { $set: { paymentstatus: 'placed' } });
   res.json({ success: true })}
 else
 {
 
  generateRazorpay(newOrderData._id,newOrderData.total).then((response)=>{
-  response.success=false
+  response.success=false;
+  
   res.json(response)})
 }
 
@@ -910,8 +922,8 @@ res.status(500).json({ success: false, error: error.message });
 //verifying razorpay payment
 const verifyrazorpayment=async(req,res)=>{
   try{
-    
-    const { order: { id }, payment: { razorpay_payment_id, razorpay_order_id,razorpay_signature } } = req.body;     
+   
+    const { order: {receipt}, payment: { razorpay_payment_id, razorpay_order_id,razorpay_signature } } = req.body;     
     
     const key_secret = process.env.RAZORPAY_SECRET_KEY      
   
@@ -926,16 +938,16 @@ const verifyrazorpayment=async(req,res)=>{
     // Creating the hmac in the required format 
     hmac = hmac.digest('hex'); 
       
-      
+     console.log('something') 
     if(razorpay_signature==hmac){ 
-      
+      console.log('success')
+      await order.updateOne({ _id: receipt }, { $set: { paymentstatus: 'placed' } });
       res.json({ success: true})
     } 
     else
     {
-     
-     
-      await order.deleteOne({_id:id}) 
+    
+      
       res.json({ success: false, message: 'Payment verification failed' });
     }
     }
@@ -1115,6 +1127,7 @@ const orders = async (req, res) => {
       const user = req.session.checkuser || '';
       //logi mid end
       const myuser = await User.findOne({ email: req.session.email });
+      await order.deleteMany({paymentstatus:'pending'})
       const orders = await order.find({ user: myuser._id })
           .populate({
               path: 'Products.products', 

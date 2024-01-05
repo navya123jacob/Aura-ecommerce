@@ -6,6 +6,11 @@ const ordersSchema = mongoose.Schema({
         ref: 'User',
         required: true
     },
+    paymentstatus: {
+        type: String,
+        default:'pending'
+       
+    },
     Products: [{
         products: {
             type: mongoose.Schema.Types.ObjectId,
