@@ -814,6 +814,7 @@ function generateRazorpay(orderId,total){
 //proceed to checkout page
 const placeorder=async(req,res)=>{
   try{
+    
     //for logi mid
     categories=req.categories
     ses=req.ses
@@ -888,11 +889,9 @@ await newOrderData.save()
   console.error(error);
 });
 
-if(req.body.paymentOption=='cashOnDelivery')
-{
-  res.json({success:true})
-  
-}
+
+if (req.body.paymentOption === 'cashOnDelivery') {
+  res.json({ success: true })}
 else
 {
 
@@ -911,10 +910,8 @@ res.status(500).json({ success: false, error: error.message });
 //verifying razorpay payment
 const verifyrazorpayment=async(req,res)=>{
   try{
-    console.log(req.body)
-const {order_id, payment_id} = req.body;      
-    const razorpay_signature =  req.headers['x-razorpay-signature']; 
-  
+    
+    const { order: { id }, payment: { razorpay_payment_id, razorpay_order_id,razorpay_signature } } = req.body;     
     
     const key_secret = process.env.RAZORPAY_SECRET_KEY      
   
@@ -924,18 +921,26 @@ const {order_id, payment_id} = req.body;
     let hmac = crypto.createHmac('sha256', key_secret);  
   
     // Passing the data to be hashed 
-    hmac.update(order_id + "|" + payment_id); 
+    hmac.update(razorpay_order_id + "|" + razorpay_payment_id); 
       
     // Creating the hmac in the required format 
-    const generated_signature = hmac.digest('hex'); 
+    hmac = hmac.digest('hex'); 
       
       
-    if(razorpay_signature===generated_signature){ 
-        res.json({success:true, message:"Payment has been verified"}) 
+    if(razorpay_signature==hmac){ 
+      
+      res.json({ success: true})
     } 
     else
-    res.json({success:false, message:"Payment verification failed"}) 
-  }
+    {
+     
+     
+      await order.deleteOne({_id:id}) 
+      res.json({ success: false, message: 'Payment verification failed' });
+    }
+    }
+    
+  
   catch (error) {
       console.log(error.message);
     }
@@ -1143,6 +1148,8 @@ const ordersstatus = async (req, res) => {
 //to see order details
 const orderdetails=async (req, res) => {
   try {
+    console.log('yes')
+    console.log(req.query.orderId,req.query.productId)
       //for logi mid
       categories = req.categories;
       ses = req.ses;
@@ -1174,7 +1181,7 @@ const orderdetails=async (req, res) => {
       const myuser=await User.findOne({email:req.session.email})
       let j=0;
       
-      for(j=0;i<myuser.addressField.length;j++)
+      for(j=0;j<myuser.addressField.length;j++)
       {
         if(myorder.address==myuser.addressField[j]._id)
         {
