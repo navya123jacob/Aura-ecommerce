@@ -123,7 +123,8 @@
                                             <select id="paymentOption" name="paymentOption" class="form-control">
                                               <option value="cashOnDelivery">Cash on Delivery</option>
                                               <option value="razorpay">Razor pay</option>
-                                              <!-- Add more options if needed -->
+                                              <option value="wallet">Wallet</option>
+                                             
                                             </select>
                                         	</div><!-- End .accordion -->
 
@@ -445,11 +446,23 @@ fetch('/placeorder', {
     })
     .then(data => {
        
-        if (data.success==true) {
+        if (data.success=='cod') {
             // COD
-            console.log('yes')
+           
             window.location.href = `/orderplaced`;
-        } else {
+        } 
+        else if(data.success=='wal')
+        {
+            if(data.check==true)
+            {
+                window.location.href = `/orderplaced`;
+            }
+            else{
+                alert('no money')
+            }
+            
+        }
+        else {
             // RazorPay
             razorpayPayment(data)
         }

@@ -902,12 +902,28 @@ await newOrderData.save()
 
 if (req.body.paymentOption === 'cashOnDelivery') {
   await order.updateOne({ _id: newOrderData._id }, { $set: { paymentstatus: 'placed' } });
-  res.json({ success: true })}
+  res.json({ success: 'cod' })}
+else if (req.body.paymentOption === 'wallet') {
+  if(myuser.wallet>=newOrderData.total)
+  {
+    await order.updateOne({ _id: newOrderData._id }, { $set: { paymentstatus: 'placed' } });
+    await User.updateOne(
+      { email: req.session.email },
+      { $inc: { wallet:-newOrderData.total } }
+    );
+    res.json({ success: 'wal',check:true })
+  }
+  else{
+    res.json({ success: 'wal',check:false})
+  }
+  }
+  
+  
 else
 {
 
  generateRazorpay(newOrderData._id,newOrderData.total).then((response)=>{
-  response.success=false;
+  response.success='razor';
   
   res.json(response)})
 }
@@ -938,7 +954,7 @@ const verifyrazorpayment=async(req,res)=>{
     // Creating the hmac in the required format 
     hmac = hmac.digest('hex'); 
       
-     console.log('something') 
+     
     if(razorpay_signature==hmac){ 
       console.log('success')
       await order.updateOne({ _id: receipt }, { $set: { paymentstatus: 'placed' } });
