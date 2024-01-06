@@ -344,7 +344,7 @@ const outotp= async (req, res) => {
   try {
     await UserOTP.deleteMany({userId:req.session.userId});
     // Destroy the session
-   console.log('yay.')
+   
     if(User.find({userId:req.session.userId,is_verified:false})) //otp expire aan verify cheythitilel
     {
       await User.deleteOne({ _id: req.session.userId});
@@ -935,7 +935,9 @@ else if (req.body.paymentOption === 'wallet') {
     res.json({ success: 'wal',check:true })
   }
   else{
-    res.json({ success: 'wal',check:false})
+    let diff=newOrderData.total-myuser.wallet
+    let orderid=newOrderData._id
+    res.json({ success: 'wal',check:false,wallet:myuser.wallet,diff,orderid})
   }
   }
   
@@ -943,10 +945,12 @@ else if (req.body.paymentOption === 'wallet') {
 else
 {
 
- generateRazorpay(newOrderData._id,newOrderData.total).then((response)=>{
-  response.success='razor';
-  
-  res.json(response)})
+  generateRazorpay(newOrderData._id,newOrderData.total).then((response)=>{
+    response.success='razor';
+    
+    res.json(response)})
+
+
 }
 
 
@@ -955,6 +959,25 @@ console.error(error);
 res.status(500).json({ success: false, error: error.message });
 }
 }
+
+//split payment 
+const splitorder=async(req,res)=>{
+  try{
+    await User.updateOne(
+      { email: req.session.email },
+      { $set: { wallet:0} }
+    );
+    await order.updateOne({ _id: req.body.currentid }, { $set: { paymentstatus: 'placed' } });
+    generateRazorpay(req.body.currentid,req.body.difference).then((response)=>{
+      response.success='razor';
+      
+      res.json(response)})
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: error.message });
+    }
+    }
+    
 
 //verifying razorpay payment
 const verifyrazorpayment=async(req,res)=>{
@@ -1338,6 +1361,7 @@ module.exports={
     removeaddress,
     checkout,
     placeorder,
+    splitorder,
     orderplaced,
     orders,
     ordersstatus,

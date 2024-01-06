@@ -429,7 +429,7 @@ function selectCoupon(couponCode, discountPercent, minAmount, event) {
     existingAddress: existingAddress,
     couponCodeInput: couponCodeInput
 };
-console.log(data)
+
 
 fetch('/placeorder', {
     method: 'POST',
@@ -445,23 +445,60 @@ fetch('/placeorder', {
         return response.json();
     })
     .then(data => {
-       
-        if (data.success=='cod') {
-            // COD
-           
+        let difference=data.diff
+    if (data.success === 'cod') {
+        // COD
+        window.location.href = `/orderplaced`;
+    } else if (data.success === 'wal') {
+        if (data.check === true) {
             window.location.href = `/orderplaced`;
-        } 
-        else if(data.success=='wal')
-        {
-            if(data.check==true)
-            {
-                window.location.href = `/orderplaced`;
-            }
-            else{
-                alert('no money')
-            }
-            
+        } else {
+            // Display SweetAlert when there's not enough money in the wallet
+            Swal.fire({
+                icon: 'warning',
+                title: 'Insufficient Funds',
+                text: `You don't have enough money in your wallet. You only have $${data.wallet}.`,
+                showCancelButton: true,
+                confirmButtonText: 'Split Payment with RazorPay',
+                cancelButtonText: 'Cancel',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                   
+
+
+//SPLIT PAYMENT
+             let newdata={difference:data.diff,currentid:data.orderid}  
+             console.log(newdata)    
+                    fetch('/splitorder?', {
+    method: 'POST',
+    body: JSON.stringify(newdata),
+    headers: {
+        'Content-Type': 'application/json',
+    },
+})
+.then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        return response.json();
+    })
+    .then(data => {razorpayPayment(data)})
+    .catch(error => {
+      console.error('Error:', error);
+    });
+                    
+                    
+
+
+
+
+                } else {
+                    // User clicked Cancel
+                    alert('Payment canceled.');
+                }
+            });
+        }
+    }
         else {
             // RazorPay
             razorpayPayment(data)
@@ -476,7 +513,8 @@ fetch('/placeorder', {
 
 function razorpayPayment(order)
 {
-    
+    console.log(order)
+
     var options = {
     "key": "rzp_test_rhkvfmHNrTHBBX", // Enter the Key ID generated from the Dashboard
     "amount": (order.amount), // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise

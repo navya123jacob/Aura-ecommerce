@@ -79,6 +79,9 @@ userRoute.get('/checkout',mid.UserNoSes,mid.logiheader,userController.checkout)
 //place order
 userRoute.post('/placeorder',mid.UserNoSes,mid.logiheader,userController.placeorder)
 
+//split payment
+userRoute.post('/splitorder',mid.UserNoSes,mid.logiheader,userController.splitorder)
+
 //placed order
 userRoute.get('/orderplaced',mid.UserNoSes,mid.logiheader,userController.orderplaced)
 
