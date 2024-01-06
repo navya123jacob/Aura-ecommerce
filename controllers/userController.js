@@ -52,7 +52,7 @@ const hashPassword = async (password) => {
 //load Home Page
 const Home=async(req,res)=>{
   try{
-   
+    
     
     const categories= await category.find({'status': 'active'})
     
@@ -339,6 +339,27 @@ const loadRegisterOTP=async(req,res)=>{
 
  
 }
+
+const outotp= async (req, res) => {
+  try {
+    await UserOTP.deleteMany({userId:req.session.userId});
+    // Destroy the session
+   console.log('yay.')
+    if(User.find({userId:req.session.userId,is_verified:false})) //otp expire aan verify cheythitilel
+    {
+      await User.deleteOne({ _id: req.session.userId});
+    }
+    req.session.destroy();
+    data= {
+      success : true,
+      
+    }
+    res.json(data)
+  } catch (error) {
+    console.log(error.message)
+   }
+ };
+
 
 //post on otp verifaction form 
 const verifyUserOTP = async (req, res) => {
@@ -1305,6 +1326,7 @@ module.exports={
     CatProductsView,
     productdetails,
     resendUserOTP,
+    outotp,
     account,
     cartload,
     productaddtocart,

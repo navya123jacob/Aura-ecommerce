@@ -12,13 +12,16 @@ const mid=require('../middleware.js');
 const Product = require('../models/productModel.js');
 
 //home page
-userRoute.get('/',userController.Home)
+userRoute.get('/',mid.otpmid,userController.Home)
 
 //Register page
 userRoute.get('/register',mid.UserSes,userController.loadRegister)
 
 //Post on Register page(redirects to otp page)
 userRoute.post('/registerpost',userController.PostRegister)
+
+//to go back out of registpostotp page
+userRoute.post('/outotp',userController.outotp)
 
 
 
@@ -44,10 +47,10 @@ userRoute.post('/userLogin',userController.PostLogin)
 
 
 // Categories products view
-userRoute.get('/category',  mid.logiheader, userController.CatProductsView);
+userRoute.get('/category',mid.otpmid,mid.logiheader, userController.CatProductsView);
 
 //to view product details
-userRoute.get('/productdetails',mid.logiheader,userController.productdetails)
+userRoute.get('/productdetails',mid.otpmid,mid.logiheader,userController.productdetails)
 
 //to view account
 userRoute.get('/account',mid.UserNoSes,mid.logiheader,userController.account)

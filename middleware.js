@@ -6,6 +6,24 @@ const UserOTP= require('./models/userOTPverify');
 const product = require('./models/productModel');
 const category = require('./models/categoryModel');
 
+
+//registerpost
+const otpmid = async(req, res, next) => {
+    if(req.session.userId)
+    {
+     const UserOTPVerificationRecords = await UserOTP.find({userId:req.session.userId});
+   
+   const { expiresAt } = UserOTPVerificationRecords[0];
+   const { createdAt } = UserOTPVerificationRecords[0];
+
+     res.redirect(`/registerpostotp?expiresAt=${expiresAt}&createdAt=${createdAt}`)
+    }  else {
+       
+        next();
+    }
+};
+    
+
 // Login session middleware
 const UserNoSes = (req, res, next) => {
     // Check if the user is already logged in
@@ -86,5 +104,6 @@ module.exports =
  adminloginNoSes,
  UserNoSes,
  UserSes,
- logiheader
+ logiheader,
+ otpmid
 }
