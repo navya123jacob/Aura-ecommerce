@@ -884,7 +884,7 @@ await newOrderData.save()
     name:product.name,
     quantity: product.quantity
   }));
-
+  
  
   productsToUpdate.forEach(async(pro) => {
    
@@ -1230,6 +1230,24 @@ const wallet=async (req, res) => {
 }
 
 
+//to see wallet history
+const wallethistory=async (req, res) => {
+  try {
+    
+      //for logi mid
+      categories = req.categories;
+      ses = req.ses;
+      const user = req.session.checkuser || '';
+      //logi mid end
+      const myuser = await User.findOne({ email: req.session.email });
+      
+         res.render('wallethistory', { user, ses, categories,myuser});
+  } catch (error) {
+      console.log(error.message);
+  }
+}
+
+
 
 
 
@@ -1275,6 +1293,7 @@ module.exports={
     ordersstatus,
     orderdetails,
     verifyrazorpayment,
-    wallet
+    wallet,
+    wallethistory
    
 }

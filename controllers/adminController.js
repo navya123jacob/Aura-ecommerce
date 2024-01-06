@@ -290,12 +290,12 @@ const orders = async (req, res) => {
         .exec();
        }
     
-      
+       
 
             const totalProducts = await order.countDocuments(query);
             const totalPages = Math.ceil(totalProducts / pageSize);
 
-        
+       
   
         res.render('adminorders', { user, orders, ses, categories ,searchQuery,page, totalPages,});
     } catch (error) {
@@ -312,6 +312,7 @@ const ordersstatus = async (req, res) => {
             { _id: req.body.orderId, 'Products._id': req.body.productId },
             { $set: { 'Products.$.orderStatus': req.body.status } }
           );
+          let walletmoney=0;
             if(req.body.status=='returned'||req.body.status=='cancelled')
             {
                 const result = await order.aggregate([
@@ -350,7 +351,7 @@ const ordersstatus = async (req, res) => {
                     }
                   ]);
                   
-                  let walletmoney=result[0].productTotal;
+                   walletmoney=result[0].productTotal;
                   console.log(walletmoney)
                  const appliedcoupon= await coupon.findOne({couponCode:result[0].couponcode})
                  if(appliedcoupon)
@@ -369,7 +370,22 @@ const ordersstatus = async (req, res) => {
                     { _id: result[0].user },
                     { $inc: { wallet: walletmoney } }
                   );
+                  if(walletmoney!=0)
+            {
+                const walletEntry = {
+                    amount: walletmoney, 
+                    description: `Amount refunded on order payed via ${result[0].paymentMode}`, 
+                    date: new Date() ,
+                    status:req.body.status
+                };
+                
+                await User.updateOne(
+                    { _id: result[0].user }, 
+                    { $push: { walletHistory: walletEntry } } // Update operation
+                );
             }
+            }
+            
   
         res.json({success:true});
     } catch (error) {

@@ -94,6 +94,9 @@ userRoute.get('/orderdetails',mid.UserNoSes,mid.logiheader,userController.orderd
 //to see wallet
 userRoute.get('/wallet',mid.UserNoSes,mid.logiheader,userController.wallet)
 
+//to see wallet history
+userRoute.get('/wallethistory',mid.UserNoSes,mid.logiheader,userController.wallethistory)
+
 
 //to add product to cart
 userRoute.post('/productaddtocart',userController.productaddtocart)
