@@ -366,10 +366,12 @@ const ordersstatus = async (req, res) => {
                 {
                     walletmoney=0
                 }
-                 await User.updateOne(
+                
+
+                await User.updateOne(
                     { _id: result[0].user },
                     { $inc: { wallet: walletmoney } }
-                  );
+                );
                   if(walletmoney!=0)
             {
                 const walletEntry = {

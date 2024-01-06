@@ -1229,21 +1229,33 @@ const orderdetails=async (req, res) => {
 
 
 //to see wallet
-const wallet=async (req, res) => {
+const wallet = async (req, res) => {
   try {
+    // For login middleware
+    const categories = req.categories;
+    const ses = req.ses;
+    const user = req.session.checkuser || '';
+
     
-      //for logi mid
-      categories = req.categories;
-      ses = req.ses;
-      const user = req.session.checkuser || '';
-      //logi mid end
-      const myuser = await User.findOne({ email: req.session.email });
-      
-         res.render('wallet', { user, ses, categories,myuser});
+    const myuser = await User.findOne({ email: req.session.email });
+
+   
+    const currentWalletAmount = myuser.wallet;
+
+    // Round the wallet amount to two decimal places
+    const roundedWalletAmount = parseFloat(currentWalletAmount.toFixed(2));
+
+   
+    myuser.wallet = roundedWalletAmount;
+
+    await myuser.save();
+    res.render('wallet', { user, ses, categories, myuser });
   } catch (error) {
-      console.log(error.message);
+    console.log(error.message);
+    // Handle the error appropriately, such as sending an error response
+    res.status(500).send('Internal Server Error');
   }
-}
+};
 
 
 //to see wallet history
