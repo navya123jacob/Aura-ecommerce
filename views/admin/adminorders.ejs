@@ -35,6 +35,7 @@
                       <th>Name</th>
                       
                       <th>Email</th>
+                      <th>Payment mode</th>
                       <th>Action</th>
                   </tr>
               </thead>
@@ -60,6 +61,7 @@
                              
                            
                               <td><%= order.user.email %></td>
+                              <td><%= order.paymentMode %></td>
                               <td>
                                 <select onchange="updateProductStatus('<%= order._id %>', '<%= product._id %>','<%= product.reason %>', this.value)">
                                     <option value="placed" <%= product.orderStatus === 'placed' ? 'selected' : '' %>>Placed</option>

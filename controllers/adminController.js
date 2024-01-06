@@ -332,7 +332,8 @@ const ordersstatus = async (req, res) => {
                         },
                         total: 1,
                         couponcode: 1,
-                        user:1
+                        user:1,
+                        paymentMode:1
                       }
                     },
                     {
@@ -343,12 +344,14 @@ const ordersstatus = async (req, res) => {
                         productTotal: '$Products.total',
                         total: 1,
                         couponcode: 1,
-                        user:1
+                        user:1,
+                        paymentMode:1
                       }
                     }
                   ]);
                   
-                  let walletmoney=0;
+                  let walletmoney=result[0].productTotal;
+                  console.log(walletmoney)
                  const appliedcoupon= await coupon.findOne({couponCode:result[0].couponcode})
                  if(appliedcoupon)
                  {
@@ -356,11 +359,16 @@ const ordersstatus = async (req, res) => {
                     
                     console.log(walletmoney)
                     
-                    await User.updateOne(
-                        { _id: result[0].user },
-                        { $inc: { wallet: walletmoney } }
-                      );
+                    
                  }
+                if(result[0].paymentMode=='cashOnDelivery' && req.body.status=='cancelled')
+                {
+                    walletmoney=0
+                }
+                 await User.updateOne(
+                    { _id: result[0].user },
+                    { $inc: { wallet: walletmoney } }
+                  );
             }
   
         res.json({success:true});

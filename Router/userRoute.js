@@ -91,6 +91,9 @@ userRoute.put('/orders/status',mid.UserNoSes,mid.logiheader,userController.order
 //see order details
 userRoute.get('/orderdetails',mid.UserNoSes,mid.logiheader,userController.orderdetails)
 
+//to see wallet
+userRoute.get('/wallet',mid.UserNoSes,mid.logiheader,userController.wallet)
+
 
 //to add product to cart
 userRoute.post('/productaddtocart',userController.productaddtocart)

@@ -1212,6 +1212,24 @@ const orderdetails=async (req, res) => {
 }
 
 
+//to see wallet
+const wallet=async (req, res) => {
+  try {
+    
+      //for logi mid
+      categories = req.categories;
+      ses = req.ses;
+      const user = req.session.checkuser || '';
+      //logi mid end
+      const myuser = await User.findOne({ email: req.session.email });
+      
+         res.render('wallet', { user, ses, categories,myuser});
+  } catch (error) {
+      console.log(error.message);
+  }
+}
+
+
 
 
 
@@ -1256,6 +1274,7 @@ module.exports={
     orders,
     ordersstatus,
     orderdetails,
-    verifyrazorpayment
+    verifyrazorpayment,
+    wallet
    
 }

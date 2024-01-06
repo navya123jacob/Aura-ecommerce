@@ -1,0 +1,61 @@
+
+<%- include('../layouts/header') %>
+<%- include('../layouts/Login/loginHeader') %>  
+
+<main class="main">
+    <div class="container">
+        <div class="row">
+            <!-- Left Sidebar -->
+            <aside class="col-md-4 col-lg-3">
+                <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link " id="tab-dashboard-link" href="/account" role="tab" aria-controls="tab-dashboard" aria-selected="true">My Account</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tab-orders-link" href="/orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " id="tab-address-link" href="/address" role="tab" aria-controls="tab-address" aria-selected="false">Addresses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" id="tab-address-link" href="/wallet" role="tab" aria-controls="tab-address" aria-selected="false">Wallet</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout" id="sign-out-link">Sign Out</a>
+                    </li>
+                </ul>
+            </aside><!-- End .col-lg-3 -->
+            <div class="card mt-5 ml-5" style="width: 50rem; overflow: hidden;">
+                <div style="position: relative;">
+                    <img src="/assets/images/banners/pages/wallet.jpeg" class="card-img-top" style="object-fit: cover; height: 40vh; width: 100%;">
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #fff;">
+                        <h2 style="margin-bottom: 0; color: black;">Wallet Details</h2>
+                    </div>
+                </div>
+                <div class="card-body" style="display: flex;justify-content: center;align-items: center;">
+                    
+                    <p class="card-text">Your current wallet balance is: $<span style="font-weight: bold;"><%= myuser.wallet %></span></p>
+                </div>
+                
+                <div class="card-body" style="display: flex;justify-content: center;align-items: center;">
+                    <!-- Add a button to add money -->
+                    <a href="#" class="btn btn-outline-primary-2 mr-2">Add Money</a>
+                    <a href="/wallethistory" class="btn btn-outline-primary-2 ml-2">Wallet History</a>
+            
+                </div>
+                <div class="card-body" style="display: flex;justify-content: center;align-items: center;">
+                  
+                    
+            
+                    <!-- You can customize the appearance of the card and content according to your design -->
+                </div>
+            </div>
+            
+        </div><!-- End .row -->
+    </div><!-- End .container -->
+</main>
+
+		<%- include('../layouts/footer') %>
+		<%- include('../layouts/Login/LoginMob') %>
+        
