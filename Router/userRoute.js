@@ -73,6 +73,9 @@ userRoute.post('/editaddress',userController.editaddress)
 //to view cart
 userRoute.get('/cart',mid.UserNoSes,mid.logiheader,userController.cartload)
 
+//to view wishlist
+userRoute.get('/wishlist',mid.UserNoSes,mid.logiheader,userController.wishlistload)
+
 //proceed to checkout
 userRoute.get('/checkout',mid.UserNoSes,mid.logiheader,userController.checkout)
 
@@ -115,6 +118,11 @@ userRoute.post('/productremovefromcart',userController.productremovefromcart)
 //to add to cart
 userRoute.post('/productaddtocart',userController.productaddtocart)
 
+//to add to wishlist
+userRoute.post('/productaddtowishlist',userController.productaddtowishlist)
+
+//to remove from wishlist
+userRoute.post('/productremovefromwish',userController.productremovefromwish)
 
 //logout page post
 userRoute.get('/logout',mid.UserNoSes,userController.logout)

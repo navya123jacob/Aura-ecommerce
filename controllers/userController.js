@@ -8,6 +8,7 @@ const category = require('../models/categoryModel');
 const cart = require('../models/cartModel');
 const order = require('../models/orderModel');
 const coupon = require('../models/couponModel');
+const wishlist = require('../models/wishlistModel');
 const Razorpay = require('razorpay');
 const crypto=require('crypto');//to use SHA256 algorithm
 const fs = require('fs');
@@ -699,6 +700,7 @@ const productaddtocart = async (req, res) => {
   }
 };//Once you retrieve a document from the collection, you can make changes to its properties and then call the .save() method to persist those changes to the database
 
+
 //to remove products from cart
 
 const productremovefromcart = async (req, res) => {
@@ -758,6 +760,113 @@ const cartload=async(req,res)=>{
 }
 
 
+//add products to wishlist
+const productaddtowishlist = async (req, res) => {
+  try {
+    const pro=await product.findOne({name:req.query.name })
+    
+   const currentuser=await User.findOne({email:req.session.email })
+   
+    
+
+    // Check if the user already has a cart document
+    const wishFind = await wishlist.findOne({ user: currentuser._id });
+    
+    if (wishFind) {
+      // User already has a cart document
+     
+      const existingProduct = await wishFind.Products.find(   // findOne is more suitable when you're querying the entire collection for a single document based on some conditions. Here looking for a product within an array, so find is appropriate.
+        (product) => product.name === pro.name
+      );
+      
+
+      if (existingProduct) {
+        res.json({ success: false, message: 'Already added' });
+        
+      } else {
+        // Product is not in the cart, add it to the product array
+        wishFind.Products.push({
+          products: pro._id,
+          price: pro.price,
+          name: pro.name
+        });
+      }
+
+
+      await wishFind.save();
+      res.json({ success: true, message: 'Added' });
+    } else {
+      // User does not have a cart document, create a new one
+      const wishAdd = new wishlist({
+        user: currentuser._id,
+        Products: [
+          {
+            products: pro._id,
+            price: pro.price,
+            name: pro.name
+          }
+        ],
+       
+      });
+
+      
+
+      await wishAdd.save();
+      res.json({ success: true, message: 'added' });
+    }
+
+   
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+//To load wishlist
+
+//load cart
+const wishlistload=async(req,res)=>{
+  try{
+    //for logi mid
+    categories=req.categories
+    ses=req.ses
+    const user = req.session.checkuser|| '' 
+    //logi mid end
+    const checkmessage=req.query.checkmessage||''
+    
+    const email=req.session.email
+    const myuser=await User.findOne({email:req.session.email})
+    const userwish=await wishlist.findOne({user:myuser._id}).populate('Products.products').exec() // Use the actual field name you defined in your schema
+    let b=0;
+    if(userwish)
+    {
+      b=1
+    }
+    
+      res.render('wishlist',{user,ses,categories,userwish,email,checkmessage,b})
+   
+      
+  }
+  catch (error) {
+      console.log(error.message);
+    }
+}
+
+
+//to remove products from wishlist
+
+const productremovefromwish = async (req, res) => {
+  try {
+    const pro=await product.findOne({name:req.query.name })
+    
+    const currentuser=await User.findOne({email:req.session.email })
+   
+    await wishlist.updateOne({user:currentuser._id}, { $pull: { 'Products': { 'products': pro._id} } })
+   res.json({success:true})
+
+  } catch (error) {
+    res.json({success:false})
+  }
+}
 
 //proceed to checkout page
 const checkout=async(req,res)=>{
@@ -1522,6 +1631,9 @@ module.exports={
     verifyrazorpayment,
     wallet,
     wallethistory,
-    getInvoice
+    getInvoice,
+    productaddtowishlist,
+    wishlistload,
+    productremovefromwish
    
 }

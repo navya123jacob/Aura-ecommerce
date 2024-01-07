@@ -79,7 +79,7 @@
                             </div><!-- End .details-action-col -->
 
                             <div class="details-action-wrapper">
-                                <a href="#" class="btn-product btn-wishlist" title="Wishlist"><span>Add to Wishlist</span></a>
+                                <a href="#" class="btn-product btn-wishlist" title="Wishlist" onclick="addtowish('<%=products.name%>','<%=email%>')">Add to Wishlist</a>
                                
                             </div><!-- End .details-action-wrapper -->
                         </div><!-- End .product-details-action -->
@@ -148,6 +148,55 @@
             console.error('Error:', error);
         });
     }
+
+    function addtowish(prodname,email)
+            {
+                
+           
+            fetch(`/productaddtowishlist?name=${prodname}&email=${email}`, {
+            method: 'POST', // Use POST or PATCH for updating data
+            headers: {
+            'Content-Type': 'application/json',
+             },
+        
+    }).then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+           
+            return response.json();
+        })
+        .then(data => {
+            
+            if(data.success==true)
+            {
+                document.querySelector('.btn-wishlist').textContent = 'Added to Wishlist';
+            
+            setTimeout(() => {
+            document.querySelector('.btn-wishlist').textContent = 'Add to Wishlist';
+            
+        }, 1500);
+            }
+
+            else{
+                document.querySelector('.btn-wishlist').textContent = 'Already Added';
+            
+            setTimeout(() => {
+            document.querySelector('.btn-wishlist').textContent = 'Add to Wishlist';
+            
+        }, 1500);
+
+            }
+           
+            
+            
+           
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
 
        
 
