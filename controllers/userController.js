@@ -762,6 +762,8 @@ const cartload=async(req,res)=>{
 //proceed to checkout page
 const checkout=async(req,res)=>{
   try{
+   
+    
     //for logi mid
     categories=req.categories
     ses=req.ses
@@ -775,7 +777,19 @@ const checkout=async(req,res)=>{
     let b=0;let c=0;
     
     
-    let coupons=await coupon.find({'status':true})
+    let coupons=[];
+   
+let couponfind = await coupon.find({ 'status': true });
+
+// Filter out coupons where user_id is equal to myuser._id
+couponfind = couponfind.filter(co => {
+  const userUsedIds = co.userUsed.map(user => user.user_id.toString());
+  if (!userUsedIds.includes(myuser._id.toString())) {
+    coupons.push(co);
+    return false; // Do not include in couponfind array
+  }
+  return true; // Include in couponfind array
+});
     
     if (myuser &&  myuser.addressField.length > 0)
     {
@@ -784,6 +798,14 @@ const checkout=async(req,res)=>{
     }
     let applied_coupon=req.query.couponapplied||''
     
+    let couponmessage=''
+
+
+    //to check if coupon already used
+    const couponcheck = await coupon.findOne({
+      'couponCode': applied_coupon,
+      'userUsed.user_id': { $in: [myuser._id] }
+    });
     
     
     if (usercart && usercart.Products[0]) {
@@ -804,16 +826,23 @@ const checkout=async(req,res)=>{
       const currentcoupon=await coupon.findOne({'status':true,'couponCode':applied_coupon})
       if(currentcoupon)
       {
-        if(currentcoupon.minAmount<=grandtotal)
+        if(couponcheck)
+        {
+          
+          couponmessage=`Already used`;
+        }
+        else if(currentcoupon.minAmount<=grandtotal)
         {
           grandtotal = grandtotal-((currentcoupon.discountPercent/100)*grandtotal)          
         }
         else{
+         
           couponmessage=`minimum amount is ${currentcoupon.minAmount}`
         }
        
       }
       else{
+        
         couponmessage=`invalid coupon code`;
         
       }
@@ -833,6 +862,7 @@ const checkout=async(req,res)=>{
       console.log(error.message);
     }
 }
+
 
 //razorpay function
 function generateRazorpay(orderId,total){
@@ -1052,6 +1082,21 @@ const orderplaced=async(req,res)=>{
     model: 'User'
   })
   .exec();
+
+  const couponcheck = await coupon.findOne({
+    'couponCode': ordermade.couponcode,
+    'userUsed.user_id': { $in: [myuser._id] }
+  });
+  if (ordermade.couponcode && !couponcheck) {
+    await coupon.updateOne(
+      { couponCode: ordermade.couponcode },
+      {
+        $addToSet: {
+          userUsed: { user_id: myuser._id }
+        }
+      }
+    );
+  }
   const userorder=await User.findOne({email:req.session.email})
       let j=0;
       

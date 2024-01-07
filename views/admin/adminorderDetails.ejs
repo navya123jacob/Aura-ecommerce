@@ -27,6 +27,9 @@
                             <p>Price: <%= myorder.Products[i].price %></p>
                             <p>Quantity: <%= myorder.Products[i].quantity %></p>
                             <p>Total: <%= myorder.Products[i].total %></p>
+                            <%if(myorder.couponcode){%>
+                            <p>Coupon used: <%= myorder.couponcode %></p>
+                            <% } %>
                             <p class="address">
                                 <strong>Address:</strong><br>
                                 <div class="address-details">
