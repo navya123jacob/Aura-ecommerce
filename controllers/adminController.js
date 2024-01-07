@@ -308,10 +308,12 @@ const ordersstatus = async (req, res) => {
     try {
         const mongoose = require('mongoose');
        const ObjectId = mongoose.Types.ObjectId;
+       
         await order.updateOne(
-            { _id: req.body.orderId, 'Products._id': req.body.productId },
+            { _id: req.body.orderId, 'Products._id':new ObjectId(req.body.productId) },
             { $set: { 'Products.$.orderStatus': req.body.status } }
           );
+          
           let walletmoney=0;
             if(req.body.status=='returned'||req.body.status=='cancelled')
             {
@@ -343,6 +345,7 @@ const ordersstatus = async (req, res) => {
                     {
                       $project: {
                         productTotal: '$Products.total',
+                        quantity: '$Products.quantity',
                         total: 1,
                         couponcode: 1,
                         user:1,
@@ -351,6 +354,10 @@ const ordersstatus = async (req, res) => {
                     }
                   ]);
                   
+                 
+                  console.log(req.body.proname)
+                  await product.updateOne(
+                    { name: req.body.proname }, { $inc: { quantity: result[0].quantity } });
                    walletmoney=result[0].productTotal;
                   console.log(walletmoney)
                  const appliedcoupon= await coupon.findOne({couponCode:result[0].couponcode})

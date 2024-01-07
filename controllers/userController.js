@@ -138,11 +138,7 @@ const loadLogin=async(req,res)=>{
 //load user Register
 const loadRegister=async(req,res)=>{
     try{
-      const notverified=await User.findOne({verified:false})
-      
-        await User.deleteMany({verified:false})
-       
-      
+    
       
       if(req.session.userId)
        {
@@ -411,8 +407,7 @@ const verifyUserOTP = async (req, res) => {
         const validOTP = await bcrypt.compare(req.body.otp, hashedOTP);
         console.log(validOTP)
         if (!validOTP) {
-          // await User.deleteOne({ _id: userId })
-          // await UserOTP.deleteMany({ userId }
+          
           data= {
             success : false,
             message:'wrong otp,try again'
@@ -820,7 +815,7 @@ const checkout=async(req,res)=>{
       }
       else{
         couponmessage=`invalid coupon code`;
-        applied_coupon=''
+        
       }
       
     }

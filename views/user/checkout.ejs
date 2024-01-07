@@ -39,6 +39,7 @@
 														<option value="" disabled>No existing addresses</option>
 													<% } %>
 												</select>
+                                                <span id="addressError" class="text-danger"></span>
 											</div>
 		                				</div><!-- End .row -->
 										<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addAddressModal">
@@ -56,7 +57,7 @@
                                                         </div><!-- .End .input-group-append -->
                                                         
                                                     </div><!-- End .input-group -->
-                                                    <p class="coupon-message text-danger"><%= couponmessage %></p>
+                                                    
                                         
                                                     <div class="dropdown" id="couponDropdown">
                                                         <button class="btn btn-secondary dropdown-toggle" type="button" id="couponDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -80,12 +81,15 @@
 		                		<aside class="col-lg-3">
 		                			<div class="summary">
 		                				<h3 class="summary-title">Your Order</h3><!-- End .summary-title -->
-
+                                       
 		                				<table class="table table-summary" id="toload">
+                                           
                                             <thead>
                                                 <tr>
                                                     <th>Product</th>
+                                                    
                                                     <th>Total</th>
+                                                    
                                                 </tr>
                                             </thead>
                                             <tbody >
@@ -100,6 +104,7 @@
                                                     <tr class="summary-subtotal">
                                                         <td>Subtotal:</td>
                                                         <td>$<%= Total %></td>
+                                                        
                                                     </tr>
                                                     <tr>
                                                         <td>Shipping:</td>
@@ -108,12 +113,25 @@
                                                     <tr class="summary-total" >
                                                         <td>Total:</td>
                                                         <td>$<%= grandtotal %></td>
+                                                        
                                                     </tr>
+                                                    <tr>
+                                                        <% if (applied_coupon) { %>
+                                                            <td>Coupon Applied</td>
+                                                            <% if (!couponmessage) { %>
+                                                                <td><%= applied_coupon %></td>
+                                                            <% } else { %>
+                                                                <td>None(<%= couponmessage %>)</td>
+                                                            <% } %>
+                                                        <% } %>
+                                                    </tr>
+                                                    
                                                 <% } else { %>
                                                     <tr>
                                                         <td colspan="2">Your cart is empty</td>
                                                     </tr>
                                                 <% } %>
+                                               
                                             </tbody>
                                         </table>
                                     
@@ -410,7 +428,7 @@ function selectCoupon(couponCode, discountPercent, minAmount, event) {
 
     function couponcheck(couponCode) {
        console.log(couponCode)
-       $('#toload').load(`/checkout?couponapplied=${couponCode} #toload`)
+       $('#toload').load(`/checkout?couponapplied=${couponCode} #toload `)
     }
 
 
@@ -418,11 +436,19 @@ function selectCoupon(couponCode, discountPercent, minAmount, event) {
     var orderId ;
     
     document.getElementById('checkoutform').addEventListener('submit', (e) => {
+        
     e.preventDefault();
     const paymentOption = document.getElementById('paymentOption').value;
     const existingAddress = document.getElementById('existingAddresses').value;
     const couponCodeInput = document.getElementById('couponCodeInput').value;
-        
+    const addressError = document.getElementById('addressError');
+
+    if (existingAddress === "") {
+        addressError.textContent = "Please select an existing address or add a new one.";
+        return false;
+    } else {
+        addressError.textContent = "";
+    }
 
         const data = {
     paymentOption: paymentOption,

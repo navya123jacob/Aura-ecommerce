@@ -36,7 +36,7 @@ userRoute.get('/resendOTP',userController.resendUserOTP)
 
 
 //login page
-userRoute.get('/login',mid.UserSes,userController.loadLogin)
+userRoute.get('/login',mid.otpmid,mid.UserSes,userController.loadLogin)
 
 
 //login page post
