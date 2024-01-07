@@ -85,6 +85,9 @@ userRoute.post('/splitorder',mid.UserNoSes,mid.logiheader,userController.splitor
 //placed order
 userRoute.get('/orderplaced',mid.UserNoSes,mid.logiheader,userController.orderplaced)
 
+//to download invoice
+userRoute.get('/download-invoice/:id',mid.UserNoSes,mid.logiheader,userController.getInvoice)
+
 //verify razorpay payment
 userRoute.post('/verify-payment',mid.UserNoSes,mid.logiheader,userController.verifyrazorpayment)
 

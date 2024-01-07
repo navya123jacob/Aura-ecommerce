@@ -448,10 +448,10 @@ fetch('/placeorder', {
         let difference=data.diff
     if (data.success === 'cod') {
         // COD
-        window.location.href = `/orderplaced`;
+        window.location.href = `/orderplaced?orderid=${data.oid}`;
     } else if (data.success === 'wal') {
         if (data.check === true) {
-            window.location.href = `/orderplaced`;
+            window.location.href = `/orderplaced?orderid=${data.oid}`;
         } else {
             // Display SweetAlert when there's not enough money in the wallet
             Swal.fire({
@@ -469,7 +469,7 @@ fetch('/placeorder', {
 //SPLIT PAYMENT
              let newdata={difference:data.diff,currentid:data.orderid}  
              console.log(newdata)    
-                    fetch('/splitorder?', {
+                    fetch('/splitorder', {
     method: 'POST',
     body: JSON.stringify(newdata),
     headers: {
@@ -569,7 +569,7 @@ function verifyPayment(payment, order) {
                 timer: 1500,
             }).then(() => {
                 // Redirect to '/orderplaced' after the alert
-                window.location.href = `/orderplaced`;
+                window.location.href = `/orderplaced?orderid=${data.orderid}`;
             });
         } else {
             // Show error alert

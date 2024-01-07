@@ -10,6 +10,19 @@ const order = require('../models/orderModel');
 const coupon = require('../models/couponModel');
 const Razorpay = require('razorpay');
 const crypto=require('crypto');//to use SHA256 algorithm
+const fs = require('fs');
+const path = require('path'); 
+const pdf = require('pdfkit');
+
+const invoiceDir = path.join(__dirname, 'invoices');
+
+// Check if the directory exists, and create it if it doesn't
+if (!fs.existsSync(invoiceDir)) {
+    fs.mkdirSync(invoiceDir);
+    console.log('Created "invoices" directory.');
+} else {
+    console.log('The "invoices" directory already exists.');
+}
 
 // This razorpayInstance will be used to 
 // access any resource from razorpay  
@@ -923,7 +936,7 @@ await newOrderData.save()
 
 if (req.body.paymentOption === 'cashOnDelivery') {
   await order.updateOne({ _id: newOrderData._id }, { $set: { paymentstatus: 'placed' } });
-  res.json({ success: 'cod' })}
+  res.json({ success: 'cod',oid:newOrderData._id })}
 else if (req.body.paymentOption === 'wallet') {
   if(myuser.wallet>=newOrderData.total)
   {
@@ -932,7 +945,7 @@ else if (req.body.paymentOption === 'wallet') {
       { email: req.session.email },
       { $inc: { wallet:-newOrderData.total } }
     );
-    res.json({ success: 'wal',check:true })
+    res.json({ success: 'wal',check:true,oid:newOrderData._id })
   }
   else{
     let diff=newOrderData.total-myuser.wallet
@@ -1002,7 +1015,7 @@ const verifyrazorpayment=async(req,res)=>{
     if(razorpay_signature==hmac){ 
       console.log('success')
       await order.updateOne({ _id: receipt }, { $set: { paymentstatus: 'placed' } });
-      res.json({ success: true})
+      res.json({ success: true,orderid:receipt})
     } 
     else
     {
@@ -1030,12 +1043,37 @@ const orderplaced=async(req,res)=>{
     const usercart=await cart.findOne({user:myuser._id}).populate('Products.products').exec() // Use the actual field name you defined in your schema
     
     
+
     const email=req.session.email
+    const orderid=req.query.orderid
+   
+    const ordermade = await order.findOne({ _id: orderid })
+  .populate({
+    path: 'Products.products',
+    model: 'Product'
+  })
+  .populate({
+    path: 'user',
+    model: 'User'
+  })
+  .exec();
+  const userorder=await User.findOne({email:req.session.email})
+      let j=0;
+      
+      for(j=0;j<myuser.addressField.length;j++)
+      {
+        if(ordermade.address==userorder.addressField[j]._id)
+        {
+         
+          break;
+        }
+      }
+    const invoicePath = generateInvoice(ordermade, userorder.addressField[j]);
     if (usercart && usercart.Products[0]) {
      
-
-        res.render('orderplaced',{user,ses,categories,usercart})
-        await cart.updateOne({user:myuser._id},{$set:{Products:[]}})
+      await cart.updateOne({user:myuser._id},{$set:{Products:[]}})    
+        res.render('orderplaced',{user,ses,categories,usercart,orderid})
+      
     }
     
     else
@@ -1050,6 +1088,82 @@ const orderplaced=async(req,res)=>{
     }
 }
 
+//to get invoice
+// invoice 
+const getInvoice = (req, res) => {
+  try {
+      console.log('invoice ')
+      const orderId = req.params.id;
+      const invoicePath = path.join(__dirname, 'invoices', `invoice_${orderId}.pdf`);
+
+      // Set appropriate headers for the PDF download
+      res.setHeader('Content-disposition', `attachment; filename=invoice_${orderId}.pdf`);
+      res.setHeader('Content-type', 'application/pdf');
+
+      // Create a readable stream from the invoice file and pipe it to the response
+      const fileStream = fs.createReadStream(invoicePath);
+      fileStream.pipe(res);
+  } catch (error) {
+      console.log(error.message)
+  }
+}
+
+//to generate invoice
+function generateInvoice(order, selectedAddrss) {
+  const invoicePath = path.join(__dirname, 'invoices', `invoice_${order._id}.pdf`);
+  const doc = new pdf();
+
+  // Pipe the PDF to a writable stream and create the invoice
+  doc.pipe(fs.createWriteStream(invoicePath));
+
+  // Set font and font size
+  doc.font('Helvetica-Bold');
+  doc.fontSize(14);
+
+  // Company Name
+  doc.text('AURA', { align: 'center' });
+
+  // Add a horizontal line
+  doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+  doc.moveDown();
+  // Invoice Header
+  doc.fontSize(12).text('Invoice', { align: 'center' }).fontSize(12);
+  doc.moveDown();
+  // Order ID
+  doc.text(`Order ID: ${order._id}`);
+  doc.moveDown();
+  // Product details
+  doc.fontSize(14).text('Product Details', { underline: true });
+
+  for (let i = 0; i < order.Products.length; i++) {
+    const product = order.Products[i];
+    doc.text(`Item ${i + 1}: ${product.name}`);
+    doc.text(`Quantity: ${product.quantity}`);
+    doc.text(`Price:  Rs. ${product.price}`);
+    doc.moveDown(); // Move to the next line
+  }
+
+  // Total
+  doc.fontSize(12).text(`Total:  Rs.${order.total}`);
+
+  // Payment mode
+  doc.text(`Payment mode: ${order.paymentMode}`);
+  doc.moveDown();
+  // Address section
+  doc.fontSize(14).text('Shipping Address', { underline: true });
+
+  doc.text(`Name: ${selectedAddrss.name}`);
+  doc.text(`Phone: ${selectedAddrss.phone}`);
+  doc.text(`Address: ${selectedAddrss.address}`);
+  doc.text(`District: ${selectedAddrss.district}`);
+  doc.text(`State: ${selectedAddrss.state}`);
+  doc.text(`Pincode: ${selectedAddrss.pincode}`);
+  
+
+  doc.end(); // Finalize the PDF
+
+  return invoicePath;
+}
 
   
 
@@ -1221,8 +1335,7 @@ const ordersstatus = async (req, res) => {
 //to see order details
 const orderdetails=async (req, res) => {
   try {
-    console.log('yes')
-    console.log(req.query.orderId,req.query.productId)
+   
       //for logi mid
       categories = req.categories;
       ses = req.ses;
@@ -1368,6 +1481,7 @@ module.exports={
     orderdetails,
     verifyrazorpayment,
     wallet,
-    wallethistory
+    wallethistory,
+    getInvoice
    
 }
