@@ -97,33 +97,7 @@ const Product = async (req, res) => {
   }
 };
 
-//products delete
-const ProductDelete=async(req,res)=>{
-    try{
 
-        // Find the product document to get the list of images
-        const productToDelete = await product.findOne({ _id: req.query.id });
-        console.log(productToDelete)
-        // Loop through each image and delete it from the public directory
-        for (const imagePath of productToDelete.pictures) {
-            const fullPath = path.join(__dirname, '..', 'public', imagePath);
-           fs.unlink(fullPath, (err) => {
-  if (err) {
-    console.error('Error deleting file:', err);
-  } else {
-    console.log('File deleted successfully');
-  }
-});
-        }
-        await product.deleteOne({_id:req.query.id})
-        res.redirect('/admin/products')
-       
-    }
-    
-    catch (error) {
-        console.log(error.message);
-      }
-    }
 
 // /products active/blocked
 const ProductToggle=async(req,res)=>{
@@ -232,7 +206,7 @@ module.exports=
     addProduct,
     addProductpost,
     Product,
-    ProductDelete,
+    
     ProductToggle,
     ProductEdit,
     ProductEditpost,

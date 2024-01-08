@@ -40,7 +40,7 @@
                 
                 <div class="card-body" style="display: flex;justify-content: center;align-items: center;">
                     <!-- Add a button to add money -->
-                    <a href="#" class="btn btn-outline-primary-2 mr-2">Add Money</a>
+                    <button class="btn btn-outline-primary-2 mr-2" onclick="addmoney()">Add Money</button>
                     <a href="/wallethistory" class="btn btn-outline-primary-2 ml-2">Wallet History</a>
             
                 </div>
@@ -55,6 +55,149 @@
         </div><!-- End .row -->
     </div><!-- End .container -->
 </main>
+<div class="modal fade" id="walletModal" tabindex="-1" aria-labelledby="walletModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm"> <!-- Use modal-sm for small size -->
+      <div class="modal-content" >
+        <div class="modal-header" style="display: flex;flex-direction: column; align-items: center;">
+          <h5 class="modal-title " id="walletModalLabel">Add Money to Wallet</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Add a form to enter the amount -->
+          <form id="addMoneyForm" style="display: flex;flex-direction: column; align-items: center;">
+            <div class="form-group">
+              <label for="amount">Amount:</label>
+              <input type="number" class="form-control" id="amount" min="1" placeholder="Enter amount" required>
+            </div>
+            <button type="submit" class="btn btn-outline-primary-2" >Add</button>
+        </form>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function addmoney() {
+  
+  $('#walletModal').modal('show');
+}
+
+document.getElementById('addMoneyForm').addEventListener('submit', function (event) {
+  event.preventDefault(); 
+  const amountValue = document.getElementById('amount').value;
+  fetch('/addwalletmoney', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({amountValue }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        razorpayPayment(data)
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        
+    });
+  
+  
+});
+
+function razorpayPayment(order)
+{
+    console.log(order)
+
+    var options = {
+    "key": "rzp_test_rhkvfmHNrTHBBX", // Enter the Key ID generated from the Dashboard
+    "amount": (order.amount), // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "AURA",
+    "description": "Test Transaction",
+    "image": "/assets/images/logo.jpg",
+    "order_id": order.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+        
+        verifyPayment(response,order)
+    },
+    "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#ffffff"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.open();
+}
+
+function verifyPayment(payment, order) {
+    console.log('inside')
+    fetch('/verify-payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ payment, order }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data.success)
+        if (data.success == true) {
+            // Show success alert
+            Swal.fire({
+                icon: 'success',
+                title: 'Payment Successful',
+                showConfirmButton: false,
+                timer: 1500,
+            }).then(() => {
+                // Redirect to '/orderplaced' after the alert
+                window.location.href = `/orderplaced?orderid=${data.orderid}`;
+            });
+        } else {
+            // Show error alert
+            Swal.fire({
+                icon: 'error',
+                title: 'Payment has failed',
+                showConfirmButton: false,
+                timer: 1500,
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Show error alert in case of network or server error
+        Swal.fire({
+            icon: 'error',
+            title: 'An error occurred',
+            text: 'Please try again later.',
+        });
+    });
+}
+
+</script>
 
 		<%- include('../layouts/footer') %>
 		<%- include('../layouts/Login/LoginMob') %>

@@ -70,13 +70,22 @@ const Home=async(req,res)=>{
     
     const categories= await category.find({'status': 'active'})
     
-   
-    const products = await product.find({ 'status': 'active' })
-  .populate({
-    path: 'category', //The path: 'category' specifies the field in the current document that you want to populate. In this case, you are populating the 'category' field of the 'Product' model.
-    match: { 'status': 'active' }
-  })
-  .exec(); //The .exec() method is used to execute the query
+   let products=[]
+    const pro = await product.find({ 'status': 'active'})
+    .populate({
+      path: 'category',
+      model: 'Category',
+     
+    })
+    .exec();
+
+    pro.forEach((e)=>{
+      if(e.category.status=='active')
+      {
+        products.push(e)
+      }
+    })
+
   const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
   if(buser)
     {
@@ -534,7 +543,7 @@ const CatProductsView = async (req, res) => {
    
 
     let mycategory=await category.findOne({name:cat,'status':'active'})
-    let products=''
+    let products=[]
     let query={}
     if(mycategory)
     {
@@ -545,18 +554,36 @@ const CatProductsView = async (req, res) => {
       const regex = new RegExp(`^${searchQuery}`, 'i');
       query.name = regex
   }
+
+  let tot=[]
+  let protot = await product.find(query).populate({
+        path: 'category',
+        model: 'Category'}).exec()
+        protot.forEach((e)=>{
+          if(e.category.status=='active')
+          {
+            tot.push(e)
+          }
+        })
     
-      products = await product
+      let pro = await product
       .find(query)
       .populate({
-        path: 'category'
+        path: 'category',
+        model: 'Category',
       })
       .sort({ price: sortvalue})
       .skip((page - 1) * pageSize)
       .limit(pageSize)
       .lean() 
+      pro.forEach((e)=>{
+        if(e.category.status=='active')
+        {
+          products.push(e)
+        }
+      })
     
-    const totalProducts = await product.countDocuments(query);
+    const totalProducts = tot.length
     const totalPages = Math.ceil(totalProducts / pageSize);
     const email=req.session.email
    
@@ -1038,9 +1065,13 @@ const placeorder=async(req,res)=>{
   if(req.body.couponCodeInput)
   {
     const currentcoupon=await coupon.findOne({'status':true,'couponCode':req.body.couponCodeInput})
-    newOrderData.couponcode=req.body.couponCodeInput;
-    newOrderData.Totalbefore=grandtotal
-    newOrderData.total=grandtotal-((currentcoupon.discountPercent/100)*grandtotal)
+    if(currentcoupon)
+    {
+      newOrderData.couponcode=req.body.couponCodeInput;
+      newOrderData.Totalbefore=grandtotal
+      newOrderData.total=grandtotal-((currentcoupon.discountPercent/100)*grandtotal)
+    }
+    
   }
 
   
@@ -1634,6 +1665,7 @@ module.exports={
     getInvoice,
     productaddtowishlist,
     wishlistload,
-    productremovefromwish
+    productremovefromwish,
+    
    
 }

@@ -26,43 +26,52 @@
 										<tr>
 											<th>Product</th>
 											<th>Price</th>
+											<th>Cart</th>
+											<th></th>
 											
 										</tr>
 									</thead>
 
 									<tbody>
-										<% if (b==1) { %>
-										<% userwish.Products.forEach(product => { %>
+										<% if (b == 1) { %>
+											<% let i = 1 %>
+											<% userwish.Products.forEach(product => { %>
+												<tr>
+													<td class="product-col">
+														<div class="product">
+															<figure class="product-media">
+																<a href="/productdetails?id=<%= product.products._id %>">
+																	<img src="<%= (product.products.pictures[0].replace('public','')) %>" alt="Product image">
+																</a>
+															</figure>
+															<h3 class="product-title">
+																<a href="#"><%= product.products.name %></a>
+															</h3><!-- End .product-title -->
+														</div><!-- End .product -->
+													</td>
+													<td class="price-col">₹<%= product.price %></td>
+													<td>
+														<button class="btn btn-product btn-cart" id="cart<%= i %>" onclick="addtocart('<%= product.products.name %>','<%= email %>', <%= i %>)">
+															Add to Cart
+														</button>
+													</td>
+													<td class="remove-col" onclick="removeWishItem('<%= product.products.name %>','<%= email %>')">
+														<button>
+															<i class="icon-close"></i>
+														</button>
+													</td>
+												</tr>
+												<% i++ %>
+											<% }); %>
+										<% } else { %>
 											<tr>
-												<td class="product-col">
-													<div class="product">
-														<figure class="product-media">
-															<a href="/productdetails?id=<%=product.products._id%>">
-																<img src="<%= (product.products.pictures[0].replace('public','')) %>" alt="Product image">
-															</a>
-														</figure>
-										
-														<h3 class="product-title">
-															<a href="#"><%= product.products.name %></a>
-														</h3><!-- End .product-title -->
-													</div><!-- End .product -->
-												</td>
-												<td class="price-col">₹<%= product.price %></td>
-												
-												<td class="remove-col">
-													<button class="btn-remove" onclick="removeWishItem('<%=product.name%>' ,'<%=email%>%>')">
-														<i class="icon-close"></i>
-													</button>
+												<td colspan="5" class="text-center">
+													Your Wishlist is empty.<%= checkmessage %>
 												</td>
 											</tr>
-											<% }); %>
-											<% } else { %>
-												<tr>
-													<td colspan="5" class="text-center">Your Wishlist is empty.<%=checkmessage%></td>
-												</tr>
-											<% } %>
-										
+										<% } %>
 									</tbody>
+									
 								</table><!-- End .table table-wishlist -->
 
 	                			
@@ -94,6 +103,44 @@
 	})
         
 	}
+
+	
+	function addtocart(prodname,email,i)
+            {
+                const qtyValue = 1;
+           console.log(i)
+            fetch(`/productaddtocart?name=${prodname}&email=${email}&qtyValue=${qtyValue}`, {
+            method: 'POST', // Use POST or PATCH for updating data
+            headers: {
+            'Content-Type': 'application/json',
+             },
+        
+    }).then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            // You can handle the response if needed
+            return response.json();
+        })
+        .then(data => {
+            // Update the button text and class
+            
+           
+            document.getElementById(`cart${i}`).textContent = 'Added to Cart';
+            
+            setTimeout(() => {
+              document.getElementById(`cart${i}`).textContent = 'Add to Cart';
+            
+        }, 1000);
+            
+            
+           
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
 		</script>
 
 <%- include('../layouts/footer') %>

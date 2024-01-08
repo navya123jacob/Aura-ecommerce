@@ -52,8 +52,7 @@
                             <!-- Edit Button -->
                             <button class="btn btn-danger btn-sm" onclick="showConfirmationModal('Edit', '<%= product._id %>')">Edit</button>
                             
-                            <!-- Delete Button -->
-                            <button class="btn btn-danger btn-sm" onclick="showConfirmationModal('Delete', '<%= product._id %>')">Delete</button>
+                            
                             
                             <!-- Toggle Button -->
                             <button class="btn btn-info btn-sm" onclick="showConfirmationModal('Toggle', '<%= product._id %>', <%= product.active %>)" >
@@ -167,10 +166,7 @@
           // Redirect to delete route
           window.location.href = `/admin/products/edit?id=${productId}`;
           break;
-        case 'delete':
-          // Redirect to delete route
-          $('#toload').load(`/admin/products/delete?id=${productId} #toload`);
-          break;
+      
         case 'toggle':
           // Redirect to toggle route
           $('#toload').load(`/admin/products/toggle?id=${productId} #toload`);

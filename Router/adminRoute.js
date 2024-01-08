@@ -81,8 +81,6 @@ adminRoute.post('/products/addpost',upload.array('images', 5),productController.
 //to view products
 adminRoute.get('/products',mid.adminloginNoSes,productController.Product)
 
-//to delete products
-adminRoute.get('/products/delete',mid.adminloginNoSes,productController.ProductDelete)
 
 // products active/blocked
 adminRoute.get('/products/toggle',mid.adminloginNoSes,productController.ProductToggle)
