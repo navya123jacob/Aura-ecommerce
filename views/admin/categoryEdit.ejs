@@ -7,34 +7,28 @@
     <div class="main-panel">
         <div class="content-wrapper">
 
-            <div class="card">
-                <div class="card-body">
-                    <form class="forms-sample" method="POST" action="/admin/categories/editpost?_id=<%=editcat._id%>">
-                        <!-- Update the form action endpoint accordingly -->
-
-                        <div class="form-group row">
-                            <label for="categoryName" class="col-sm-3 col-form-label">Category Name</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="categoryName" name="name" placeholder="Category Name" value="<%=editcat.name%>" required>
-                                <small id="nameError" class="text-danger"></small>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="categoryDescription" class="col-sm-3 col-form-label">Category Description</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control"  id="categoryDescription" name="description" placeholder="Category description" value="<%=editcat.description%>" required>
-                                <small id="descriptionError" class="text-danger"></small>
-                            </div>
-                        </div>
-
-
-                        <!-- Other form fields... -->
-
-                        <button type="submit" class="btn btn-primary mr-2" onclick="validateForm()">Submit</button>
-                        <button class="btn btn-dark">Cancel</button>
-                    </form>
-                    <p class="text-success"> <%=message%></p>
+            <form class="forms-sample" id="editForm">
+                <div class="form-group row">
+                    <label for="categoryName" class="col-sm-3 col-form-label">Category Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="categoryName" name="name" placeholder="Category Name" value="<%=editcat.name%>" required>
+                        <small id="nameError" class="text-danger"></small>
+                    </div>
+                </div>
+    
+                <div class="form-group row">
+                    <label for="categoryDescription" class="col-sm-3 col-form-label">Category Description</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="categoryDescription" name="description" placeholder="Category description" value="<%=editcat.description%>" required>
+                        <small id="descriptionError" class="text-danger"></small>
+                    </div>
+                </div>
+    
+                <button type="button" class="btn btn-primary mr-2" onclick="validateAndSubmit()">Submit</button>
+                <button type="button" class="btn btn-dark">Cancel</button>
+                <p class="text-success"> <%=message%></p>
+            </form>
+                    
                       
                 </div>
             </div>
@@ -59,30 +53,75 @@
 <%- include('./layouts/footer.ejs') %>
 
 <script>
-    function validateForm() {
-        const categoryNameInput = document.getElementById('categoryName');
-        const categoryDescriptionInput = document.getElementById('categoryDescription');
-        const nameError = document.getElementById('nameError');
-        const descriptionError = document.getElementById('descriptionError');
+   function validateAndSubmit() {
+    
+    const categoryNameInput = document.getElementById('categoryName');
+    const categoryDescriptionInput = document.getElementById('categoryDescription');
+    const nameError = document.getElementById('nameError');
+    const descriptionError = document.getElementById('descriptionError');
 
-        const categoryName = categoryNameInput.value.trim();
-        const categoryDescription = categoryDescriptionInput.value.trim();
+    const categoryName = categoryNameInput.value.trim();
+    const categoryDescription = categoryDescriptionInput.value.trim();
 
-        // Regular expression to allow only letters (no numbers or special characters)
-        const nameRegex = /^[a-zA-Z]+$/;
+   
+    const nameRegex = /^[a-zA-Z]+$/;
 
-        if (!nameRegex.test(categoryName) || categoryName === '') {
-            nameError.textContent = 'Category name should contain only letters and cannot be empty.';
-            categoryNameInput.focus();
-        } else {
-            nameError.textContent = '';
-        }
+    let isValid = true;
 
-        if (categoryDescription === '') {
-            descriptionError.textContent = 'Category description cannot be empty.';
-            categoryDescriptionInput.focus();
-        } else {
-            descriptionError.textContent = '';
-        }
+    if (!nameRegex.test(categoryName) || categoryName === '') {
+        nameError.textContent = 'Category name should contain only letters and cannot be empty.';
+        categoryNameInput.focus();
+        isValid = false;
+    } else {
+        nameError.textContent = '';
     }
+
+    if (categoryDescription === '') {
+        descriptionError.textContent = 'Category description cannot be empty.';
+        categoryDescriptionInput.focus();
+        isValid = false;
+    } else {
+        descriptionError.textContent = '';
+    }
+
+    if (isValid) {
+        
+        fetch('/admin/categories/editpost?_id=<%=editcat._id%>', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: categoryName,
+                description: categoryDescription,
+            }),
+        })
+        .then(response => {
+           
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+          
+            if(data.success==true)
+            {
+                window.location.href=`/admin/categories`
+            }
+            else{
+               
+                const encodedMessage = encodeURIComponent(data.message); // jQuery load method with a URL that contains special characters.  jQuery treating the URL as a selector and not properly handling the special characters.
+               const url = `/admin/categories/edit?message=${encodedMessage}&categoryId=${data.catid} #editForm`;
+
+               $('#editForm').load(url);
+                
+            }
+           
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+    }
+}
 </script>

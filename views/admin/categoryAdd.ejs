@@ -7,12 +7,8 @@
     <div class="main-panel">
         <div class="content-wrapper">
 
-            <div class="card">
-                <div class="card-body">
-                    <form class="forms-sample" method="POST" action="/admin/categories/addpost">
-                        <!-- Update the form action endpoint accordingly -->
-
-                        <div class="form-group row">
+                    <form class="forms-sample" id="addForm">
+                              <div class="form-group row">
                             <label for="categoryName" class="col-sm-3 col-form-label">Category Name</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="categoryName" name="name" placeholder="Category Name" required>
@@ -29,13 +25,11 @@
                         </div>
 
 
-                        <!-- Other form fields... -->
-
-                        <button type="submit" class="btn btn-primary mr-2" onclick="validateForm()">Submit</button>
+                        <button type="button" class="btn btn-primary mr-2" onclick="validateForm()">Submit</button>
                         <button class="btn btn-dark">Cancel</button>
+                        <p class="text-success"> <%=message%></p>
                     </form>
-                    <p class="text-success"> <%=message%></p>
-                      
+                  
                 </div>
             </div>
 
@@ -70,10 +64,11 @@
 
         // Regular expression to allow only letters (no numbers or special characters)
         const nameRegex = /^[a-zA-Z]+$/;
-
-        if (!nameRegex.test(categoryName) || categoryName === '') {
+        let isValid = true;
+        if (categoryName === '') {
             nameError.textContent = 'Category name should contain only letters and cannot be empty.';
             categoryNameInput.focus();
+            isValid = false;
         } else {
             nameError.textContent = '';
         }
@@ -81,8 +76,41 @@
         if (categoryDescription === '') {
             descriptionError.textContent = 'Category description cannot be empty.';
             categoryDescriptionInput.focus();
+            isValid = false;
         } else {
             descriptionError.textContent = '';
+        }
+        if (isValid) {
+            // Use fetch to submit the form data asynchronously
+            fetch('/admin/categories/addpost', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: categoryName,
+                    description: categoryDescription,
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                
+                if (data.success === true) {
+                    window.location.href = '/admin/categories';  // Redirect on success
+                } else {
+                    const encodedMessage = encodeURIComponent(data.message);
+                    const url = `/admin/categories/add?message=${encodedMessage} #addForm`;
+                    $('#addForm').load(url);
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
         }
     }
 </script>

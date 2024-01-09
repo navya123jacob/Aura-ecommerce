@@ -1,5 +1,7 @@
 <%- include('./layouts/header.ejs') %>
 
+
+
 <div class="container-fluid page-body-wrapper">
     <!-- partial:partials/_navbar.html -->
     <%- include('./layouts/nav.ejs') %>
@@ -67,8 +69,10 @@
                         <div class="form-group row">
                             <label for="productImages" class="col-sm-3 col-form-label">Images</label>
                             <div class="col-sm-9">
-                                <input type="file" class="form-control" id="productImages" name="images" multiple>
+                                <input type="file" class="form-control" id="productImages" name="images" multiple onchange="previewImages()">
                                 <small id="imagesError" class="text-danger"></small>
+                                <div id="imagePreview" class="mt-2"></div>
+                                <button type="button" class="btn btn-secondary mt-2" onclick="cancelImageSelection()">Cancel</button>
                             </div>
                         </div>
             
@@ -96,7 +100,7 @@
 </div>
 <!-- container-scroller -->
 
-<%- include('./layouts/footer.ejs') %>
+
 <script>
     function validateForm() {
         const productNameInput = document.getElementById('productName');
@@ -167,13 +171,58 @@
             dateError.textContent = '';
         }
 
-        // You may need to add additional validation for images depending on your requirements
-
-        // Clear imagesError for now
+       
         imagesError.textContent = '';
     }
-</script>
+
+    function previewImages() {
+        var input = document.getElementById('productImages');
+        var previewContainer = document.getElementById('imagePreview');
+        var files = input.files;
+
+      
+        previewContainer.innerHTML = '';
+
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var reader = new FileReader();//FileReader object is created
+
+            reader.onload = function (e) {
+                var image = document.createElement('img');
+                image.src = e.target.result;
+                image.classList.add('img-thumbnail', 'mr-2');
+
+               
+                var closeButton = document.createElement('button');
+                closeButton.innerHTML = '&times;'; //HTML entity that represents the multiplication sign (×). 
+                closeButton.classList.add('btn', 'btn-sm', 'btn-danger');
+                closeButton.addEventListener('click', function () {
+                    
+                    previewContainer.removeChild(image);
+                    previewContainer.removeChild(closeButton);
+                    input.value = ''; 
+                });
+
+               
+                previewContainer.appendChild(image);
+                previewContainer.appendChild(closeButton);
+                
+            };
+
+            reader.readAsDataURL(file);//reader.readAsDataURL(file); method is called, instructing the FileReader to read the contents of the selected file and convert it into a data URL.
+
+                                     // As the file is being read, the load event is triggered when the reading is complete.
+
+        }
+    }
+
+    function cancelImageSelection() {
+        var input = document.getElementById('productImages');
+        input.value = ''; // Clear the file input
+        var previewContainer = document.getElementById('imagePreview');
+        previewContainer.innerHTML = ''; // Clear the preview container
+    }</script>
 
 
-<!-- The for attribute in the <label> elements associates the label with a specific form element using the id attribute.  -->
+<%- include('./layouts/footer.ejs') %>
     

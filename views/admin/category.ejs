@@ -119,15 +119,14 @@
 
   
   function searchUsers() {
-    // Get the search query from the input field
+    
     const searchQuery = document.getElementById('searchInput').value.toLowerCase();
 
-    // Get all table rows in the tbody
     const rows = document.querySelectorAll('tbody tr');
 
-    // Loop through each row and hide/show based on the first letter of the user's name
+    
     rows.forEach(row => {
-      // Extract the user's name from the row (adjust the index based on your table structure)
+      // Extract the user's name from the row 
       const userName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
 
       // Check if the first letter of the user's name matches the search query

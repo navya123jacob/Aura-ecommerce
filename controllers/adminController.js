@@ -158,19 +158,23 @@ const CategoryAddpost=async(req,res)=>{
         
         // Check if a category with the same name already exists (case-sensitive)
         const existingCategory = await Category.findOne({ name: { $regex: new RegExp(req.body.name, 'i') } });
-
+        
         if (existingCategory) {
-            // If a category with the same name exists, redirect with an error message
-            return res.redirect('/admin/categories/add?message=Category name already exists. Please choose another name.');
+           
+            res.json({success:false,message:'This category is already added'})
         }
-        const Categorylist = new Category({
-            name:req.body.name,
-              description:req.body.description,
-            status:'active'
-
-    })
-    Categorylist.save()
-    res.redirect('/admin/categories/add?message=successfully added')
+        else{
+            console.log('no')
+            const Categorylist = new Category({
+                name:req.body.name,
+                  description:req.body.description,
+                status:'active'
+    
+        })
+        await Categorylist.save()
+        res.json({success:true})
+        }
+        
     }
     catch (error) {
         console.log(error.message);
@@ -182,6 +186,7 @@ const CategoryEdit=async(req,res)=>{
     try{
         const editcat=await Category.findOne({_id:req.query.categoryId}) ||''
        const message=req.query.message||''
+       console.log(message)
         res.render('categoryEdit',{message,editcat})
 
     }
@@ -193,15 +198,19 @@ const CategoryEdit=async(req,res)=>{
 //category edit post
 const CategoryEditpost=async(req,res)=>{
     try{
-        const existingCategory = await Category.findOne({ name: req.body.name });
-
-        if (existingCategory) {
-            // If a category with the same name exists, redirect with an error message
-        return res.redirect('/admin/categories/edit?message=Category name already exists. Please choose another name.');
+        const existingCategory = await Category.findOne({ "name": new RegExp('^' + req.body.name + '$', 'i') });
+        const presentcat=await Category.findOne({_id:req.query._id});
+       
+        if (existingCategory && (presentcat.name.toLowerCase() !=  req.body.name.toLowerCase() )) {
+          
+              
+                res.json({success:false,message:'Category name already exists. Please choose another name.',catid:req.query._id})
+          
+       
         }
         else{
             await Category.updateOne({_id:req.query._id},{$set:{name:req.body.name,description:req.body.description}})
-            res.redirect('/admin/categories')
+            res.json({success:true,message:'Edited'})
         }
       
     }
