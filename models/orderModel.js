@@ -66,7 +66,7 @@ const ordersSchema = mongoose.Schema({
         type: Number,
         default:0
         
-    },
+    }
 
 });
 

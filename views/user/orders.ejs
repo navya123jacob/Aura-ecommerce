@@ -1,5 +1,25 @@
 <%- include('../layouts/header') %>
 <%- include('../layouts/Login/loginHeader') %>
+<style>
+    .order-details td, .order-details th {
+        padding: 8px;
+        text-align: center;
+        border: 1px solid #ddd; /* Add a very light border */
+    }
+
+    .order-details th {
+        background-color: #f2f2f2; /* Add a light background color for header cells */
+    }
+
+    .order-details img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .order-details button {
+        padding: 5px;
+    }
+</style>
 
 <main class="main">
         	
@@ -14,7 +34,7 @@
 
     <div class="page-content">
         <div class="dashboard">
-            <div class="container">
+            <div class="container"  id="tabletoload">
                 <div class="row">
         <aside class="col-md-4 col-lg-3">
 	                			
@@ -39,10 +59,30 @@
             
         
     </aside><!-- End .col-lg-3 -->
+    
     <div class="col-md-8 col-lg-9">
+        <div class="toolbox">
+            <div class="toolbox-right">
+                <div class="toolbox-sort m-4">
+                    <label for="startDate">Start Date:</label>
+                    <div class="select-custom">
+                        <input type="date" id="startDate" name="startDate">
+                    </div>
+                </div>
+        
+                <div class="toolbox-sort m-4">
+                    <label for="endDate">End Date:</label>
+                    <div class="select-custom">
+                        <input type="date" id="endDate" name="endDate">
+                    </div>
+                </div>
+                <button class="btn btn-outline-primary-2" onclick="sortOrdersByDateRange()">Sort</button>
+                <div id="sorterrorText" class="text-danger"></div>
+            </div><!-- End .toolbox-right -->
+        </div>
         <div class="tab-content">
             <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel" aria-labelledby="tab-dashboard-link">
-        <table class="order-details" id="tabletoload">
+        <table class="order-details">
             <thead>
                 <tr>
                     <th>Order Date</th>
@@ -52,6 +92,7 @@
                     <th>Price</th>
                     <th>Quantity</th>
                     <th>Total</th>
+                    
                     <th>Action</th>
                 </tr>
             </thead>
@@ -104,6 +145,44 @@
 </div><!-- End .col-lg-9 -->
 </div><!-- End .row -->
 </div><!-- End .container -->
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+      <% if (page > 1) { %>
+        <li class="page-item">
+          <a class="page-link page-link-prev" href="?cat=<%= cat %>&page=<%= page - 1 %>" aria-label="Previous">
+            <span aria-hidden="true"><i class="icon-long-arrow-left"></i></span>Prev
+          </a>
+        </li>
+      <% } else { %>
+        <li class="page-item disabled">
+          <span class="page-link page-link-prev" aria-label="Previous" tabindex="-1" aria-disabled="true">
+            <span aria-hidden="true"><i class="icon-long-arrow-left"></i></span>Prev
+          </span>
+        </li>
+      <% } %>
+  
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <li class="page-item <%= page === i ? 'active' : '' %>">
+          <a class="page-link" href="?cat=<%= cat %>&page=<%= i %>"><%= i %></a>
+        </li>
+      <% } %>
+  
+      <% if (page < totalPages) { %>
+        <li class="page-item">
+          <a class="page-link page-link-next" href="?cat=<%= cat %>&page=<%= page + 1 %>" aria-label="Next">
+            Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
+          </a>
+        </li>
+      <% } else { %>
+        <li class="page-item disabled">
+          <span class="page-link page-link-next" aria-label="Next" tabindex="-1" aria-disabled="true">
+            Next <span aria-hidden="true"><i class="icon-long-arrow-right"></i></span>
+          </span>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+
 </div><!-- End .dashboard -->
 </div><!-- End .page-content -->
 </main><!-- End .main -->
@@ -184,6 +263,37 @@ function returnOrder(orderId, productId) {
         }
     });
 }
+
+function sortOrdersByDateRange() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const errorText = document.getElementById('sorterrorText');
+
+    
+    errorText.textContent = '';
+
+
+   
+     const startDateObj = new Date(startDate);
+    const endDateObj = new Date(endDate);
+
+    if (isNaN(startDateObj.getTime()) || isNaN(endDateObj.getTime())) {
+        errorText.textContent = 'Please enter valid start and end dates.';
+        
+        return;
+    }
+
+    if (startDateObj > endDateObj) {
+        errorText.textContent = 'Start date cannot be greater than end date.';
+       
+        return;
+    }
+    const encodedStartDate = encodeURIComponent(startDateObj.toISOString());
+const encodedEndDate = encodeURIComponent(endDateObj.toISOString());
+
+$('#tabletoload').load(`/orders?start=${encodedStartDate}&end=${encodedEndDate} #tabletoload`);
+}
+
 </script>
 <%- include('../layouts/footer') %>
 <%- include('../layouts/Login/LoginMob') %>

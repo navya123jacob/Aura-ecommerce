@@ -11,7 +11,7 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form class="forms-sample" method="POST" action="/admin/products/addpost" enctype="multipart/form-data">
+                    <form class="forms-sample" onsubmit="return validateForm();" method="POST" action="/admin/products/addpost" enctype="multipart/form-data">
                         <!-- enctype="multipart/form-data" to ensure that the data is correctly encoded and transmitted to the server. This is crucial for the server to interpret and process the file data appropriately. -->
                         <!-- Update the form action endpoint accordingly -->
             
@@ -72,13 +72,13 @@
                                 <input type="file" class="form-control" id="productImages" name="images" multiple onchange="previewImages()">
                                 <small id="imagesError" class="text-danger"></small>
                                 <div id="imagePreview" class="mt-2"></div>
-                                <button type="button" class="btn btn-secondary mt-2" onclick="cancelImageSelection()">Cancel</button>
+                                <button type="button" class="btn btn-secondary mt-2" >Cancel</button>
                             </div>
                         </div>
             
                         <!-- Other form fields... -->
             
-                        <button type="submit" class="btn btn-primary mr-2" onclick="validateForm()">Submit</button>
+                        <button type="submit" class="btn btn-primary mr-2" >Submit</button>
                         <button class="btn btn-dark">Cancel</button>
                     </form>
                     <p class="text-success"> <%= message %></p>
@@ -128,10 +128,11 @@
 
         // Regular expression to allow only letters (no numbers or special characters) for name
         const nameRegex = /^[a-zA-Z]+$/;
-
+        let isValid = true;
         if ( productName === '') {
             nameError.textContent = 'Product name should contain only letters and cannot be empty.';
             productNameInput.focus();
+            return false;
         } else {
             nameError.textContent = '';
         }
@@ -139,6 +140,7 @@
         if (isNaN(productPrice) || productPrice <= 0) {
             priceError.textContent = 'Product price should be a valid positive number.';
             productPriceInput.focus();
+            return false;
         } else {
             priceError.textContent = '';
         }
@@ -146,13 +148,16 @@
         if (productDescription === '') {
             descriptionError.textContent = 'Product description cannot be empty.';
             productDescriptionInput.focus();
+            return false;
         } else {
             descriptionError.textContent = '';
         }
 
+       
         if (productCategory === '') {
             categoryError.textContent = 'Please select a category.';
             productCategoryInput.focus();
+            return false;
         } else {
             categoryError.textContent = '';
         }
@@ -160,6 +165,7 @@
         if (isNaN(productQuantity) || productQuantity <= 0) {
             quantityError.textContent = 'Quantity should be a valid positive number.';
             productQuantityInput.focus();
+            return false;
         } else {
             quantityError.textContent = '';
         }
@@ -167,13 +173,37 @@
         if (productDate === '') {
             dateError.textContent = 'Please select a date.';
             productDateInput.focus();
+            return false;
         } else {
             dateError.textContent = '';
         }
-
-       
+        if (!validateImages(productImages)) {
+        imagesError.textContent = 'Please select valid image files.';
+        productImagesInput.focus();
+        return false;
+    } else {
         imagesError.textContent = '';
     }
+        
+      return true;
+    }
+    function validateImages(images) {
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif']; 
+    const fileNames = images.split(','); // If the images are coming as a comma-separated string
+
+    if (fileNames.length === 0 || fileNames.length > 5) {
+        return false; 
+    }
+
+    for (const fileName of fileNames) {
+        const extension = fileName.split('.').pop().toLowerCase();
+        if (!allowedExtensions.includes(extension)) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
     function previewImages() {
         var input = document.getElementById('productImages');

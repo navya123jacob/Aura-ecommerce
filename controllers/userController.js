@@ -1475,21 +1475,58 @@ const removeaddress=async(req,res)=>{
 //order section
 const orders = async (req, res) => {
   try {
+    let startdate=req.query.start||'';
+    let enddate=req.query.end||'';
       //for logi mid
       categories = req.categories;
       ses = req.ses;
       const user = req.session.checkuser || '';
       //logi mid end
+      const cat = req.query.cat;
+      const page = req.query.page || 1;
+      const pageSize = 4;
       const myuser = await User.findOne({ email: req.session.email });
+      let orders=[]
       await order.deleteMany({paymentstatus:'pending'})
-      const orders = await order.find({ user: myuser._id })
+      let ord = await order.find({ user: myuser._id })
           .populate({
               path: 'Products.products', 
               model: 'Product'
-          })
-          .exec();
+          }).skip((page - 1) * pageSize)
+          .limit(pageSize)
+          .lean()
+          let totord = await order.find({ user: myuser._id });let overall=[];
+          if(!req.query.start)
+          {
+            overall=[...totord]
+            orders=[...ord]
+          }
+          else{
+            let startDate = new Date(req.query.start);
+let endDate = new Date(req.query.end);
 
-      res.render('orders', { user, orders, ses, categories });
+ord.forEach((e)=>{
+   let orderDateObj = new Date(e.date);
+  if(orderDateObj >= startDate && orderDateObj <= endDate)
+  {
+    orders.push(e)
+  }
+})
+totord.forEach((e)=>{
+  let orderDateObj = new Date(e.date);
+ if(orderDateObj >= startDate && orderDateObj <= endDate)
+ {
+   overall.push(e)
+ }
+})
+}
+
+        console.log(overall.length)
+          const totalProducts = overall.length;
+          const totalPages = Math.ceil(totalProducts / pageSize);
+          const email=req.session.email
+
+      res.render('orders', { user, orders, ses, categories,cat,page, totalPages,email });
   } catch (error) {
       console.log(error.message);
   }

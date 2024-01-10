@@ -91,12 +91,7 @@
 
 	                						<tr class="summary-shipping-row">
 												<td>
-													<div class="custom-control custom-radio">
-														<input type="radio" id="free-shipping" name="shipping" class="custom-control-input">
-														<label class="custom-control-label" for="free-shipping">
-															<span id="shipping-label">Free Shipping</span>
-														</label>
-													</div><!-- End .custom-control -->
+													<span id="shipping-label">Free Shipping</span>
 												</td>
 												<td id="shipping-cost">₹<%=shipping%>.00</td>
 											</tr>
@@ -122,21 +117,21 @@
 
 		<script>
 			
-			var shipping = <%=shipping%>
-			console.log(shipping)
-		
-			// Get the elements by their IDs
-			var shippingLabel = document.getElementById('shipping-label');
-			var shippingCost = document.getElementById('shipping-cost');
-		
-			// Update the content based on the shipping value
-			if (shipping > 0) {
-				shippingLabel.textContent = 'Shipping';
-				shippingCost.textContent = '₹' + <%=shipping%>;
-			} else {
-				shippingLabel.textContent = 'Free Shipping';
-				shippingCost.textContent = '₹0.00';
-			}
+			var shipping = <%=shipping%>;
+console.log(shipping);
+
+var shippingLabel = document.getElementById('shipping-label');
+var shippingCost = document.getElementById('shipping-cost');
+
+if (shipping > 0) {
+    
+    shippingLabel.textContent = 'Shipping';
+    shippingCost.textContent = '₹' + <%=shipping%>;
+} else {
+   
+    shippingLabel.textContent = 'Free Shipping';
+    shippingCost.textContent = '₹0.00';
+}
 
 			//to remove product
 

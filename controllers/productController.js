@@ -21,30 +21,36 @@ const addProduct=async(req,res)=>{
 
 //admin side add product post
 const addProductpost=async(req,res)=>{
-    try{
-        
-        const arr = req.files.map(file => file.path);
-         // Create a new Product document using Mongoose model
-    const newProduct = new product({
-        name: req.body.name,
-        price: req.body.price,
-        description: req.body.description,
-        category: req.body.category,
-        quantity: req.body.quantity,
-        date: req.body.date,
-        pictures: arr // Assuming 'images' is an array in your Mongoose model.req.files is an array that contains information about all the uploaded files. Each element in this array is an object with details about a single uploaded file. The .map() function is then used to create a new array containing only the paths of the uploaded files.
-      });
-  
-      // Save the new Product document to the database
-      await newProduct.save();
-      res.redirect('/admin/products/add?message=product added')
-    }
-    catch(error)
+  try{
+    const existingProduct = await product.findOne({ name: { $regex: new RegExp(req.body.name, 'i') } });
+    if(!existingProduct)
     {
-        console.log(error.message)
-    }
-}
+      const arr = req.files.map(file => file.path);
+      // Create a new Product document using Mongoose model
+ const newProduct = new product({
+     name: req.body.name,
+     price: req.body.price,
+     description: req.body.description,
+     category: req.body.category,
+     quantity: req.body.quantity,
+     date: req.body.date,
+     pictures: arr // Assuming 'images' is an array in your Mongoose model.req.files is an array that contains information about all the uploaded files. Each element in this array is an object with details about a single uploaded file. The .map() function is then used to create a new array containing only the paths of the uploaded files.
+   });
 
+   // Save the new Product document to the database
+   await newProduct.save();
+   res.redirect('/admin/products?message=product added')
+    }
+    else{
+      res.redirect('/admin/products/add?message=Product already exist')
+    }
+     
+  }
+  catch(error)
+  {
+      console.log(error.message)
+  }
+}
 // products view with pagination
 const Product = async (req, res) => {
   try {
