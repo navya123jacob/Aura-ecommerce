@@ -1,0 +1,222 @@
+<%- include('./layouts/header.ejs') %>
+
+<div class="container-fluid page-body-wrapper">
+    <!-- partial:partials/_navbar.html -->
+    <%- include('./layouts/nav.ejs') %>
+    <!-- partial -->
+    <div class="main-panel">
+        <div class="content-wrapper">
+            <div class="card" id="toload">
+                <div class="card-body" >
+                    <form class="forms-sample">
+                      
+            
+                        <div class="form-group row">
+                            <label for="couponName" class="col-sm-3 col-form-label" >Coupon Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="couponName" name="couponName" placeholder="Coupon Name" required>
+                                <h6 class="text-danger error-message" id="couponNameError"></h6>
+                              
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="couponCode" class="col-sm-3 col-form-label">Coupon Code</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="couponCode" name="couponCode" placeholder="Coupon Code" required>
+                                <p class="text-danger error-message" id="couponCodeError"></p>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="couponAvailability" class="col-sm-3 col-form-label">Available coupons</label>
+                            <div class="col-sm-9">
+                                <input type=number class="form-control" id="availability" name="availability" placeholder="Availability" required>
+                                <p class="text-danger error-message" id="couponavailabilityError"></p>
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="discountAmount" class="col-sm-3 col-form-label">Discount Percentage</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" id="discountAmount" name="discountAmount" placeholder="Discount Percentage" min="1" max="100" required>
+                                <p class="text-danger error-message" id="coupondiscountError"></p>
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="minAmount" class="col-sm-3 col-form-label">Minimum Amount</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" id="minAmount" name="minAmount" placeholder="Minimum Amount" required>
+                                <p class="text-danger error-message" id="couponminError"></p>
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="couponDescription" class="col-sm-3 col-form-label">Coupon Description</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="couponDescription" name="couponDescription" placeholder="Coupon Description" required></textarea>
+                                <p class="text-danger error-message" id="coupondescError"></p>
+                            </div>
+                        </div>
+            
+                        <div class="form-group row">
+                            <label for="expiryDate" class="col-sm-3 col-form-label">Expiry Date</label>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control" id="expiryDate" name="expiryDate" placeholder="Expiry Date" required>
+                                <p class="text-danger error-message" id="couponexpiryError"></p>
+                            </div>
+                        </div>
+            
+                      
+            
+                        <button type="submit" class="btn btn-primary mr-2" onclick="addcoupon(event)">Submit</button>
+                        <button class="btn btn-dark">Cancel</button>
+                    </form>
+                    
+                    <p class="text-success" id="messageid"> <%= message %></p>
+                </div>
+                
+            </div>
+            
+    <!-- content-wrapper ends -->
+    <!-- partial:partials/_footer.html -->
+    <footer class="footer" >
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Aura Beauty</span>
+        </div>
+    </footer>
+    <!-- partial -->
+    </div>
+    <!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+function addcoupon(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const couponName = document.getElementById('couponName').value;
+    const couponCode = document.getElementById('couponCode').value;
+    const discountPercent = document.getElementById('discountAmount').value;
+    const minAmount = document.getElementById('minAmount').value;
+    const couponDescription = document.getElementById('couponDescription').value;
+    const expiryDate = document.getElementById('expiryDate').value;
+    const availability = document.getElementById('availability').value;
+
+    let count = 0;
+// Validate couponName (should contain only letters and cannot be empty)
+const nameRegex = /^[a-zA-Z]+$/;
+const nameError = document.getElementById('couponNameError');
+if ( couponName.trim() === '') {
+    nameError.innerText = 'Invalid name (should contain only letters and cannot be empty)';
+   count=1;
+} else {
+    nameError.innerText = ''; // Clear error message if validation passes
+}
+
+// Validate couponCode (should not be empty)
+const codeError = document.getElementById('couponCodeError');
+if (couponCode.trim() === '') {
+    codeError.innerText = 'Invalid code (cannot be empty)';
+    count=1;
+} else {
+    codeError.innerText = ''; // Clear error message if validation passes
+}
+
+// Validate discountPercent (should be a positive number)
+const discountError = document.getElementById('coupondiscountError');
+if (isNaN(discountPercent) || parseFloat(discountPercent) <= 0) {
+    discountError.innerText = 'Invalid discount (should be a positive number)';
+    count=1;
+} else {
+    discountError.innerText = ''; // Clear error message if validation passes
+}
+
+// Validate minAmount (should be a positive number)
+const minError = document.getElementById('couponminError');
+if (isNaN(minAmount) || parseFloat(minAmount) <= 0) {
+    minError.innerText = 'Invalid min value (should be a positive number)';
+    count=1;
+} else {
+    minError.innerText = ''; // Clear error message if validation passes
+}
+
+// Validate couponDescription (should not be empty)
+const descError = document.getElementById('coupondescError');
+if (couponDescription.trim() === '') {
+    descError.innerText = 'Invalid description (cannot be empty)';
+    count=1;
+} else {
+    descError.innerText = ''; // Clear error message if validation passes
+}
+
+// Validate expiryDate (should not be empty, and you may want to check if it's a valid date)
+const expiryError = document.getElementById('couponexpiryError');
+if (expiryDate.trim() === '' || isNaN(Date.parse(expiryDate))) {
+    expiryError.innerText = 'Invalid date (should not be empty, and should be a valid date)';
+    count=1;
+} else {
+    expiryError.innerText = ''; // Clear error message if validation passes
+}
+
+// Validate availability (should be a positive number)
+const availabilityError = document.getElementById('couponavailabilityError');
+if (isNaN(availability) || parseInt(availability) <= 0) {
+    availabilityError.innerText = 'Invalid number (should be a positive number)';
+    count=1;
+} else {
+    availabilityError.innerText = ''; // Clear error message if validation passes
+}
+
+
+if(count==0)
+{
+    const formData = {
+        couponName,
+        couponCode,
+        discountPercent,
+        minAmount,
+        couponDescription,
+        expiryDate,
+        availability
+    };
+   
+   fetch('/admin/addcouponpost', {
+        method: 'POST', 
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+    })
+        .then(response => {
+            
+           
+            return response.json();
+        })
+        .then(data => {
+            
+            Swal.fire({
+               title: 'Added!',
+               html: '<h5 style="color: #4CAF50;">The coupon has been added.</h5>',
+               icon: 'success'
+                });
+                $('#toload').load('/admin/couponsadd #toload');
+                
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+
+   
+}
+
+
+    
+
+</script>
+
+<%- include('./layouts/footer.ejs') %>

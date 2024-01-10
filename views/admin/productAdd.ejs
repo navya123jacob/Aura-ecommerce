@@ -102,7 +102,7 @@
 
 
 <script>
-    function validateForm() {
+    function validateForm() { 
         const productNameInput = document.getElementById('productName');
         const productPriceInput = document.getElementById('productPrice');
         const productDescriptionInput = document.getElementById('productDescription');
@@ -110,6 +110,7 @@
         const productQuantityInput = document.getElementById('productQuantity');
         const productDateInput = document.getElementById('productDate');
         const productImagesInput = document.getElementById('productImages');
+        
         const nameError = document.getElementById('nameError');
         const priceError = document.getElementById('priceError');
         const descriptionError = document.getElementById('descriptionError');
@@ -117,7 +118,6 @@
         const quantityError = document.getElementById('quantityError');
         const dateError = document.getElementById('dateError');
         const imagesError = document.getElementById('imagesError');
-
         const productName = productNameInput.value.trim();
         const productPrice = productPriceInput.value.trim();
         const productDescription = productDescriptionInput.value.trim();
@@ -125,11 +125,13 @@
         const productQuantity = productQuantityInput.value.trim();
         const productDate = productDateInput.value.trim();
         const productImages = productImagesInput.value.trim();
-
+         console.log(productNameInput)
         // Regular expression to allow only letters (no numbers or special characters) for name
         const nameRegex = /^[a-zA-Z]+$/;
         let isValid = true;
+        
         if ( productName === '') {
+            
             nameError.textContent = 'Product name should contain only letters and cannot be empty.';
             productNameInput.focus();
             return false;
@@ -178,7 +180,7 @@
             dateError.textContent = '';
         }
         if (!validateImages(productImages)) {
-        imagesError.textContent = 'Please select valid image files.';
+        imagesError.textContent = 'Please select valid and atmost 5 images.';
         productImagesInput.focus();
         return false;
     } else {

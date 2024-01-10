@@ -6,6 +6,7 @@ const Category = require('../models/categoryModel');
 const order = require('../models/orderModel');
 const product = require('../models/productModel');
 const coupon = require('../models/couponModel');
+const offer = require('../models/offerModel');
 
 
 
@@ -556,7 +557,56 @@ const couponremove=async (req, res) => {
 };
 
 
+//to view offers
+const offers= async (req, res) => {
+    try {
+        const message=req.query.message||''
 
+        const pageSize = 5; // Number of products per page
+        const page = parseInt(req.query.page) || 1;
+        const searchQuery = req.query.search || '';
+        let query = {};
+        let offers;
+        if (searchQuery) {
+          const regex = new RegExp(`^${searchQuery}`, 'i');
+          query = {name: regex};
+          
+      }
+      
+      
+      const totalProducts = await offer.countDocuments(query);
+     
+    const totalPages = Math.ceil(totalProducts / pageSize);
+       offers=await offer.find(query).skip((page - 1) * pageSize)
+       .limit(pageSize)
+       .exec();
+       
+        res.render('offers', { message,offers,searchQuery, page, totalPages});
+
+       
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
+//add offers
+const addoffers= async (req, res) => {
+    try {
+     
+        const message=req.query.message||''
+        
+        
+       
+        res.render('addcoupon', { message});
+
+       
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
+    }
+};
 
 //logout
 const adminlogout=async(req,res)=>{
@@ -591,6 +641,8 @@ module.exports={
     addcoupons,
     addcouponpost,
     couponremove,
+    offers,
+    addoffers,
     
     adminlogout
 }

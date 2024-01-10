@@ -9,7 +9,7 @@
 
             <div class="card">
                 <div class="card-body">
-                    <form class="forms-sample" method="POST" action="/admin/products/editpost?id=<%= editProduct._id %>" enctype="multipart/form-data">
+                    <form class="forms-sample" onsubmit="return validateForm(<%=editProduct.pictures.length%>);"  method="POST" action="/admin/products/editpost?id=<%= editProduct._id %>"  enctype="multipart/form-data">
                         <!-- Update the form action endpoint and set enctype accordingly -->
 
                         <!-- Product Name -->
@@ -17,7 +17,7 @@
                             <label for="productName" class="col-sm-3 col-form-label">Product Name</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="productName" name="name" placeholder="Product Name" value="<%= editProduct.name %>" required>
-                                <small id="nameError" class="text-danger"></small>
+                                <small id="nameError" class="text-danger" data-error-id="productNameError"></small>
                             </div>
                         </div>
 
@@ -26,7 +26,7 @@
                             <label for="productDescription" class="col-sm-3 col-form-label">Product Description</label>
                             <div class="col-sm-9">
                                 <textarea class="form-control" id="productDescription" name="description" placeholder="Product Description" required><%= editProduct.description %></textarea>
-                                <small id="descriptionError" class="text-danger"></small>
+                                <small id="descriptionError" class="text-danger" data-error-id="productDescriptionError"></small>
                             </div>
                         </div>
 
@@ -35,7 +35,7 @@
                             <label for="productQuantity" class="col-sm-3 col-form-label">Product Quantity</label>
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" id="productQuantity" name="quantity" placeholder="Product Quantity" value="<%= editProduct.quantity %>" required>
-                                <small id="quantityError" class="text-danger"></small>
+                                <small id="quantityError" class="text-danger" data-error-id="productQuantityError"></small>
                             </div>
                         </div>
 
@@ -44,7 +44,7 @@
                             <label for="productPrice" class="col-sm-3 col-form-label">Product Price</label>
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" id="productPrice" name="price" placeholder="Product Price" value="<%= editProduct.price %>" required>
-                                <small id="priceError" class="text-danger"></small>
+                                <small id="priceError" class="text-danger" data-error-id="productPriceError"></small>
                             </div>
                         </div>
 
@@ -62,20 +62,20 @@
                                     </div>
                                 <% } %>
                                 <!-- Option to add new images -->
-                                <input type="file" class="form-control-file mt-2" name="newImages" accept="image/*" onchange="displaySelectedNewImage(this)" multiple>
-                                <small id="imagesError" class="text-danger"></small>
+                                <input type="file" class="form-control-file mt-2" name="newImages" accept="image/*" id="productImages" onchange="displaySelectedNewImage(this)" multiple>
+                                <small id="imagesError" class="text-danger" data-error-id="productImagesError"></small>
+                                <div id="imagePreview" class="mt-2"></div>
                             </div>
                         </div>
 
                         <!-- Other form fields... -->
 
-                        <button type="submit" class="btn btn-primary mr-2" onclick="validateForm()">Submit</button>
+                        <button type="submit" class="btn btn-primary mr-2">Submit</button>
                         <button class="btn btn-dark">Cancel</button>
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
+       
     <!-- content-wrapper ends -->
     <!-- partial:partials/_footer.html -->
     <footer class="footer">
@@ -93,9 +93,105 @@
 
 <%- include('./layouts/footer.ejs') %>
 <script>
-    function validateForm() {
-        // Add validation logic if needed
+    function validateForm(l) {
+        
+   const productNameInput = document.getElementById('productName');
+    const productDescriptionInput = document.getElementById('productDescription');
+    const productQuantityInput = document.getElementById('productQuantity');
+    const productPriceInput = document.getElementById('productPrice');
+    const productImagesInput = document.getElementById('productImages');
+
+    
+    const nameError = document.getElementById('nameError');
+    const priceError = document.getElementById('priceError');
+    const descriptionError = document.getElementById('descriptionError');
+    const categoryError = document.getElementById('categoryError');
+    const quantityError = document.getElementById('quantityError');
+    const dateError = document.getElementById('dateError');
+    const imagesError = document.getElementById('imagesError');
+
+    const productName = productNameInput.value.trim();
+    const productDescription = productDescriptionInput.value.trim();
+    const productQuantity = productQuantityInput.value
+    const productPrice = productPriceInput.value
+    const productImages = productImagesInput.files;
+    const nameRegex = /^[a-zA-Z]+$/;
+ 
+    let errors = {};
+
+if (productName === '') {
+    errors.productName = 'Product name should contain only letters and cannot be empty.';
+    nameError.textContent = errors.productName;
+    productNameInput.focus();
+    
+    return false}
+ else {
+    nameError.textContent = '';
+}
+
+// Product Price Validation
+if (isNaN(productPrice) || productPrice <= 0) {
+    errors.productPrice = 'Product price should be a valid positive number.';
+    priceError.textContent = errors.productPrice;
+    productPriceInput.focus();
+    return false
+} else {
+    priceError.textContent = '';
+}
+
+// Product Description Validation
+if (productDescription === '') {
+    errors.productDescription = 'Product description cannot be empty.';
+    descriptionError.textContent = errors.productDescription;
+    productDescriptionInput.focus();
+    return false
+} else {
+    descriptionError.textContent = '';
+}
+
+
+// Product Quantity Validation
+if (isNaN(productQuantity) || productQuantity <= 0) {
+    errors.productQuantity = 'Quantity should be a valid positive number.';
+    quantityError.textContent = errors.productQuantity;
+    productQuantityInput.focus();
+    return false
+} else {
+    quantityError.textContent = '';
+}
+
+console.log('yes')
+// Product Images Validation
+if (!validateImages(productImages,l)) {
+    errors.productImages = `Please select valid and atmost 5 images.`;
+    imagesError.textContent = errors.productImages;
+    productImagesInput.focus();
+    return false
+} else {
+    imagesError.textContent = '';
+}
+
+return true;
+   
     }
+
+    function validateImages(images,len) {
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'];
+    let newlen=images.length+len
+    if (newlen === 0 || newlen > 5) {
+        return false;
+    }
+
+    for (const file of images) {
+        const fileName = file.name.toLowerCase();
+        const extension = fileName.split('.').pop();
+        if (!allowedExtensions.includes(extension)) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
     function selectImage(index) {
         console.log(`Selecting image ${index}`);
@@ -111,27 +207,32 @@
     }
 
     function displaySelectedNewImage(input) {
-        // Display the selected new image
-        const imagesContainer = document.querySelector("#productImages");
-        const newImageDiv = document.createElement("div");
-        newImageDiv.className = "mb-3";
+    var previewContainer = document.getElementById('imagePreview');
+    var files = input.files;
 
-        const newImage = document.createElement("img");
-        newImage.alt = "New Product Image";
-        newImage.style.maxWidth = "100px";
-        newImage.style.maxHeight = "100px";
-        newImage.src = URL.createObjectURL(input.files[0]);
-        newImageDiv.appendChild(newImage);
+    for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        let reader = new FileReader();
 
-        const deleteButton = document.createElement("button");
-        deleteButton.type = "button";
-        deleteButton.className = "btn btn-danger btn-sm mt-2";
-        deleteButton.textContent = "Delete";
-        deleteButton.onclick = function () {
-            newImageDiv.remove();
+        reader.onload = function (e) {
+            var image = document.createElement('img');
+            image.src = e.target.result;
+            image.classList.add('img-thumbnail', 'mr-2');
+
+            var closeButton = document.createElement('button');
+            closeButton.innerHTML = '&times;';
+            closeButton.classList.add('btn', 'btn-sm', 'btn-danger');
+            closeButton.addEventListener('click', function () {
+                previewContainer.removeChild(image);
+                previewContainer.removeChild(closeButton);
+                input.value = ''; 
+            });
+
+            previewContainer.appendChild(image);
+            previewContainer.appendChild(closeButton);
         };
-        newImageDiv.appendChild(deleteButton);
 
-        imagesContainer.appendChild(newImageDiv);
+        reader.readAsDataURL(file);
     }
+}
 </script>

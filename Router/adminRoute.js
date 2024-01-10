@@ -116,7 +116,11 @@ adminRoute.post('/addcouponpost',mid.adminloginNoSes,adminController.addcouponpo
 //to remove coupon
 adminRoute.post('/couponremove',mid.adminloginNoSes,adminController.couponremove)
 
+//to view offers
+adminRoute.get('/offers',mid.adminloginNoSes,adminController.offers)
 
+//to add offers
+adminRoute.get('/offersAdd',mid.adminloginNoSes,adminController.addoffers)
 
 //logout
 adminRoute.get('/logout',adminController.adminlogout)
