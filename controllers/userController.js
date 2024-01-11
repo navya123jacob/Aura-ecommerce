@@ -14,6 +14,7 @@ const crypto=require('crypto');//to use SHA256 algorithm
 const fs = require('fs');
 const path = require('path'); 
 const pdf = require('pdfkit');
+const os=require('os')
 
 const invoiceDir = path.join(__dirname, 'invoices');
 
@@ -610,14 +611,23 @@ const productdetails = async (req, res) => {
     //logi mid end
 
     const id = req.query.id;
+   
+    
     const products = await product.findOne({ _id: id })
     .populate({
       path: 'category'
      
     }).exec();
-   
-     
-      
+
+    let images = [];
+
+for (let i = 0; i < products.pictures.length; i++) {
+    const filePath = products.pictures[i];
+    const baseName = path.basename(filePath);
+    images.push(baseName);
+}
+
+
     if (!products) {
       // Handle the case when no product is found
       return res.status(404).send('Product not found');
@@ -641,7 +651,7 @@ const productdetails = async (req, res) => {
   ]);
 
   var k=0;
-    res.render('productdeets', { products ,productlist,categories,ses,user,email,k});
+    res.render('productdeets', { products ,productlist,categories,ses,user,email,k,images});
   } catch (error) {
     console.log(error.message);
     // Handle other errors as needed
