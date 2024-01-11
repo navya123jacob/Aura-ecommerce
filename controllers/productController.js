@@ -131,10 +131,10 @@ const ProductToggle=async(req,res)=>{
     //in EDIT PRODUCT
     //products edit get
 const ProductEdit=async(req,res)=>{
-    try{
+    try{let message=req.query.message||'';
        const editProduct=await product.findOne({_id:req.query.id})
 
-        res.render('productsEdit',{editProduct})
+        res.render('productsEdit',{editProduct,message})
     }
     catch(error)
     {
@@ -147,7 +147,16 @@ const ProductEdit=async(req,res)=>{
 
     const ProductEditpost = async (req, res) => {
         try {
-           console.log(req.files)
+          
+          const existingpro = await product.findOne({ "name": new RegExp('^' + req.body.name + '$', 'i') });
+          const presentpro=await product.findOne({_id:req.query.id});
+          
+          if (existingpro && (presentpro.name.toLowerCase() !=  req.body.name.toLowerCase() )) 
+          {
+            res.json({success:false,message:'Product name already exists. Please choose another name.'})
+          }
+          else{
+            
            const newarr = req.files.map(file => file.path);
            
            await product.updateOne(
@@ -167,6 +176,8 @@ const ProductEdit=async(req,res)=>{
             } 
         )
         res.json({success:true})
+
+          }
         }
       catch (error) {
       console.error(error.message);

@@ -73,6 +73,7 @@
                         <button type="button" class="btn btn-primary mr-2" onclick="return validateForm(<%=editProduct.pictures.length%>);">Submit</button>
                         <button class="btn btn-dark">Cancel</button>
                     </form>
+                    <p class="text-success"> <%= message %></p>
                 </div>
             </div>
        
@@ -207,6 +208,10 @@ const formData = new FormData();
        if(data.success==true)
        {
         $('#toload').load(`/admin/products/edit?id=<%= editProduct._id %> #toload`)
+       }
+       else{
+        var encodedMessage = encodeURIComponent(data.message);
+        $('#toload').load(`/admin/products/edit?id=<%= editProduct._id %>&message=${encodedMessage} #toload`)
        }
     })
     .catch(error => {
