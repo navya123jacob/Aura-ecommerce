@@ -146,8 +146,9 @@ const ProductEdit=async(req,res)=>{
 
     const ProductEditpost = async (req, res) => {
         try {
-           
+           console.log(req.files)
            const newarr = req.files.map(file => file.path);
+           console.log(newarr)
            await product.updateOne(
             { _id: req.query.id },
             {
@@ -164,7 +165,7 @@ const ProductEdit=async(req,res)=>{
                 }
             } 
         )
-        res.redirect(`/admin/products/edit?id=${req.query.id}`)
+        res.json({success:true})
         }
       catch (error) {
       console.error(error.message);

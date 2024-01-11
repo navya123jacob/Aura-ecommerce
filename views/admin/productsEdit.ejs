@@ -8,8 +8,8 @@
         <div class="content-wrapper">
 
             <div class="card">
-                <div class="card-body">
-                    <form class="forms-sample" onsubmit="return validateForm(<%=editProduct.pictures.length%>);"  method="POST" action="/admin/products/editpost?id=<%= editProduct._id %>"  enctype="multipart/form-data">
+                <div class="card-body" id="toload">
+                    <form class="forms-sample"  enctype="multipart/form-data">
                         <!-- Update the form action endpoint and set enctype accordingly -->
 
                         <!-- Product Name -->
@@ -22,7 +22,7 @@
                         </div>
 
                         <!-- Product Description -->
-                        <div class="form-group row">
+                        <div class="form-group row"  >
                             <label for="productDescription" class="col-sm-3 col-form-label">Product Description</label>
                             <div class="col-sm-9">
                                 <textarea class="form-control" id="productDescription" name="description" placeholder="Product Description" required><%= editProduct.description %></textarea>
@@ -49,7 +49,7 @@
                         </div>
 
                         <!-- Product Images -->
-                        <div class="form-group row">
+                        <div class="form-group row" >
                             <label for="productImages" class="col-sm-3 col-form-label">Product Images</label>
                             <div class="col-sm-9">
                                 <% for (let i = 0; i < editProduct.pictures.length; i++) { %>
@@ -70,7 +70,7 @@
 
                         <!-- Other form fields... -->
 
-                        <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                        <button type="button" class="btn btn-primary mr-2" onclick="return validateForm(<%=editProduct.pictures.length%>);">Submit</button>
                         <button class="btn btn-dark">Cancel</button>
                     </form>
                 </div>
@@ -93,6 +93,7 @@
 
 <%- include('./layouts/footer.ejs') %>
 <script>
+     let v=[];let pictures=[]
     function validateForm(l) {
         
    const productNameInput = document.getElementById('productName');
@@ -118,7 +119,15 @@
     const nameRegex = /^[a-zA-Z]+$/;
  
     let errors = {};
-
+    for (let i = 0; i < productImages.length; i++) {
+        if(!v.includes(i))
+        {
+            pictures.push( productImages[i])
+            
+        }
+       
+    }
+   
 if (productName === '') {
     errors.productName = 'Product name should contain only letters and cannot be empty.';
     nameError.textContent = errors.productName;
@@ -160,24 +169,55 @@ if (isNaN(productQuantity) || productQuantity <= 0) {
     quantityError.textContent = '';
 }
 
-console.log('yes')
+
 // Product Images Validation
-if (!validateImages(productImages,l)) {
+if (!validateImages(pictures,l)) {
     errors.productImages = `Please select valid and atmost 5 images.`;
     imagesError.textContent = errors.productImages;
     productImagesInput.focus();
+    pictures=[]
     return false
 } else {
     imagesError.textContent = '';
 }
 
-return true;
-   
+const formData = new FormData();
+    formData.append('name', productName);
+    formData.append('description', productDescription);
+    formData.append('quantity', productQuantity);
+    formData.append('price', productPrice);
+    for (let i = 0; i < pictures.length; i++) {
+       
+            
+            formData.append('newImages', pictures[i]);
+        
+       
     }
+    
+   
 
+    // Fetch request to send data to the server
+    fetch(`/admin/products/editpost?id=<%= editProduct._id %>`, {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+       if(data.success==true)
+       {
+        $('#toload').load(`/admin/products/edit?id=<%= editProduct._id %> #toload`)
+       }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+
+    return true;
+}
     function validateImages(images,len) {
     const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'];
     let newlen=images.length+len
+    console.log(images.length,len,newlen)
     if (newlen === 0 || newlen > 5) {
         return false;
     }
@@ -198,15 +238,24 @@ return true;
         document.getElementById(`productImageInput${index}`).click();
     }
 
+    
     function deleteImage(index) {
-        console.log(`Deleting image ${index}`);
-        // Implement logic to delete the image at the specified index
-        // For example, remove the corresponding input and delete the image URL
-        const imageDiv = document.querySelector(`#productImages div:nth-child(${parseInt(index) + 1})`);
-        imageDiv.remove();
-    }
+    console.log(`Deleting image ${index}`);
+    const nameError = document.getElementById('nameError');
+    
+   
+    
+    const productImagesInput = document.getElementById('productImages');
+   
+  v.push(index)
 
-    function displaySelectedNewImage(input) {
+   
+   
+}
+
+
+
+function displaySelectedNewImage(input) {
     var previewContainer = document.getElementById('imagePreview');
     var files = input.files;
 
@@ -225,7 +274,8 @@ return true;
             closeButton.addEventListener('click', function () {
                 previewContainer.removeChild(image);
                 previewContainer.removeChild(closeButton);
-                input.value = ''; 
+
+                deleteImage(i); 
             });
 
             previewContainer.appendChild(image);
