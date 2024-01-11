@@ -10,7 +10,7 @@
         <div class="content-wrapper">
 
             <div class="card">
-                <div class="card-body">
+                <div class="card-body" id="toload">
                     <form class="forms-sample" enctype="multipart/form-data">
                         <!-- enctype="multipart/form-data" to ensure that the data is correctly encoded and transmitted to the server. This is crucial for the server to interpret and process the file data appropriately. -->
                         <!-- Update the form action endpoint accordingly -->
@@ -210,7 +210,7 @@ formData.append('date', productDate);
 
 if(isValid==true)
 {
-  alert('hi')
+  
   fetch("/admin/products/addpost", {
     method: 'POST',
     body: formData,
@@ -225,7 +225,8 @@ if(isValid==true)
     if (data.success === true) {
         window.location.href = "/admin/products";
     } else {
-        alert('Error: Server responded with unsuccessful status');
+        var encodedMessage = encodeURIComponent(data.message);
+        $('#toload').load(`/admin/products/add?message=${encodedMessage} #toload`)
     }
 })
 .catch(error => {
@@ -235,7 +236,7 @@ if(isValid==true)
 });
     return true;  
 }
-else{alert('hi')
+else{
    
     return false;}
     
@@ -268,27 +269,44 @@ function displaySelectedNewImage() {
 
     previewContainer.innerHTML = '';
 
+   
+    var targetHeight = 40; 
+
     for (var i = 0; i < files.length; i++) {
         (function (index) {
             var file = files[index];
             var reader = new FileReader();
 
             reader.onload = function (e) {
+                var imageContainer = document.createElement('div');
+                imageContainer.style.height = targetHeight + 'vh';
+                imageContainer.style.width = 'auto'; 
+                imageContainer.style.overflow = 'hidden';
+
                 var image = document.createElement('img');
                 image.src = e.target.result;
                 image.classList.add('img-thumbnail', 'mr-2');
+
+                // Calculate the aspect ratio of the image
+                var aspectRatio = image.naturalWidth / image.naturalHeight;
+
+                // Calculate the width to maintain the aspect ratio with the target height
+                var newWidth = targetHeight * aspectRatio;
+
+                image.style.width = newWidth + 'vh'; 
+                image.style.height = targetHeight + 'vh'; 
 
                 var closeButton = document.createElement('button');
                 closeButton.innerHTML = '&times;';
                 closeButton.classList.add('btn', 'btn-sm', 'btn-danger');
                 closeButton.addEventListener('click', function () {
-                    previewContainer.removeChild(image);
-                    previewContainer.removeChild(closeButton);
+                    previewContainer.removeChild(imageContainer);
                     deleteImage(index, file);
                 });
 
-                previewContainer.appendChild(image);
-                previewContainer.appendChild(closeButton);
+                imageContainer.appendChild(image);
+                imageContainer.appendChild(closeButton);
+                previewContainer.appendChild(imageContainer);
             };
 
             reader.readAsDataURL(file);
@@ -311,7 +329,7 @@ function displaySelectedNewImage() {
         input.value = ''; // Clear the file input
         var previewContainer = document.getElementById('imagePreview');
         previewContainer.innerHTML = ''; // Clear the preview container
-        
+        v=[]
     }</script>
 
 
