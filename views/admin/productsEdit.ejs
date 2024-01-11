@@ -128,6 +128,7 @@
        
     }
    
+   
 if (productName === '') {
     errors.productName = 'Product name should contain only letters and cannot be empty.';
     nameError.textContent = errors.productName;
@@ -194,7 +195,7 @@ const formData = new FormData();
        
     }
     
-   
+    console.log(pictures)
 
     // Fetch request to send data to the server
     fetch(`/admin/products/editpost?id=<%= editProduct._id %>`, {
@@ -241,11 +242,7 @@ const formData = new FormData();
     
     function deleteImage(index) {
     console.log(`Deleting image ${index}`);
-    const nameError = document.getElementById('nameError');
-    
    
-    
-    const productImagesInput = document.getElementById('productImages');
    
   v.push(index)
 

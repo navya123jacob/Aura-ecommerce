@@ -599,7 +599,7 @@ const addoffers= async (req, res) => {
         
         
        
-        res.render('addcoupon', { message});
+        res.render('offerAdd', { message});
 
        
     } catch (error) {

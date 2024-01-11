@@ -25,6 +25,7 @@ const addProductpost=async(req,res)=>{
     const existingProduct = await product.findOne({ name: { $regex: new RegExp(req.body.name, 'i') } });
     if(!existingProduct)
     {
+     
       const arr = req.files.map(file => file.path);
       // Create a new Product document using Mongoose model
  const newProduct = new product({
@@ -39,17 +40,17 @@ const addProductpost=async(req,res)=>{
 
    // Save the new Product document to the database
    await newProduct.save();
-   res.redirect('/admin/products?message=product added')
+   res.json({success:true})
     }
     else{
-      res.redirect('/admin/products/add?message=Product already exist')
+      res.json({success:false,message:'Product already added'})
     }
      
   }
-  catch(error)
-  {
-      console.log(error.message)
-  }
+  catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+}
 }
 // products view with pagination
 const Product = async (req, res) => {
@@ -148,7 +149,7 @@ const ProductEdit=async(req,res)=>{
         try {
            console.log(req.files)
            const newarr = req.files.map(file => file.path);
-           console.log(newarr)
+           
            await product.updateOne(
             { _id: req.query.id },
             {
