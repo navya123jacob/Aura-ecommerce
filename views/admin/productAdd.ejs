@@ -102,7 +102,7 @@
 
 
 <script>
-    let v=[];let pictures=[];
+    let v=[];
     function validateForm() { 
         const productNameInput = document.getElementById('productName');
         const productPriceInput = document.getElementById('productPrice');
@@ -130,14 +130,6 @@
         // Regular expression to allow only letters (no numbers or special characters) for name
         const nameRegex = /^[a-zA-Z]+$/;
         let isValid = true;
-        for (let i = 0; i < productImages.length; i++) {
-        if(!v.includes(i))
-        {
-            pictures.push( productImages[i])
-            
-        }
-       
-    }
         
         if ( productName === '') {
             
@@ -189,12 +181,13 @@
             dateError.textContent = '';
         }
         if (!validateImages(productImages)) {
-        imagesError.textContent = 'Please select valid and atmost 5 images.';
+        imagesError.textContent = 'Please select valid and at most 5 images.';
         productImagesInput.focus();
-        pictures=[]
+        console.log('Validation failed!');
         isValid = false;
     } else {
         imagesError.textContent = '';
+        console.log('Validation passed!');
     }
     
     const formData = new FormData();
@@ -206,14 +199,14 @@ formData.append('category', productCategory);
 formData.append('date', productDate); 
 
  
-for (let i = 0; i < pictures.length; i++) {
-       
-            
-       formData.append('images', pictures[i]);
-
+ console.log(productImages)
+ console.log(v)
+ for (let i = 0; i < productImages.length; i++) {
+    if (!v.includes(i)) {
+        formData.append('images', productImages[i]);
+        console.log(`Appended image ${i}:`, productImages[i]);
+    }
 }
-console.log(pictures);  
-console.log(v);  
 
 if(isValid==true)
 {
@@ -243,16 +236,17 @@ if(isValid==true)
     return true;  
 }
 else{alert('hi')
-    pictures=[]
+   
     return false;}
     
 }
     
 function validateImages(images) {
     const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'];
-    console.log(images.length,v.length)
-    if (((images.length-v.length) === 0) || ((images.length-v.length) > 5)) {
-        return false; 
+    console.log(images.length, v.length);
+    
+    if ((images.length - v.length) === 0 || (images.length - v.length) > 5) {
+        return false;
     }
 
     for (const file of images) {
@@ -305,6 +299,7 @@ function displaySelectedNewImage() {
         console.log(`Deleting image ${index}`);
    
    v.push(index)
+   
    console.log(v)
 
    

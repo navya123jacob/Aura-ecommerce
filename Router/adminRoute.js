@@ -26,11 +26,10 @@ const storage = multer.diskStorage({
   });
   
   // Initialize multer
-  const upload = multer({  //upload: The initialized multer instance.upload.array processes the uploaded files and makes them available in the req.files array within the route handler,when uploading image files through form
+  const upload = multer({
     storage: storage,
-    limits: { fileSize: 1000000 } // Set a file size limit (optional)
-  })
-  
+    limits: { fileSize: 5 * 1024 * 1024 } // Set the file size limit to 5MB
+  });
 
 
 //admin login
