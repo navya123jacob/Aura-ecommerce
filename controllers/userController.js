@@ -680,13 +680,7 @@ const productaddtocart = async (req, res) => {
     
    const currentuser=await User.findOne({email:req.session.email })
    const quantity=req.query.qtyValue||1
-   let productprice=pro.price;
-
-   if(pro.offer!=0)
-{ 
-  productprice = (pro.price - (pro.offer / 100) * pro.price).toFixed(2);
- 
-}
+   
 
     // Check if the user already has a cart document
     const cartFind = await cart.findOne({ user: currentuser._id });
@@ -720,10 +714,10 @@ const productaddtocart = async (req, res) => {
         // Product is not in the cart, add it to the product array
         cartFind.Products.push({
           products: pro._id,
-          price: productprice,
+          price: pro.price,
           name: pro.name,
           quantity: quantity,
-          total:quantity* productprice
+          total:quantity* pro.price
         });
       }
       
@@ -736,10 +730,10 @@ const productaddtocart = async (req, res) => {
         Products: [
           {
             products: pro._id,
-            price: productprice,
+            price: pro.price,
             name: pro.name,
             quantity: quantity,
-            total:productprice*quantity
+            total:pro.price*quantity
           }
         ],
        
@@ -786,18 +780,34 @@ const cartload=async(req,res)=>{
     
     const email=req.session.email
     const myuser=await User.findOne({email:req.session.email})
-    const usercart=await cart.findOne({user:myuser._id}).populate('Products.products').exec() // Use the actual field name you defined in your schema
+    const usercart=await cart.findOne({user:myuser._id}).populate('Products.products').exec() 
     let Total = 0;
     let shipping = 0;
     let grandtotal = 0;
     let b=0;
     
+   
+
+    let totalproprice=[];let proprice=[]
     if (usercart && usercart.Products[0]) {
       b=1
-        usercart.Products.forEach(product => {
-            Total = Total + product.total;
-        });
-
+      let Total = 0;
+      
+      usercart.Products.forEach(product => {
+          let productPrice = parseFloat(product.total);
+          let individualprice=product.price
+          if (product.products.offer !== 0) {
+              const discountAmount = (product.products.offer / 100) * productPrice;
+              const discountedPrice = productPrice - discountAmount;
+              productPrice = discountedPrice.toFixed(2);
+              individualprice=(individualprice-((product.products.offer / 100) * individualprice)).toFixed(2);
+          }
+      
+          Total = Total + parseFloat(productPrice);
+          totalproprice.push(parseFloat(productPrice))
+          proprice.push(parseFloat(individualprice))
+      });
+      
         if (Total < 500) {
             shipping = 40;
         }
@@ -806,7 +816,7 @@ const cartload=async(req,res)=>{
     }
     
     
-      res.render('cart',{user,ses,categories,usercart,shipping,Total,grandtotal,b,email,checkmessage})
+      res.render('cart',{user,ses,categories,usercart,shipping,Total,grandtotal,b,email,checkmessage,totalproprice,proprice})
    
       
   }
@@ -998,7 +1008,7 @@ couponfind = couponfind.filter(co => {
         }
         else if(currentcoupon.minAmount<=grandtotal)
         {
-          grandtotal = grandtotal-((currentcoupon.discountPercent/100)*grandtotal)          
+          grandtotal = (grandtotal-((currentcoupon.discountPercent/100)*grandtotal)).toFixed(2)         
         }
         else{
          

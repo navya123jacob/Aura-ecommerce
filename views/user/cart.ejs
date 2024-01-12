@@ -33,6 +33,7 @@
 									</thead>
 
 									<tbody>
+										<% let i=0 %>
 										<% if (b==1) { %>
 										<% usercart.Products.forEach(product => { %>
 											<tr>
@@ -49,19 +50,20 @@
 														</h3><!-- End .product-title -->
 													</div><!-- End .product -->
 												</td>
-												<td class="price-col">₹<%= product.price %></td>
+												<td class="price-col">₹<%=proprice[i]%></td>
 												<td class="quantity-col">
 													<div class="cart-product-quantity">
 														<input type="number" class="form-control" id="quantity" value="<%= product.quantity %>" min="1" max="<%= product.products.quantity %>" step="1" data-decimals="0" onchange="addtocart('<%=product.name%>','<%=email%>', this.value)" required></div><!-- End .cart-product-quantity -->
 												</td>
 												
-												<td class="total-col">₹<%= product.total %></td>
+												<td class="total-col">₹<%= totalproprice[i] %></td>
 												<td class="remove-col">
 													<button class="btn-remove" onclick="removeCartItem('<%=product.name%>' ,'<%=email%>%>')">
 														<i class="icon-close"></i>
 													</button>
 												</td>
 											</tr>
+											<% i++ %>
 											<% }); %>
 											<% } else { %>
 												<tr>
@@ -179,7 +181,7 @@ if (shipping > 0) {
 		response.json()
 	}).then((data)=>{
 		
-		$('#carttoload').load('/cart #carttoload')
+		$('#load').load('/cart #load')
 
 	})
         
