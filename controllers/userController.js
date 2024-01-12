@@ -587,9 +587,25 @@ const CatProductsView = async (req, res) => {
     const totalProducts = tot.length
     const totalPages = Math.ceil(totalProducts / pageSize);
     const email=req.session.email
+
+    //offer
+    let totalprice=[]
+  for (let i = 0; i < products.length; i ++) {
    
+    if(products[i].offer==0)
+    {
+      totalprice.push(products[i].price)
+    }
+    else{
       
-        res.render('categories', { products, categories, page, totalPages,cat,ses,user,email,searchQuery});
+      let newtotal = (products[i].price - (products[i].offer / 100) * products[i].price).toFixed(2);
+      totalprice.push(newtotal)
+    }
+
+  }  
+  
+      
+        res.render('categories', { products, categories, page, totalPages,cat,ses,user,email,searchQuery,totalprice});
       
 
     

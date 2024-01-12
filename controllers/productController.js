@@ -95,7 +95,7 @@ const Product = async (req, res) => {
       .exec();
   }
 
-     
+ 
 
     res.render('product', { products, page, totalPages,searchQuery});
   } catch (error) {
