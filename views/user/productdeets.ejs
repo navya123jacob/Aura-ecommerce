@@ -55,10 +55,19 @@
 
                         
 
-                        <div class="product-price">
-                            ₹<%=products.price%>
-                        </div><!-- End .product-price -->
-
+                        <div class="product-price" style=" display: inline-block;">
+                            <% if (products.offer == 0) { %>
+                                ₹<%= totalprice %>
+                            <% } else { %>
+                                <span style="text-decoration: line-through; color: grey;">₹<%=products.price %></span>
+                                <span style="margin-left: 5px;">₹<%= totalprice %></span>
+                            <% } %>
+                        </div>
+                        <div class="font-weight-bold" >
+                            <% if (products.offername != '') { %>
+                                <span style="color: #71af71;"><%= products.offername %> offer!</span>
+                            <% } %>
+                        </div>
                         <div class="product-content">
                             <p><%=products.description%></p>
                         </div><!-- End .product-content -->

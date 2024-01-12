@@ -648,26 +648,22 @@ for (let i = 0; i < products.pictures.length; i++) {
       // Handle the case when no product is found
       return res.status(404).send('Product not found');
     }
-    const productlist = await product.aggregate([
-      {
-          $lookup: {
-              from: 'categories', // Assuming your category collection is named 'categories'
-              localField: 'category',
-              foreignField: '_id',
-              as: 'categoryData'
-          }
-      },
-      {
-          $match: {
-              'status': 'active',
-              'categoryData.status': 'active',
-              'products._id':{$ne:req.query.id}
-          }
-      }
-  ]);
+
+    let totalprice=0
+ 
+   
+    if(products.offer==0)
+    {
+      totalprice=products.price
+    }
+    else{
+      
+      let newtotal = (products.price - (products.offer / 100) * products.price).toFixed(2);
+      totalprice=newtotal
+    }
 
   var k=0;
-    res.render('productdeets', { products ,productlist,categories,ses,user,email,k,images});
+    res.render('productdeets', { products ,categories,ses,user,email,k,images,totalprice});
   } catch (error) {
     console.log(error.message);
     // Handle other errors as needed
@@ -684,7 +680,13 @@ const productaddtocart = async (req, res) => {
     
    const currentuser=await User.findOne({email:req.session.email })
    const quantity=req.query.qtyValue||1
-    
+   let productprice=pro.price;
+
+   if(pro.offer!=0)
+{ 
+  productprice = (pro.price - (pro.offer / 100) * pro.price).toFixed(2);
+ 
+}
 
     // Check if the user already has a cart document
     const cartFind = await cart.findOne({ user: currentuser._id });
@@ -714,29 +716,30 @@ const productaddtocart = async (req, res) => {
         existingProduct.total = existingProduct.quantity *existingProduct.price
         
       } else {
+        
         // Product is not in the cart, add it to the product array
         cartFind.Products.push({
           products: pro._id,
-          price: pro.price,
+          price: productprice,
           name: pro.name,
           quantity: quantity,
-          total:quantity* pro.price
+          total:quantity* productprice
         });
       }
-
-
+      
       await cartFind.save();
     } else {
-      // User does not have a cart document, create a new one
+      
+      // User does not have a cart document, creating a new one
       const cartAdd = new cart({
         user: currentuser._id,
         Products: [
           {
             products: pro._id,
-            price: pro.price,
+            price: productprice,
             name: pro.name,
             quantity: quantity,
-            total:pro.price*quantity
+            total:productprice*quantity
           }
         ],
        
