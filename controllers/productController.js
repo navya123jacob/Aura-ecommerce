@@ -3,7 +3,7 @@ const product = require('../models/productModel');
 const Category = require('../models/categoryModel');
 const path = require('path');
 const fs=require('fs')
-
+const offer = require('../models/offerModel');
 
 
 //admin side add product
@@ -133,8 +133,8 @@ const ProductToggle=async(req,res)=>{
 const ProductEdit=async(req,res)=>{
     try{let message=req.query.message||'';
        const editProduct=await product.findOne({_id:req.query.id})
-
-        res.render('productsEdit',{editProduct,message})
+       const offers=await offer.find({status:true})
+        res.render('productsEdit',{editProduct,message,offers})
     }
     catch(error)
     {
