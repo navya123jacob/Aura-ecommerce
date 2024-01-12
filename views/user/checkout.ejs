@@ -513,15 +513,15 @@ fetch('/placeorder', {
       console.error('Error:', error);
     });
                     
-                    
-
-
-
-
+      
                 } else {
-                    // User clicked Cancel
-                    alert('Payment canceled.');
-                }
+    // User clicked Cancel
+    Swal.fire({
+        icon: 'error',
+        title: 'Payment canceled',
+        text: 'You have canceled the payment.',
+    });
+}
             });
         }
     }

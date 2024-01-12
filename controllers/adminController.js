@@ -608,6 +608,35 @@ const addoffers= async (req, res) => {
     }
 };
 
+// add offers post
+ const addofferspost=async (req, res) => {
+    try {
+        const existingOffer = await offer.findOne({ name: { $regex: new RegExp(req.body.name, 'i') } });
+        if(!existingOffer)
+        {
+        
+        const offerData = new offer({
+            name:req.body.name,
+        discount:req.body.discount,
+        startingDate:req.body.startingDate,
+        expiryDate:req.body.expiryDate
+          })
+
+          offerData.save()
+        
+        
+    res.json({success:true})   
+        } 
+        else{
+            res.json({success:false,message:'Offer already added'})
+          }      
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
 //logout
 const adminlogout=async(req,res)=>{
     try{
@@ -643,6 +672,7 @@ module.exports={
     couponremove,
     offers,
     addoffers,
+    addofferspost,
     
     adminlogout
 }

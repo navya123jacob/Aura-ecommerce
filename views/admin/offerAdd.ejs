@@ -105,16 +105,13 @@
 if(count==1)
 {
     const formData = {
-        couponName,
-        couponCode,
-        discountPercent,
-        minAmount,
-        couponDescription,
+        name,
+        discount,
+        startingDate,
         expiryDate,
-        availability
     };
    
-   fetch('/admin/addcouponpost', {
+   fetch('/admin/addofferpost', {
         method: 'POST', 
         headers: {
             'Content-Type': 'application/json',
@@ -127,13 +124,21 @@ if(count==1)
             return response.json();
         })
         .then(data => {
-            
-            Swal.fire({
+            if(data.success==true)
+            {
+                Swal.fire({
                title: 'Added!',
-               html: '<h5 style="color: #4CAF50;">The coupon has been added.</h5>',
+               html: '<h5 style="color: #4CAF50;">The offer has been added.</h5>',
                icon: 'success'
                 });
-                $('#toload').load('/admin/couponsadd #toload');
+                window.location.href='/admin/offers'
+            }
+            else{
+                var encodedMessage = encodeURIComponent(data.message);
+        $('#toload').load(`/admin/offersAdd?message=${encodedMessage} #toload`)
+
+            }
+            
                 
         })
         .catch(error => {

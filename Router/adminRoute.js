@@ -121,6 +121,9 @@ adminRoute.get('/offers',mid.adminloginNoSes,adminController.offers)
 //to add offers
 adminRoute.get('/offersAdd',mid.adminloginNoSes,adminController.addoffers)
 
+//offer add post
+adminRoute.post('/addofferpost',mid.adminloginNoSes,adminController.addofferspost)
+
 //logout
 adminRoute.get('/logout',adminController.adminlogout)
 

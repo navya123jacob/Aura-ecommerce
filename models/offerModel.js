@@ -19,7 +19,9 @@ const offer = new mongoose.Schema({
     status: {
         type: Boolean,
         default: true
-    }
+    },
+    list:{type: Boolean,
+        default: true}
 })
 
 module.exports = mongoose.model('offer', offer)
