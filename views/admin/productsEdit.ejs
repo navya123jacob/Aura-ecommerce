@@ -45,12 +45,14 @@
                                 <select class="form-control" id="productOffers" name="offers">
                                     <option value="">Select an offer</option>
                                     <% offers.forEach(offer => { %>
-                                        <option value="<%= offer._id %>"><%= offer.name %></option>
+                                   
+                                        <option value="<%= offer.name %>" <% if (editProduct && editProduct.offername == offer.name) { %>selected<% } %>><%= offer.name %></option>
                                     <% }); %>
                                 </select>
                                 <small id="offersError" class="text-danger"></small>
                             </div>
                         </div>
+
                         <!-- Product Price -->
                         <div class="form-group row">
                             <label for="productPrice" class="col-sm-3 col-form-label">Product Price</label>
@@ -195,6 +197,9 @@ if (!validateImages(pictures,l)) {
     imagesError.textContent = '';
 }
 
+const productOffersInput = document.getElementById('productOffers');
+    const productOffers = productOffersInput.value;
+
 const formData = new FormData();
     formData.append('name', productName);
     formData.append('description', productDescription);
@@ -207,6 +212,9 @@ const formData = new FormData();
         
        
     }
+    
+formData.append('offers', productOffers);
+
     
     console.log(pictures)
 

@@ -145,46 +145,51 @@ const ProductEdit=async(req,res)=>{
 
 //post form
 
-    const ProductEditpost = async (req, res) => {
-        try {
-          
-          const existingpro = await product.findOne({ "name": new RegExp('^' + req.body.name + '$', 'i') });
-          const presentpro=await product.findOne({_id:req.query.id});
-          
-          if (existingpro && (presentpro.name.toLowerCase() !=  req.body.name.toLowerCase() )) 
-          {
-            res.json({success:false,message:'Product name already exists. Please choose another name.'})
-          }
-          else{
-            
-           const newarr = req.files.map(file => file.path);
-           
-           await product.updateOne(
-            { _id: req.query.id },
-            {
-                $set: {
-                    name: req.body.name,
-                    description: req.body.description,
-                    price: req.body.price,
-                    quantity: req.body.quantity,
-                },
-                $push: {
-                    pictures: {
-                        $each: newarr
-                    }
-                }
-            } 
-        )
-        res.json({success:true})
-
-          }
-        }
-      catch (error) {
-      console.error(error.message);
-      res.status(500).send('Internal Server Error');
+const ProductEditpost = async (req, res) => {
+  try {
+    
+    const existingpro = await product.findOne({ "name": new RegExp('^' + req.body.name + '$', 'i') });
+    const presentpro=await product.findOne({_id:req.query.id});
+    const offerapplied=await offer.findOne({name:req.body.offers}) ||""
+      const offerdiscount=offerapplied.discount||0
+    console.log(offerdiscount)
+    if (existingpro && (presentpro.name.toLowerCase() !=  req.body.name.toLowerCase() )) 
+    {
+      res.json({success:false,message:'Product name already exists. Please choose another name.'})
     }
-  };
+    else{
+      
+     const newarr = req.files.map(file => file.path);
+     
+     await product.updateOne(
+      { _id: req.query.id },
+      {
+          $set: {
+              name: req.body.name,
+              description: req.body.description,
+              price: req.body.price,
+              quantity: req.body.quantity,
+              offer:offerdiscount,
+              offername:req.body.offers
+          },
+          $push: {
+              pictures: {
+                  $each: newarr
+              }
+          }
+      } 
+  )
+  res.json({success:true})
 
+    }
+  }
+catch (error) {
+console.error(error.message);
+res.status(500).send('Internal Server Error');
+}
+};
+
+    
   //to delete product inside post form
   const ProducteditDelete =async(req,res)=>{
     try{

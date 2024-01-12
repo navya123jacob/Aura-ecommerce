@@ -41,6 +41,10 @@ const productSchema = new mongoose.Schema({
     offer:{
         type: Number,
         default: 0,
+    },
+    offername: {
+      type: String,
+      default:"",
     }
 
 });
