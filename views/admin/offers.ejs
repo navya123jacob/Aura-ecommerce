@@ -126,11 +126,11 @@
   }
 
   //to remove coupon item
-	function removeCoupon(name) {
+	function removeOffer(name) {
     // Show SweetAlert confirmation dialog
     Swal.fire({
         title: 'Are you sure?',
-        html: '<h5 style="color: #333;">You are about to remove the coupon. This action cannot be undone!</h5>',
+        html: '<h5 style="color: #333;">You are about to remove the offer. This action cannot be undone!</h5>',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -139,7 +139,7 @@
     }).then((result) => {
         if (result.isConfirmed) {
             // If the user confirms, proceed with the removal
-            fetch(`/admin/couponremove?name=${name}`, {
+            fetch(`/admin/Offerremove?name=${name}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -150,11 +150,11 @@
                 // Alert user after successful removal
                 Swal.fire({
                title: 'Removed!',
-               html: '<h5 style="color: #4CAF50;">The coupon has been removed.</h5>',
+               html: '<h5 style="color: #4CAF50;">The offer has been removed.</h5>',
                icon: 'success'
                 });
                 // Reload the coupons section
-                $('#toload').load('/admin/coupons #toload');
+                $('#toload').load('/admin/offers #toload');
             }).catch((error) => {
                 // Handle errors
                 console.error('Error:', error);

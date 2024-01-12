@@ -134,8 +134,7 @@
                 		</div><!-- End .col-lg-9 -->
                 		<aside class="col-lg-3 order-lg-first">
                             <div class="sidebar sidebar-shop">
-                                <!-- ... Other sidebar content ... -->
-                        
+                              
                                 <!-- Category Filter -->
                                 <div class="widget widget-collapsible">
                                     <h3 class="widget-title">
@@ -144,26 +143,23 @@
                                         </a>
                                     </h3>
                                     <div class="collapse show" id="widget-category">
-                                        <div class="widget-body">
-                                            <div class="filter-items filter-items-count">
-                                                
-
-                                              <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="allCheckbox" onchange="handleCheckboxChange('all')" >
+                                      <div class="widget-body">
+                                        <div class="filter-items filter-items-count">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="allCheckbox" onchange="handleCheckboxChange('all')" <% if (!cat) { %>checked<% } %> >
                                                 <label class="custom-control-label" for="allCheckbox">All</label>
                                             </div>
-                                                    <div class="filter-item">
-                                                      <% categories.forEach(category => { %>
-                                                      <div class="custom-control custom-checkbox">
-                                                        
-                                                        <input type="checkbox" class="custom-control-input" id="<%= 'cat-' + category._id %>" onchange="handleCheckboxChange('<%= category.name %>')" >
+                                            
+                                            <% categories.forEach(category => { %>
+                                                <div class="filter-item">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input" id="<%= 'cat-' + category._id %>" onchange="handleCheckboxChange('<%= category.name %>')" <% if (category.name === cat) { %>checked<% } %> >
                                                         <label class="custom-control-label" for="<%= 'cat-' + category._id %>"><%= category.name %></label>
                                                     </div>
-                                                        
-                                                    </div>
-                                                <% }); %>
-                                            </div>
+                                                </div>
+                                            <% }); %>
                                         </div>
+                                    </div>
                                     </div>
                                 </div>
                         

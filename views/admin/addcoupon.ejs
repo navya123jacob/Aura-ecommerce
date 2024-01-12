@@ -127,7 +127,7 @@ if (couponCode.trim() === '') {
 
 // Validate discountPercent (should be a positive number)
 const discountError = document.getElementById('coupondiscountError');
-if (isNaN(discountPercent) || parseFloat(discountPercent) <= 0) {
+if (isNaN(discountPercent) || parseFloat(discountPercent) <= 0 || parseFloat(discountPercent) >= 100) { 
     discountError.innerText = 'Invalid discount (should be a positive number)';
     count=1;
 } else {
@@ -196,13 +196,19 @@ if(count==0)
             return response.json();
         })
         .then(data => {
-            
-            Swal.fire({
+            if(data.success==true)
+            {
+                Swal.fire({
                title: 'Added!',
                html: '<h5 style="color: #4CAF50;">The coupon has been added.</h5>',
                icon: 'success'
                 });
-                $('#toload').load('/admin/couponsadd #toload');
+                window.location.href='/admin/coupons'
+            }
+            else{ var encodedMessage = encodeURIComponent(data.message);
+                $('#toload').load(`/admin/couponsadd?message=${encodedMessage} #toload`); 
+            }
+           
                 
         })
         .catch(error => {

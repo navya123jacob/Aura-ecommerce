@@ -521,20 +521,29 @@ const addcoupons= async (req, res) => {
 //add coupon post 
 const addcouponpost=async (req, res) => {
     try {
+        const existingcoupon = await coupon.findOne({ couponCode:req.body.couponCode });
+        if(!existingcoupon)
+        {
+            const couponData = new coupon({couponName:req.body.couponName,
+                couponCode:req.body.couponCode,
+                discountPercent:req.body.discountPercent,
+                  minAmount:req.body.minAmount,
+                couponDescription:req.body.couponDescription,
+                Availability:req.body.availability,
+                expiryDate:req.body.expiryDate,
+                })
+      
+                couponData.save()
+              
+              
+          res.json({success:true})  
+        }
+        else{
+            res.json({success:false,message:'Coupon already added'}) 
+        }
         
-        const couponData = new coupon({couponName:req.body.couponName,
-          couponCode:req.body.couponCode,
-          discountPercent:req.body.discountPercent,
-            minAmount:req.body.minAmount,
-          couponDescription:req.body.couponDescription,
-          Availability:req.body.availability,
-          expiryDate:req.body.expiryDate,
-          })
-
-          couponData.save()
         
-        
-    res.json({success:true})          
+                
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');
@@ -636,6 +645,19 @@ const addoffers= async (req, res) => {
     }
 };
 
+//remove offer
+const offerremove=async (req, res) => {
+    try {
+        
+        const pro=await offer.deleteOne({name:req.query.name })
+    
+        
+    res.json({success:true})          
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
+    }
+};
 
 //logout
 const adminlogout=async(req,res)=>{
@@ -673,6 +695,7 @@ module.exports={
     offers,
     addoffers,
     addofferspost,
+    offerremove,
     
     adminlogout
 }

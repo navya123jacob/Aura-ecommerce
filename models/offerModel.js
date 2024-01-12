@@ -23,5 +23,11 @@ const offer = new mongoose.Schema({
     list:{type: Boolean,
         default: true}
 })
-
+offer.pre('find', async function () {
+    const currentDate = new Date();
+    await this.model.updateMany(
+        { expiryDate: { $lt: currentDate }, status: true },
+        { $set: { status: false } }
+    );
+  });
 module.exports = mongoose.model('offer', offer)

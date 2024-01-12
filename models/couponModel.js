@@ -43,5 +43,11 @@ const couponSchema = new mongoose.Schema({
     }],
 },{timestamps:true})
 
-
+couponSchema.pre('find', async function () {
+  const currentDate = new Date();
+  await this.model.updateMany(
+      { expiryDate: { $lt: currentDate }, status: true },
+      { $set: { status: false } }
+  );
+});//pre middleware is a feature that allows you to define functions that are executed before or after certain operations on your documents or models
 module.exports = mongoose.model('Coupon',couponSchema)
