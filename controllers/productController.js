@@ -152,7 +152,7 @@ const ProductEditpost = async (req, res) => {
     const presentpro=await product.findOne({_id:req.query.id});
     const offerapplied=await offer.findOne({name:req.body.offers}) ||""
       const offerdiscount=offerapplied.discount||0
-    console.log(offerdiscount)
+    
     if (existingpro && (presentpro.name.toLowerCase() !=  req.body.name.toLowerCase() )) 
     {
       res.json({success:false,message:'Product name already exists. Please choose another name.'})

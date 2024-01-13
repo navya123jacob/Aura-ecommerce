@@ -188,7 +188,8 @@ const CategoryEdit=async(req,res)=>{
         const editcat=await Category.findOne({_id:req.query.categoryId}) ||''
        const message=req.query.message||''
        console.log(message)
-        res.render('categoryEdit',{message,editcat})
+       const offers=await offer.find({status:true})
+        res.render('categoryEdit',{message,editcat,offers})
 
     }
     catch (error) {
@@ -201,7 +202,9 @@ const CategoryEditpost=async(req,res)=>{
     try{
         const existingCategory = await Category.findOne({ "name": new RegExp('^' + req.body.name + '$', 'i') });
         const presentcat=await Category.findOne({_id:req.query._id});
-       
+        const offerapplied=await offer.findOne({name:req.body.offers}) ||""
+        const offerdiscount=offerapplied.discount||0
+      console.log(offerdiscount)
         if (existingCategory && (presentcat.name.toLowerCase() !=  req.body.name.toLowerCase() )) {
           
               
@@ -210,7 +213,7 @@ const CategoryEditpost=async(req,res)=>{
        
         }
         else{
-            await Category.updateOne({_id:req.query._id},{$set:{name:req.body.name,description:req.body.description}})
+            await Category.updateOne({_id:req.query._id},{$set:{name:req.body.name,description:req.body.description,offer:offerdiscount,offername:req.body.offers}})
             res.json({success:true,message:'Edited'})
         }
       

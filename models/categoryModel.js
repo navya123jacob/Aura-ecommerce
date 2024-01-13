@@ -14,7 +14,17 @@ const categorySchema=new mongoose.Schema({
         type:String,
         enum:['active','blocked'],
         default:'active'
+    },
+  
+    offer:{
+        type: Number,
+        default: 0,
+    },
+    offername: {
+      type: String,
+      default:"",
     }
+
 
 })
 

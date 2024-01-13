@@ -1584,7 +1584,7 @@ totord.forEach((e)=>{
 })
 const startIndex = (page - 1) * pageSize;
 const endIndex = Math.min(startIndex + pageSize, overall.length);
-console.log(startIndex,endIndex)
+
 for (let index = startIndex; index < endIndex; index++) {
   const e = overall[index];
  
@@ -1598,7 +1598,7 @@ for (let index = startIndex; index < endIndex; index++) {
           const totalProducts = overall.length;
           const totalPages = Math.ceil(totalProducts / pageSize);
           const email=req.session.email
-          console.log(overall.length,orders.length,totalPages)
+          
       res.render('orders', { user, orders, ses, categories,cat,page, totalPages,email });
   } catch (error) {
       console.log(error.message);

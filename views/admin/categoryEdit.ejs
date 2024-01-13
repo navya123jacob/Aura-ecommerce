@@ -23,6 +23,19 @@
                         <small id="descriptionError" class="text-danger"></small>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label for="productOffers" class="col-sm-3 col-form-label">Offers</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="productOffers" name="offers">
+                            <option value="">Select an offer</option>
+                            <% offers.forEach(offer => { %>
+                           
+                                <option value="<%= offer.name %>" <% if (editcat && editcat.offername == offer.name) { %>selected<% } %>><%= offer.name %></option>
+                            <% }); %>
+                        </select>
+                        <small id="offersError" class="text-danger"></small>
+                    </div>
+                </div>
     
                 <button type="button" class="btn btn-primary mr-2" onclick="validateAndSubmit()">Submit</button>
                 <button type="button" class="btn btn-dark">Cancel</button>
@@ -68,7 +81,7 @@
 
     let isValid = true;
 
-    if (!nameRegex.test(categoryName) || categoryName === '') {
+    if ( categoryName === '') {
         nameError.textContent = 'Category name should contain only letters and cannot be empty.';
         categoryNameInput.focus();
         isValid = false;
@@ -83,6 +96,9 @@
     } else {
         descriptionError.textContent = '';
     }
+    const productOffersInput = document.getElementById('productOffers');
+    const productOffers = productOffersInput.value;
+
 
     if (isValid) {
         
@@ -94,6 +110,7 @@
             body: JSON.stringify({
                 name: categoryName,
                 description: categoryDescription,
+                offers:productOffers
             }),
         })
         .then(response => {
