@@ -537,10 +537,10 @@ const CatProductsView = async (req, res) => {
 
     let mycategory=await category.findOne({name:cat,'status':'active'})
     let products=[]
-    let query={}
+    let query={'status': 'active'}
     if(mycategory)
     {
-      query = { 'status': 'active',category:mycategory._id };
+      query.category = mycategory._id;
     }
    
     if (searchQuery) {
@@ -553,6 +553,7 @@ const CatProductsView = async (req, res) => {
         path: 'category',
         model: 'Category'}).exec()
         protot.forEach((e)=>{
+    
           if(e.category.status=='active')
           {
             tot.push(e)
@@ -583,16 +584,28 @@ const CatProductsView = async (req, res) => {
     //offer
     let totalprice=[]
   for (let i = 0; i < products.length; i ++) {
-   
-    if(products[i].offer==0)
+    
+    if(products[i].offer==0 && products[i].category.offer==0 )
     {
       totalprice.push(products[i].price)
     }
     else{
-      
-      let newtotal = (products[i].price - (products[i].offer / 100) * products[i].price).toFixed(2);
-      totalprice.push(newtotal)
+      let discountpercent=0
+      if (products[i].offer!=0)
+       {
+        discountpercent = products[i].offer;
+    } 
+    else if(products[i].category.offer!=0) 
+    {
+        discountpercent = products[i].category.offer;
     }
+    
+  
+      let newtotal = (products[i].price - (discountpercent / 100) * products[i].price).toFixed(2);
+      totalprice.push(newtotal)
+      
+    }
+    
 
   }  
   
