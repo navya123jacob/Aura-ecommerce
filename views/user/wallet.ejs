@@ -157,8 +157,8 @@ rzp1.open();
 }
 
 function verifyPayment(payment, order) {
-    console.log('inside')
-    fetch('/verify-payment', {
+   
+    fetch(`/verify-payment?wallet=yes`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -177,12 +177,12 @@ function verifyPayment(payment, order) {
             // Show success alert
             Swal.fire({
                 icon: 'success',
-                title: 'Payment Successful',
+                title: 'Successful added money to your Wallet',
                 showConfirmButton: false,
                 timer: 1500,
             }).then(() => {
                 // Redirect to '/orderplaced' after the alert
-                window.location.href = `/orderplaced?orderid=${data.orderid}`;
+                window.location.href = `/wallet`;
             });
         } else {
             // Show error alert

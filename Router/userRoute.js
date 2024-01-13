@@ -110,6 +110,9 @@ userRoute.get('/wallet',mid.UserNoSes,mid.logiheader,userController.wallet)
 //to see wallet history
 userRoute.get('/wallethistory',mid.UserNoSes,mid.logiheader,userController.wallethistory)
 
+//to add wallet money
+userRoute.post('/addwalletmoney',mid.UserNoSes,mid.logiheader,userController.addwalletMoney)
+
 
 //to add product to cart
 userRoute.post('/productaddtocart',userController.productaddtocart)

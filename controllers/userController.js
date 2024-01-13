@@ -817,7 +817,7 @@ const cartload=async(req,res)=>{
       b=1
       
       
-      usercart.Products.forEach(product => {
+      usercart.Products.forEach(async(product) => {
           let productPrice = parseFloat(product.total);
           let individualprice=product.price;let discountpercent=0
           
@@ -836,10 +836,17 @@ const cartload=async(req,res)=>{
               productPrice = discountedPrice.toFixed(2);
               individualprice=(individualprice-((discountpercent / 100) * individualprice)).toFixed(2);
           }
+          
       
           Total = Total + parseFloat(productPrice);
           totalproprice.push(parseFloat(productPrice))
           proprice.push(parseFloat(individualprice))
+          
+          if(product.products.quantity==0)
+          {
+            await cart.updateOne({user:myuser._id}, { $pull: { 'Products': { 'products': product.products} } })
+            totalproprice.pop();proprice.pop();
+          }
       });
       
         if (Total < 500) {
@@ -1302,7 +1309,7 @@ const splitorder=async(req,res)=>{
 const verifyrazorpayment=async(req,res)=>{
   try{
    
-    const { order: {receipt}, payment: { razorpay_payment_id, razorpay_order_id,razorpay_signature } } = req.body;     
+    const { order: {receipt,amount}, payment: { razorpay_payment_id, razorpay_order_id,razorpay_signature } } = req.body;     
     
     const key_secret = process.env.RAZORPAY_SECRET_KEY      
   
@@ -1319,8 +1326,17 @@ const verifyrazorpayment=async(req,res)=>{
       
      
     if(razorpay_signature==hmac){ 
+      if(!req.query.wallet)
+      {
+        await order.updateOne({ _id: receipt }, { $set: { paymentstatus: 'placed' } });
+      }
+      else{ const realamount=(amount/100).toFixed(2)
+        await User.updateOne(
+          { email: req.session.email },
+          { $inc: { wallet:realamount } }
+        );
+      }
       
-      await order.updateOne({ _id: receipt }, { $set: { paymentstatus: 'placed' } });
       res.json({ success: true,orderid:receipt})
     } 
     else
@@ -1797,7 +1813,24 @@ const wallethistory=async (req, res) => {
   }
 }
 
-
+//to add wallet money via razorpay
+const addwalletMoney = async (req, res) => {
+  try {
+    const orderId = generateOrderId();
+    let amount=req.body.amountValue;
+    const response = await generateRazorpay(orderId, amount);
+    response.success = 'razor';
+    res.json(response);
+  } catch (error) {
+    console.error('Error in addwalletMoney:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+function generateOrderId() {
+  const{v4:uuidv4}=require('uuid')
+  const orderId = uuidv4();
+  return orderId;
+}
 
 
 
@@ -1847,10 +1880,11 @@ module.exports={
     verifyrazorpayment,
     wallet,
     wallethistory,
+    addwalletMoney,
     getInvoice,
     productaddtowishlist,
     wishlistload,
-    productremovefromwish,
+    productremovefromwish
     
    
 }
