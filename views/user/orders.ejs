@@ -101,13 +101,14 @@
                     <tr>
                         <td rowspan="<%= order.Products.length %>"><%= new Date(order.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %></td>
 
-
+                       
                         <td rowspan="<%= order.Products.length %>"><%= order.total %></td>
                         <% order.Products.forEach((product, index) => { %>
-                            <% if (index !== 0) { %>
+                            <% if (index != 0) { %>
                                 <tr>
                             <% } %>
                             <td>
+                               
                                 <a href="/productdetails?id=<%=product.products._id%>">
                                     <img src="<%= product.products.pictures[0].replace('public', '') %>" alt="<%= product.name %>" style="width:20vh">
                                 </a>
@@ -131,7 +132,7 @@
                                     <button style="margin-bottom: 5px;">Order details</button>
                                   </a>
                             </td>
-                            <% if (index !== 0) { %>
+                            <% if (index != 0) { %>
                                 </tr>
                             <% } %>
                         <% }); %>

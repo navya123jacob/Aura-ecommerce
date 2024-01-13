@@ -93,12 +93,14 @@
                                                 </tr>
                                             </thead>
                                             <tbody >
+                                                <% let i=0%>
                                                 <% if (b  > 0) { %>
                                                     <% usercart.Products.forEach(product => { %>
                                                         <tr>
                                                             <td><a href="#"><%= product.products.name %></a></td>
-                                                            <td>$<%= product.total %></td>
+                                                            <td>$<%= totalproprice[i] %></td>
                                                         </tr>
+                                                        <% i++%>
                                                     <% }); %>
                                                     
                                                     <tr class="summary-subtotal">

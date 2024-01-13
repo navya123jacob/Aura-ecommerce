@@ -983,11 +983,25 @@ couponfind = couponfind.filter(co => {
     });
     
     
+    let totalproprice=[];let proprice=[]
     if (usercart && usercart.Products[0]) {
       b=1
-        usercart.Products.forEach(product => {
-            Total = Total + product.total;
-        });
+      let Total = 0;
+      
+      usercart.Products.forEach(product => {
+          let productPrice = parseFloat(product.total);
+          let individualprice=product.price
+          if (product.products.offer !== 0) {
+              const discountAmount = (product.products.offer / 100) * productPrice;
+              const discountedPrice = productPrice - discountAmount;
+              productPrice = discountedPrice.toFixed(2);
+              individualprice=(individualprice-((product.products.offer / 100) * individualprice)).toFixed(2);
+          }
+      
+          Total = Total + parseFloat(productPrice);
+          totalproprice.push(parseFloat(productPrice))
+          proprice.push(parseFloat(individualprice))
+      });
 
         if (Total < 500) {
             shipping = 40;
@@ -1023,7 +1037,7 @@ couponfind = couponfind.filter(co => {
       }
       
     }
-        res.render('checkout',{user,ses,categories,usercart,shipping,Total,grandtotal,b,myuser,c,coupons,applied_coupon,couponmessage})
+        res.render('checkout',{user,ses,categories,usercart,shipping,Total,grandtotal,b,myuser,c,coupons,applied_coupon,couponmessage,totalproprice})
     }
     
     else
@@ -1072,11 +1086,25 @@ const placeorder=async(req,res)=>{
     let b=0;let c=0
    
     
-    if (usercart && usercart.Products) {
+    let totalproprice=[];let proprice=[]
+    if (usercart && usercart.Products[0]) {
       b=1
-        usercart.Products.forEach(product => {
-            Total = Total + product.total;
-        });
+      let Total = 0;
+      
+      usercart.Products.forEach(product => {
+          let productPrice = parseFloat(product.total);
+          let individualprice=product.price
+          if (product.products.offer !== 0) {
+              const discountAmount = (product.products.offer / 100) * productPrice;
+              const discountedPrice = productPrice - discountAmount;
+              productPrice = discountedPrice.toFixed(2);
+              individualprice=(individualprice-((product.products.offer / 100) * individualprice)).toFixed(2);
+          }
+      
+          Total = Total + parseFloat(productPrice);
+          totalproprice.push(parseFloat(productPrice))
+          proprice.push(parseFloat(individualprice))
+      });
 
         if (Total < 500) {
             shipping = 40;
@@ -1089,16 +1117,15 @@ const placeorder=async(req,res)=>{
     const newOrderData = new order({
       user: myuser._id,
       paymentMode: req.body.paymentOption,
-      total: grandtotal,  
+      total: grandtotal,
       address: req.body.existingAddress,
       date: new Date(),
-      Products: usercart.Products.map(product => ({
+      Products: usercart.Products.map((product, index) => ({
           products: product.products,
           name: product.name,
-          price: product.price,
+          price: proprice[index],
           quantity: product.quantity,
-          total: product.price * product.quantity,
-         
+          total: proprice[index] * product.quantity,
       })),
   });
   if(req.body.couponCodeInput)
@@ -1534,7 +1561,11 @@ const orders = async (req, res) => {
           }).skip((page - 1) * pageSize)
           .limit(pageSize)
           .lean()
-          let totord = await order.find({ user: myuser._id });let overall=[];
+          let totord = await order.find({ user: myuser._id }).populate({
+            path: 'Products.products', 
+            model: 'Product'
+        }).exec();
+        let overall=[];
           if(!req.query.start)
           {
             overall=[...totord]
@@ -1544,13 +1575,6 @@ const orders = async (req, res) => {
             let startDate = new Date(req.query.start);
 let endDate = new Date(req.query.end);
 
-ord.forEach((e)=>{
-   let orderDateObj = new Date(e.date);
-  if(orderDateObj >= startDate && orderDateObj <= endDate)
-  {
-    orders.push(e)
-  }
-})
 totord.forEach((e)=>{
   let orderDateObj = new Date(e.date);
  if(orderDateObj >= startDate && orderDateObj <= endDate)
@@ -1558,13 +1582,23 @@ totord.forEach((e)=>{
    overall.push(e)
  }
 })
+const startIndex = (page - 1) * pageSize;
+const endIndex = Math.min(startIndex + pageSize, overall.length);
+console.log(startIndex,endIndex)
+for (let index = startIndex; index < endIndex; index++) {
+  const e = overall[index];
+ 
+    orders.push(e);
+  
 }
 
-        console.log(overall.length)
+}
+
+        
           const totalProducts = overall.length;
           const totalPages = Math.ceil(totalProducts / pageSize);
           const email=req.session.email
-
+          console.log(overall.length,orders.length,totalPages)
       res.render('orders', { user, orders, ses, categories,cat,page, totalPages,email });
   } catch (error) {
       console.log(error.message);
