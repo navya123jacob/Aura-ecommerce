@@ -657,13 +657,22 @@ for (let i = 0; i < products.pictures.length; i++) {
     let totalprice=0
  
    
-    if(products.offer==0)
+    if(products.offer==0 && products.category.offer==0)
     {
       totalprice=products.price
     }
     else{
+      let discountpercent=0
+      if (products.offer!=0)
+       {
+        discountpercent = products.offer;
+    } 
+    else if(products.category.offer!=0) 
+    {
+        discountpercent = products.category.offer;
+    }
       
-      let newtotal = (products.price - (products.offer / 100) * products.price).toFixed(2);
+      let newtotal = (products.price - (discountpercent / 100) * products.price).toFixed(2);
       totalprice=newtotal
     }
 
@@ -970,7 +979,17 @@ const checkout=async(req,res)=>{
     const user = req.session.checkuser|| '' 
     //logi mid end
     const myuser=await User.findOne({email:req.session.email})
-    const usercart=await cart.findOne({user:myuser._id}).populate('Products.products').exec() // Use the actual field name you defined in your schema
+    const usercart = await cart
+  .findOne({ user: myuser._id })
+  .populate({
+    path: 'Products.products',
+    populate: {
+      path: 'category', 
+      select: 'offername', 
+      select: 'offer'
+    },
+  })
+  .exec();
     let Total = 0;
     let shipping = 0;
     let grandtotal = 0;
@@ -1014,20 +1033,30 @@ couponfind = couponfind.filter(co => {
       let Total = 0;
       
       usercart.Products.forEach(product => {
-          let productPrice = parseFloat(product.total);
-          let individualprice=product.price
-          if (product.products.offer !== 0) {
-              const discountAmount = (product.products.offer / 100) * productPrice;
-              const discountedPrice = productPrice - discountAmount;
-              productPrice = discountedPrice.toFixed(2);
-              individualprice=(individualprice-((product.products.offer / 100) * individualprice)).toFixed(2);
-          }
-      
-          Total = Total + parseFloat(productPrice);
-          totalproprice.push(parseFloat(productPrice))
-          proprice.push(parseFloat(individualprice))
-      });
-
+        let productPrice = parseFloat(product.total);
+        let individualprice=product.price;let discountpercent=0
+        
+        if(product.products.category.offer != 0)
+        {
+          discountpercent=product.products.category.offer
+        }
+        if(product.products.offer != 0)
+        {
+          discountpercent=product.products.offer
+        }
+        
+        if (product.products.offer != 0 ||product.products.category.offer!= 0 ) {
+            const discountAmount = (discountpercent / 100) * productPrice;
+            const discountedPrice = productPrice - discountAmount;
+            productPrice = discountedPrice.toFixed(2);
+            individualprice=(individualprice-((discountpercent / 100) * individualprice)).toFixed(2);
+        }
+    
+        Total = Total + parseFloat(productPrice);
+        totalproprice.push(parseFloat(productPrice))
+        proprice.push(parseFloat(individualprice))
+    });
+    
         if (Total < 500) {
             shipping = 40;
         }
@@ -1104,7 +1133,17 @@ const placeorder=async(req,res)=>{
     const user = req.session.checkuser|| '' 
     //logi mid end
     const myuser=await User.findOne({email:req.session.email})
-    const usercart=await cart.findOne({user:myuser._id}).populate('Products.products').exec() // Use the actual field name you defined in your schema
+    const usercart = await cart
+  .findOne({ user: myuser._id })
+  .populate({
+    path: 'Products.products',
+    populate: {
+      path: 'category', 
+      select: 'offername', 
+      select: 'offer'
+    },
+  })
+  .exec();
     let Total = 0;
     let shipping = 0;
     let grandtotal = 0;
@@ -1117,19 +1156,30 @@ const placeorder=async(req,res)=>{
       let Total = 0;
       
       usercart.Products.forEach(product => {
-          let productPrice = parseFloat(product.total);
-          let individualprice=product.price
-          if (product.products.offer !== 0) {
-              const discountAmount = (product.products.offer / 100) * productPrice;
-              const discountedPrice = productPrice - discountAmount;
-              productPrice = discountedPrice.toFixed(2);
-              individualprice=(individualprice-((product.products.offer / 100) * individualprice)).toFixed(2);
-          }
-      
-          Total = Total + parseFloat(productPrice);
-          totalproprice.push(parseFloat(productPrice))
-          proprice.push(parseFloat(individualprice))
-      });
+        let productPrice = parseFloat(product.total);
+        let individualprice=product.price;let discountpercent=0
+        
+        if(product.products.category.offer != 0)
+        {
+          discountpercent=product.products.category.offer
+        }
+        if(product.products.offer != 0)
+        {
+          discountpercent=product.products.offer
+        }
+        
+        if (product.products.offer != 0 ||product.products.category.offer!= 0 ) {
+            const discountAmount = (discountpercent / 100) * productPrice;
+            const discountedPrice = productPrice - discountAmount;
+            productPrice = discountedPrice.toFixed(2);
+            individualprice=(individualprice-((discountpercent / 100) * individualprice)).toFixed(2);
+        }
+    
+        Total = Total + parseFloat(productPrice);
+        totalproprice.push(parseFloat(productPrice))
+        proprice.push(parseFloat(individualprice))
+    });
+    
 
         if (Total < 500) {
             shipping = 40;
@@ -1160,7 +1210,7 @@ const placeorder=async(req,res)=>{
     {
       newOrderData.couponcode=req.body.couponCodeInput;
       newOrderData.Totalbefore=grandtotal
-      newOrderData.total=grandtotal-((currentcoupon.discountPercent/100)*grandtotal)
+      newOrderData.total=(grandtotal-((currentcoupon.discountPercent/100)*grandtotal)).toFixed(2)
     }
     
   }
