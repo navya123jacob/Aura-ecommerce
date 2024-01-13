@@ -25,6 +25,7 @@
                       <th>Price</th>
                       <th>Category</th>
                       <th>Quantity</th>
+                      <th>Offer Applied</th>
                       <th>Images</th>
                       <th>Action</th> <!-- New column for buttons -->
                     </tr>
@@ -38,6 +39,13 @@
                         <td><%= product.price %></td>
                         <td><%= product.category.name %></td>
                         <td><%= product.quantity %></td>
+                        <td>
+                          <% if (product.offername) { %>
+                            <%= product.offername %>
+                          <% } else { %>
+                            None
+                          <% } %>
+                        </td>
                         <td>
                           <% if (product.pictures && product.pictures.length > 0) { %>
                             <% product.pictures.forEach(image => { %>

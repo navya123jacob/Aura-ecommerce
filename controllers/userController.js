@@ -321,14 +321,10 @@ const loadRegisterOTP=async(req,res)=>{
       const newnowObject = new Date(nowString.replace('+',' '));
       // Format the date to ISO 8601 format
       const nowisoFormattedDate = newnowObject.toISOString();
-      console.log(nowString)
+      
       // Get the current minutes
      const newcurrentMinutes = newnowObject.getMinutes();
 
-     console.log('ISO Formatted Date:', nowisoFormattedDate);
-     console.log('Minutes:', newcurrentMinutes);
-     
-        
 
       // Convert the date string to a Date object
        const dateObject = new Date(req.query.expiresAt);
@@ -339,10 +335,6 @@ const loadRegisterOTP=async(req,res)=>{
       // Extract the minutes
       const minutes = dateObject.getMinutes();
 
-      console.log('ISO Formatted Date:', isoFormattedDate);
-      console.log('Minutes:', minutes);
-
-      
           const userId=req.session.userId
           const message = req.query.message ||''
           res.render('otp',{message,userId,isoFormattedDate,nowisoFormattedDate,user,categories,ses})
@@ -780,7 +772,17 @@ const cartload=async(req,res)=>{
     
     const email=req.session.email
     const myuser=await User.findOne({email:req.session.email})
-    const usercart=await cart.findOne({user:myuser._id}).populate('Products.products').exec() 
+    const usercart = await cart
+  .findOne({ user: myuser._id })
+  .populate({
+    path: 'Products.products',
+    populate: {
+      path: 'category', 
+      select: 'offername', // Select the fields from the Category model
+      select: 'offer'
+    },
+  })
+  .exec();
     let Total = 0;
     let shipping = 0;
     let grandtotal = 0;
@@ -791,16 +793,26 @@ const cartload=async(req,res)=>{
     let totalproprice=[];let proprice=[]
     if (usercart && usercart.Products[0]) {
       b=1
-      let Total = 0;
+      
       
       usercart.Products.forEach(product => {
           let productPrice = parseFloat(product.total);
-          let individualprice=product.price
-          if (product.products.offer !== 0) {
-              const discountAmount = (product.products.offer / 100) * productPrice;
+          let individualprice=product.price;let discountpercent=0
+          
+          if(product.products.category.offer != 0)
+          {
+            discountpercent=product.products.category.offer
+          }
+          if(product.products.offer != 0)
+          {
+            discountpercent=product.products.offer
+          }
+          
+          if (product.products.offer != 0 ||product.products.category.offer!= 0 ) {
+              const discountAmount = (discountpercent / 100) * productPrice;
               const discountedPrice = productPrice - discountAmount;
               productPrice = discountedPrice.toFixed(2);
-              individualprice=(individualprice-((product.products.offer / 100) * individualprice)).toFixed(2);
+              individualprice=(individualprice-((discountpercent / 100) * individualprice)).toFixed(2);
           }
       
           Total = Total + parseFloat(productPrice);
@@ -1244,7 +1256,7 @@ const verifyrazorpayment=async(req,res)=>{
       
      
     if(razorpay_signature==hmac){ 
-      console.log('success')
+      
       await order.updateOne({ _id: receipt }, { $set: { paymentstatus: 'placed' } });
       res.json({ success: true,orderid:receipt})
     } 
@@ -1495,7 +1507,7 @@ const editaddress=async(req,res)=>{
     const addressfind=await User.findOne({ email: req.session.email})
    
     const specificaddress= addressfind.addressField.find((add) => add.address === req.body.realaddress);
-    console.log(specificaddress)
+    
    
 if (specificaddress) {
   specificaddress.name = req.body.name;

@@ -21,6 +21,7 @@
                       <th>#</th>
                       <th>Category Name</th>
                       <th>Description</th>
+                      <th>Offer Applied</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -31,6 +32,13 @@
                         <td><%= i %></td>
                         <td><%= category.name %></td>
                         <td><%= category.description %></td>
+                        <td>
+                          <% if (category.offername) { %>
+                            <%= category.offername %>
+                          <% } else { %>
+                            None
+                          <% } %>
+                        </td>
                         <td>
                           
                           <button class="btn btn-warning btn-sm" onclick="showConfirmationModal('Edit', '<%= category._id %>', '<%= category.name %>')">Edit</button>

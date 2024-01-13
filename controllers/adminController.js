@@ -109,7 +109,7 @@ const users = async (req, res) => {
 
 //block user
 const userblock = async (req, res) => {
-    try { console.log('userblock route hit');
+    try { 
    
         const email = req.query.email;
         const blockstatus = req.query.blockstatus;
@@ -165,7 +165,7 @@ const CategoryAddpost=async(req,res)=>{
             res.json({success:false,message:'This category is already added'})
         }
         else{
-            console.log('no')
+           
             const Categorylist = new Category({
                 name:req.body.name,
                   description:req.body.description,
@@ -187,7 +187,7 @@ const CategoryEdit=async(req,res)=>{
     try{
         const editcat=await Category.findOne({_id:req.query.categoryId}) ||''
        const message=req.query.message||''
-       console.log(message)
+       
        const offers=await offer.find({status:true})
         res.render('categoryEdit',{message,editcat,offers})
 
@@ -368,7 +368,6 @@ const ordersstatus = async (req, res) => {
                   ]);
                   
                  
-                  console.log(req.body.proname)
                   await product.updateOne(
                     { name: req.body.proname }, { $inc: { quantity: result[0].quantity } });
                    walletmoney=result[0].productTotal;
