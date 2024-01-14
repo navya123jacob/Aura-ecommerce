@@ -9,7 +9,6 @@ const coupon = require('../models/couponModel');
 const offer = require('../models/offerModel');
 
 
-
 //module for hashing password
 const bcrypt = require('bcrypt');
 
@@ -54,8 +53,99 @@ const LoginPost=async(req,res)=>{
 //dashboard
 const dashboard=async(req,res)=>{
     try{
+        let prodlen=await product.countDocuments();
+        let catlen=await Category.countDocuments();
+        //revenue
+        let revenue=await order.aggregate([
+            {
+              $match: {
+                "Products.orderStatus": { $in: ["placed", "delivered"] },
+                "paymentMode":{ $in: ["razorpay", "wallet"] } 
+              }
+            },
+            {
+              $unwind: "$Products"
+            },
+            {
+              $match: {
+                "Products.orderStatus": { $in: ["placed", "delivered"] }
+              }
+            },
+            {
+              $group: {
+                _id: null,
+                total: { $sum: "$Products.total" }
+              }
+            }
+          ]);
+          let revenue2 = await order.aggregate([
+            {
+              $match: {
+                "Products.orderStatus": "delivered",
+                paymentMode: "cashOnDelivery"
+              }
+            },
+            {
+              $unwind: "$Products"
+            },
+            {
+              $match: {
+                "Products.orderStatus": "delivered",
+                paymentMode: "cashOnDelivery"
+              }
+            },
+            {
+              $group: {
+                _id: null,
+                total: { $sum: "$Products.total" }
+              }
+            }
+          ]);
+          
+          let pending=await order.aggregate([
+            {
+              $match: {
+                "Products.orderStatus": { $ne:  "delivered" }
+              }
+            }
+          ]);
+          let revenuelen=revenue[0].total+revenue[0].total;
+          let pendlen=pending.length;
+         
+          //area chart
+const chartYearData = await order.aggregate([
+    {
+      $group: {
+        _id: { $year: "$date" }, 
+        count: { $sum: 1 } 
+      }
+    },
+    {
+      $sort: {
+        _id: 1 
+      }
+    }
+  ]);
+  let  labels=[2021, 2022, 2023, 2024, 2025];let yeardata=[];
+  for(let i=0;i<labels.length;i++)
+  {let val=0
+    for(let j=0;j<chartYearData.length;j++)
+    {
+        if(labels[i]==chartYearData[j]._id)
+        {
+            b=true;
+            val=chartYearData[j].count;
+           break;
+            
+        }
+        
+    }
+   yeardata.push(val)
+  }
+ 
+ 
         const message=req.query.message||'';
-        res.render('dashboard')
+        res.render('dashboard',{prodlen,catlen,revenuelen,pendlen,yeardata})
     }
     catch (error) {
         console.log(error.message);
