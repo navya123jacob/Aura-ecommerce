@@ -113,6 +113,7 @@ const dashboard=async(req,res)=>{
           let pendlen=pending.length;
          
           //area chart
+          //for orders
 const chartYearData = await order.aggregate([
     {
       $group: {
@@ -143,9 +144,40 @@ const chartYearData = await order.aggregate([
    yeardata.push(val)
   }
  
+  //for users
+  const chartUserData = await User.aggregate([
+    {
+      $group: {
+        _id: { $year: "$date" }, 
+        count: { $sum: 1 } 
+      }
+    },
+    {
+      $sort: {
+        _id: 1 
+      }
+    }
+  ]);
+  let yearuser=[];
+  for(let i=0;i<labels.length;i++)
+  {let val=0
+    for(let j=0;j<chartUserData.length;j++)
+    {
+        if(labels[i]==chartUserData[j]._id)
+        {
+            b=true;
+            val=chartUserData[j].count;
+           break;
+            
+        }
+        
+    }
+    yearuser.push(val)
+  }
+  
  
         const message=req.query.message||'';
-        res.render('dashboard',{prodlen,catlen,revenuelen,pendlen,yeardata})
+        res.render('dashboard',{prodlen,catlen,revenuelen,pendlen,yeardata,yearuser})
     }
     catch (error) {
         console.log(error.message);
