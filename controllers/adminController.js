@@ -384,11 +384,12 @@ const dashboard=async(req,res)=>{
 
 //to view sales report
 
-let invsales=[];let start='';let end=''
+let invsales=[];
 const salesreport= async (req, res) => {
   try {
     let startdate=req.query.start||'';
     let enddate=req.query.end||'';
+   
      
       const page = req.query.page || 1;
       const pageSize = 10;
@@ -456,8 +457,8 @@ for (let index = startIndex; index < endIndex; index++) {
           
           let salesid = generateOrderId();
          
-          const invoicePath = generateInvoice(orders,salesid,req.query.start,req.query.end);
-          console.log(salesid)
+          
+          invsales=[...orders] 
       res.render('salesreport', {  orders, page, totalPages,salesid });
   } catch (error) {
       console.log(error.message);
@@ -470,6 +471,8 @@ const getInvoice = (req, res) => {
   try {
       console.log('invoice ')
       const orderId = req.params.id;
+      
+      const invoiceP = generateInvoice(invsales,orderId);
       
 
      const invoicePath = path.join(__dirname, 'invoices', `invoice_${orderId}.pdf`);
@@ -489,7 +492,7 @@ fileStream.pipe(res);
 }
 
 
-function generateInvoice(orders, salesid,start,end) {
+function generateInvoice(orders, salesid) {
   const invoicePath = path.join(__dirname, 'invoices', `invoice_${salesid}.pdf`);
   const doc = new pdf();
 
@@ -513,12 +516,7 @@ function generateInvoice(orders, salesid,start,end) {
 
   // Order details
   doc.fontSize(14).text('Sales Report', { underline: true });
-  if (start && end) {
-    const startDate = new Date(start).toLocaleDateString('en-GB');
-    const endDate = new Date(end).toLocaleDateString('en-GB');
-    doc.fontSize(10).text(`Date Range: ${startDate} to ${endDate}`);
-    doc.moveDown(); 
-  }
+  
 
   // Display Order ID and Payment Mode
   doc.moveDown(); // Move to the next line
