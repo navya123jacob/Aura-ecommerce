@@ -44,7 +44,8 @@ adminRoute.get('/dashboard',mid.adminloginNoSes,mid.adminloginNoSes,adminControl
 //sales report
 adminRoute.get('/salesreport',mid.adminloginNoSes,mid.adminloginNoSes,adminController.salesreport)
 
-
+//sales report
+adminRoute.get('/download-invoice/:id',mid.adminloginNoSes,mid.adminloginNoSes,adminController.getInvoice)
 
 //users
 adminRoute.get('/users',mid.adminloginNoSes,adminController.users)

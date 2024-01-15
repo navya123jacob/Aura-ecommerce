@@ -7,10 +7,15 @@ const order = require('../models/orderModel');
 const product = require('../models/productModel');
 const coupon = require('../models/couponModel');
 const offer = require('../models/offerModel');
-
+const fs = require('fs');
+const path = require('path'); 
+const pdf = require('pdfkit');
+const os=require('os')
 
 //module for hashing password
 const bcrypt = require('bcrypt');
+
+
 
 //login
 const Login=async(req,res)=>{
@@ -378,6 +383,8 @@ const dashboard=async(req,res)=>{
 
 
 //to view sales report
+
+let invsales=[];let start='';let end=''
 const salesreport= async (req, res) => {
   try {
     let startdate=req.query.start||'';
@@ -388,7 +395,9 @@ const salesreport= async (req, res) => {
     
       let orders=[]
     
-      let ord = await order.find()
+      let ord = await order.find({
+        "Products.orderStatus": { $nin: ["returned", "cancelled"] }
+      })
           .populate({
               path: 'Products.products', 
               model: 'Product'
@@ -398,7 +407,9 @@ const salesreport= async (req, res) => {
           }).skip((page - 1) * pageSize)
           .limit(pageSize)
           .lean()
-          let totord = await order.find().populate({
+          let totord = await order.find({
+            "Products.orderStatus": { $nin: ["returned", "cancelled"] }
+          }).populate({
             path: 'Products.products', 
             model: 'Product'
         }).populate({
@@ -438,17 +449,98 @@ for (let index = startIndex; index < endIndex; index++) {
           const totalProducts = overall.length;
           const totalPages = Math.ceil(totalProducts / pageSize);
           function generateOrderId() {
-            const{v4:uuidv4}=require('uuid')
-            const orderId = uuidv4();
-            return orderId;
+            // Generate a random 5-digit number
+            const randomOrderId = Math.floor(10000 + Math.random() * 90000).toString();
+            return randomOrderId;
           }
-          let salesid= generateOrderId()
-         
           
+          let salesid = generateOrderId();
+         
+          const invoicePath = generateInvoice(orders,salesid,req.query.start,req.query.end);
+          console.log(salesid)
       res.render('salesreport', {  orders, page, totalPages,salesid });
   } catch (error) {
       console.log(error.message);
   }
+}
+
+///to get invoice
+// invoice 
+const getInvoice = (req, res) => {
+  try {
+      console.log('invoice ')
+      const orderId = req.params.id;
+      
+
+     const invoicePath = path.join(__dirname, 'invoices', `invoice_${orderId}.pdf`);
+
+      // Set appropriate headers for the PDF download
+      res.setHeader('Content-disposition', `attachment; filename=invoice_${orderId}.pdf`);
+      res.setHeader('Content-type', 'application/pdf');
+
+      console.log('Invoice Path:', invoicePath);
+
+// Create a readable stream from the invoice file and pipe it to the response
+const fileStream = fs.createReadStream(invoicePath);
+fileStream.pipe(res);
+  } catch (error) {
+      console.log(error.message)
+  }
+}
+
+
+function generateInvoice(orders, salesid,start,end) {
+  const invoicePath = path.join(__dirname, 'invoices', `invoice_${salesid}.pdf`);
+  const doc = new pdf();
+
+  // Pipe the PDF to a writable stream and create the invoice
+  doc.pipe(fs.createWriteStream(invoicePath));
+
+  // Set font and font size
+  doc.font('Helvetica-Bold');
+  doc.fontSize(14);
+
+  // Company Name
+  doc.text('AURA', { align: 'center' });
+
+  // Add a horizontal line
+  doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+  doc.moveDown();
+
+  // Invoice Header
+  doc.fontSize(12).text('Invoice', { align: 'center' }).fontSize(12);
+  doc.moveDown();
+
+  // Order details
+  doc.fontSize(14).text('Sales Report', { underline: true });
+  if (start && end) {
+    const startDate = new Date(start).toLocaleDateString('en-GB');
+    const endDate = new Date(end).toLocaleDateString('en-GB');
+    doc.fontSize(10).text(`Date Range: ${startDate} to ${endDate}`);
+    doc.moveDown(); 
+  }
+
+  // Display Order ID and Payment Mode
+  doc.moveDown(); // Move to the next line
+  orders.forEach((order, index) => {
+    doc.text(`${index + 1}. Name: ${order.user.Fname}`);
+  doc.text(`Name: ${order.user.Fname}`);
+  doc.text(`Email: ${order.user.email}`);
+  doc.text(`Order ID: ${order._id}`);
+  doc.text(`Date: ${new Date(order.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}`);
+  let matchingAddress = order.user.addressField.find(address => address._id.toString() === order.address.toString());
+  let addressString
+  if (matchingAddress){
+    addressString =  `${matchingAddress.address}, ${matchingAddress.district}, ${matchingAddress.state} ${matchingAddress.pincode}`
+   
+  }
+  doc.text(`Address: ${addressString}`);
+  doc.text(`Payment Mode: ${order.paymentMode}`);
+  doc.moveDown(); // Move to the next line
+})
+  doc.end(); // Finalize the PDF
+
+  return invoicePath;
 }
 
 
@@ -1071,6 +1163,7 @@ module.exports={
     LoginPost,
     dashboard,
     salesreport,
+    getInvoice,
     users,
     userblock,
     CategoryView,

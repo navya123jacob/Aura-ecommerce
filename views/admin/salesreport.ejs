@@ -160,7 +160,7 @@
             
           
       </div>
-      <a href="/admin/download-invoice" class="sales-report-link">
+      <a href="/admin/download-invoice/<%= salesid%>" class="sales-report-link">
         <button class="sales-report-button">
           <i class="mdi mdi-clipboard-text"></i>
           Download invoice
@@ -293,13 +293,6 @@ const encodedEndDate = encodeURIComponent(endDateObj.toISOString());
 $('#tabletoload').load(`/admin/salesreport?start=${encodedStartDate}&end=${encodedEndDate} #tabletoload`);
 }
 
-document.getElementById('downloadButton').addEventListener('click', function () {
-    // Use html2pdf to convert the table to PDF
-    var element = document.querySelector('.order-details');
-    html2pdf(element);
 
-    // Alternatively, if you want to customize the PDF output, you can use the following:
-    // html2pdf(element, { filename: 'table.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 } });
-});
+
 </script>
-
