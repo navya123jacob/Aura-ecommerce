@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="assets/css/bootstrap.min.css">
 <%- include('./layouts/header.ejs') %>
 <style>
     .table-container {
@@ -24,8 +25,23 @@
     .order-details button {
         padding: 5px;
     }
-</style>
+    .toolbox-right {
+    display: flex;
+    align-items: center;
+}
 
+.toolbox-sort {
+    margin-right: 20px;
+}
+.custom-outline-white {
+  border-color: #fff; 
+  color: #fff; 
+}
+
+.custom-outline-white:hover {
+  background-color: #fff; 
+  color: #007bff;}
+</style>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <div class="container-fluid page-body-wrapper">
@@ -38,7 +54,7 @@
       <div class="row" >
        
             <div class="col-12 grid-margin" id="tabletoload">
-                <div class="toolbox">
+                <div class="toolbox ">
                     <div class="toolbox-right"> 
                         <div class="toolbox-sort m-4">
                             <label for="startDate">Start Date:</label>
@@ -53,68 +69,45 @@
                                 <input type="date" id="endDate" name="endDate">
                             </div>
                         </div>
-                        <button class="btn btn-outline-primary-2" onclick="sortOrdersByDateRange()">Sort</button>
+                
+                        <button class="btn custom-outline-white" onclick="sortOrdersByDateRange()">Sort</button>
                         <div id="sorterrorText" class="text-danger"></div>
                     </div><!-- End .toolbox-right -->
                 </div>
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel"
                         aria-labelledby="tab-dashboard-link">
-                        <div class="table-container">
+                        <div class="table-container" style="display: flex;align-items: center;">
                 <table class="order-details" >
                     <thead>
                         <tr>
+                            <th>Username</th>
+                            <th>Email</th>
                             <th>Order Date</th>
-                            <th>Total</th>
-                            <th>Product</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
+                            <th>Address</th>
                             <th>Total</th>
                             
-                            <th>Action</th>
+                            <th>Paymentmode</th>
                         </tr>
                     </thead>
                     <tbody>
                         <% orders.forEach(order => { %>
                             <tr>
-                                <td rowspan="<%= order.Products.length %>"><%= new Date(order.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %></td>
-        
-                               
-                                <td rowspan="<%= order.Products.length %>"><%= order.total %></td>
-                                <% order.Products.forEach((product, index) => { %>
-                                    <% if (index != 0) { %>
-                                        <tr>
-                                    <% } %>
-                                    <td>
-                                       
-                                        <a href="/productdetails?id=<%=product.products._id%>">
-                                            <img src="<%= product.products.pictures[0].replace('public', '') %>" alt="<%= product.name %>" style="width:20vh">
-                                        </a>
-                                    </td>
-                                    <td><%= product.name %></td>
-                                    <td><%= product.price %></td>
-                                    <td><%= product.quantity %></td>
-                                    <td><%= product.total %></td>
-                                    <td>
-                                        <% if (['placed', 'shipped'].includes(product.orderStatus)) { %>
-                                            <!-- Cancel button for placed or shipped products -->
-                                            <button onclick="cancelOrder('<%= order._id %>', '<%= product._id %>')" style="margin-bottom: 5px;">Cancel</button>
-                                        <% } else if (['out for delivery', 'delivered'].includes(product.orderStatus)) { %>
-                                            <!-- Return button for out for delivery or delivered products -->
-                                            <button onclick="returnOrder('<%= order._id %>', '<%= product._id %>')" style="margin-bottom: 5px;">Return</button>
-                                        <% } else if (['request return', 'request cancellation','returned','cancelled'].includes(product.orderStatus)) { %>
-                                            <!-- Display the order status itself as the button -->
-                                            <button disabled style="margin-bottom: 5px;"><%= product.orderStatus %></button>
-                                        <% } %>
-                                        <a href='/orderdetails?orderId=<%= order._id %>&productId=<%= product._id %>' class="button-link">
-                                            <button style="margin-bottom: 5px;">Order details</button>
-                                          </a>
-                                    </td>
-                                    <% if (index != 0) { %>
-                                        </tr>
-                                    <% } %>
-                                <% }); %>
+                                <td><%=order.user.Fname%></td>
+                                <td><%=order.user.email%></td>
+                                <td ><%= new Date(order.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %></td>
+                                <% let matchingAddress = order.user.addressField.find(address => address._id.toString() === order.address.toString()); %>
+
+                                 <td>
+                                <% if (matchingAddress) { %>
+                                <%= matchingAddress.address %>, <%= matchingAddress.district %>, <%= matchingAddress.state %> <%= matchingAddress.pincode %>
+                                <% } else { %>
+                                  N/A
+                               <% } %>
+                               </td>
+                                <td ><%= order.total %></td>
+                              
+                                <td><%=order.paymentMode%></td>
                             </tr>
                         <% }); %>
                     </tbody>
@@ -167,7 +160,12 @@
             
           
       </div>
-
+      <a href="/admin/download-invoice" class="sales-report-link">
+        <button class="sales-report-button">
+          <i class="mdi mdi-clipboard-text"></i>
+          Download invoice
+        </button>
+      </a>
     </div>
     <!-- content-wrapper ends -->
 
@@ -183,8 +181,11 @@
 </div>
 <!-- page-body-wrapper ends -->
 </div>
-<!-- container-scroller -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<!-- Bootstrap JS -->
+<script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
 <script>
 function cancelOrder(orderId, productId) {
     Swal.fire({
@@ -292,5 +293,13 @@ const encodedEndDate = encodeURIComponent(endDateObj.toISOString());
 $('#tabletoload').load(`/admin/salesreport?start=${encodedStartDate}&end=${encodedEndDate} #tabletoload`);
 }
 
+document.getElementById('downloadButton').addEventListener('click', function () {
+    // Use html2pdf to convert the table to PDF
+    var element = document.querySelector('.order-details');
+    html2pdf(element);
+
+    // Alternatively, if you want to customize the PDF output, you can use the following:
+    // html2pdf(element, { filename: 'table.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 } });
+});
 </script>
 

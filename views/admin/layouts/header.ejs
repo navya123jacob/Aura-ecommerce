@@ -7,17 +7,17 @@
     <title>AURA</title>
     <!-- plugins:css -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <link rel="stylesheet" href="/admin_assets/vendors/mdi/css/materialdesignicons.min.css">
-    <link rel="stylesheet" href="/admin_assets/vendors/css/vendor.bundle.base.css">
-    <!-- endinject -->
-    <!-- Plugin css for this page -->
-    <link rel="stylesheet" href="/admin_assets/vendors/jvectormap/jquery-jvectormap.css">
-    <link rel="stylesheet" href="/admin_assets/vendors/flag-icon-css/css/flag-icon.min.css">
-    <link rel="stylesheet" href="/admin_assets/vendors/owl-carousel-2/owl.carousel.min.css">
-    <link rel="stylesheet" href="/admin_assets/vendors/owl-carousel-2/owl.theme.default.min.css">
-    
-    <link rel="stylesheet" href="/admin_assets/css/style.css">
-   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<!-- Bootstrap JS and Popper.js -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" href="/admin_assets/vendors/mdi/css/materialdesignicons.min.css">
+<link rel="stylesheet" href="/admin_assets/vendors/css/vendor.bundle.base.css">
+<!-- ... Other CSS links ... -->
+<link rel="stylesheet" href="/admin_assets/css/style.css">
     <!-- End layout styles -->
     
   </head>
@@ -42,41 +42,8 @@
                   
                 </div>
               </div>
-              <a href="#" id="profile-dropdown" data-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
-              <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list" aria-labelledby="profile-dropdown">
-                <a href="#" class="dropdown-item preview-item">
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-dark rounded-circle">
-                      <i class="mdi mdi-settings text-primary"></i>
-                    </div>
-                  </div>
-                  <div class="preview-item-content">
-                    <p class="preview-subject ellipsis mb-1 text-small">Account settings</p>
-                  </div>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item preview-item">
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-dark rounded-circle">
-                      <i class="mdi mdi-onepassword  text-info"></i>
-                    </div>
-                  </div>
-                  <div class="preview-item-content">
-                    <p class="preview-subject ellipsis mb-1 text-small">Change Password</p>
-                  </div>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item preview-item">
-                  <div class="preview-thumbnail">
-                    <div class="preview-icon bg-dark rounded-circle">
-                      <i class="mdi mdi-calendar-today text-success"></i>
-                    </div>
-                  </div>
-                  <div class="preview-item-content">
-                    <p class="preview-subject ellipsis mb-1 text-small">To-do list</p>
-                  </div>
-                </a>
-              </div>
+             
+              
             </div>
           </li>
           <li class="nav-item nav-category">
@@ -98,87 +65,90 @@
               <span class="menu-title">Users</span>
             </a>
           </li>
-          <li class="nav-item menu-items">
-            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-              <span class="menu-icon">
-                <i class="mdi mdi-laptop"></i>
-              </span>
-              <span class="menu-title">Categories</span>
-              <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="ui-basic">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="/admin/categories">view Categories</a></li>
-                <li class="nav-item"> <a class="nav-link" href="/admin/categories/add">Add Categories</a></li>
-                
-              </ul>
-            </div>
-          </li>
-          <li class="nav-item menu-items">
-            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-              <span class="menu-icon">
-                <i class="mdi mdi-laptop"></i>
-              </span>
-              <span class="menu-title">Products</span>
-              <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="ui-basic">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="/admin/products">view products</a></li>
-                <li class="nav-item"> <a class="nav-link" href="/admin/products/add">Add products</a></li>
-                
-              </ul>
-            </div>
-          </li>
-          <li class="nav-item menu-items">
-            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-              <span class="menu-icon">
-                <i class="mdi mdi-laptop"></i>
-              </span>
-              <span class="menu-title">Orders</span>
-              <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="ui-basic">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="/admin/orders">view orders</a></li>
-               
-                
-              </ul>
-            </div>
-          </li>
-          <li class="nav-item menu-items">
-            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-              <span class="menu-icon">
-                <i class="mdi mdi-laptop"></i>
-              </span>
-              <span class="menu-title">Coupons</span>
-              <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="ui-basic">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="/admin/coupons">view coupons</a></li>
-                <li class="nav-item"> <a class="nav-link" href="/admin/couponsadd">Add coupons</a></li>
-                
-              </ul>
-            </div>
-          </li>
-          <li class="nav-item menu-items">
-            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-              <span class="menu-icon">
-                <i class="mdi mdi-laptop"></i>
-              </span>
-              <span class="menu-title">Offers</span>
-              <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="ui-basic">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="/admin/offers">view Offers</a></li>
-                <li class="nav-item"> <a class="nav-link" href="/admin/offersAdd">Add Offers</a></li>
-                
-              </ul>
-            </div>
-          </li>
-         
+          <!-- Categories -->
+<li class="nav-item menu-items">
+  <a class="nav-link" data-toggle="collapse" href="#categories" aria-expanded="false" aria-controls="categories">
+      <span class="menu-icon">
+          <i class="mdi mdi-laptop"></i>
+      </span>
+      <span class="menu-title">Categories</span>
+      <i class="menu-arrow"></i>
+  </a>
+  <div class="collapse" id="categories">
+      <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="/admin/categories">View Categories</a></li>
+          <li class="nav-item"> <a class="nav-link" href="/admin/categories/add">Add Categories</a></li>
+      </ul>
+  </div>
+</li>
+
+<!-- Products -->
+<li class="nav-item menu-items">
+  <a class="nav-link" data-toggle="collapse" href="#products" aria-expanded="false" aria-controls="products">
+      <span class="menu-icon">
+          <i class="mdi mdi-laptop"></i>
+      </span>
+      <span class="menu-title">Products</span>
+      <i class="menu-arrow"></i>
+  </a>
+  <div class="collapse" id="products">
+      <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="/admin/products">View Products</a></li>
+          <li class="nav-item"> <a class="nav-link" href="/admin/products/add">Add Products</a></li>
+      </ul>
+  </div>
+</li>
+
+<!-- Orders -->
+<li class="nav-item menu-items">
+  <a class="nav-link" data-toggle="collapse" href="#orders" aria-expanded="false" aria-controls="orders">
+      <span class="menu-icon">
+          <i class="mdi mdi-laptop"></i>
+      </span>
+      <span class="menu-title">Orders</span>
+      <i class="menu-arrow"></i>
+  </a>
+  <div class="collapse" id="orders">
+      <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="/admin/orders">View Orders</a></li>
+      </ul>
+  </div>
+</li>
+
+<!-- Coupons -->
+<li class="nav-item menu-items">
+  <a class="nav-link" data-toggle="collapse" href="#coupons" aria-expanded="false" aria-controls="coupons">
+      <span class="menu-icon">
+          <i class="mdi mdi-laptop"></i>
+      </span>
+      <span class="menu-title">Coupons</span>
+      <i class="menu-arrow"></i>
+  </a>
+  <div class="collapse" id="coupons">
+      <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="/admin/coupons">View Coupons</a></li>
+          <li class="nav-item"> <a class="nav-link" href="/admin/couponsadd">Add Coupons</a></li>
+      </ul>
+  </div>
+</li>
+
+<!-- Offers -->
+<li class="nav-item menu-items">
+  <a class="nav-link" data-toggle="collapse" href="#offers" aria-expanded="false" aria-controls="offers">
+      <span class="menu-icon">
+          <i class="mdi mdi-laptop"></i>
+      </span>
+      <span class="menu-title">Offers</span>
+      <i class="menu-arrow"></i>
+  </a>
+  <div class="collapse" id="offers">
+      <ul class="nav flex-column sub-menu">
+          <li class="nav-item"> <a class="nav-link" href="/admin/offers">View Offers</a></li>
+          <li class="nav-item"> <a class="nav-link" href="/admin/offersAdd">Add Offers</a></li>
+      </ul>
+  </div>
+</li>
+
         </ul>
       </nav>
      

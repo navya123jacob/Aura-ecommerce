@@ -350,11 +350,11 @@ const dashboard=async(req,res)=>{
   const razoramount=razorpayamount[0].totalSum;const codamount=cashOnDeliveryamount[0].totalSum;const walamount=walletamount[0].totalSum;
   const page = parseInt(req.query.page) || 1;
         const pageSize = 6; 
-        const totalorders = await order.countDocuments({"Products.orderStatus": { $in: ["delivered", "placed"] }});
+        const totalorders = await order.countDocuments({"Products.orderStatus": { $nin: ["returned", "cancelled"] }});
        
         const totalPages = Math.ceil(totalorders / pageSize);
   const orders = await order.find({
-    "Products.orderStatus": { $in: ["delivered", "placed"] }
+    "Products.orderStatus": { $nin: ["returned", "cancelled"] }
   })
   .populate({
     path: 'Products.products',
@@ -384,7 +384,7 @@ const salesreport= async (req, res) => {
     let enddate=req.query.end||'';
      
       const page = req.query.page || 1;
-      const pageSize = 4;
+      const pageSize = 10;
     
       let orders=[]
     
@@ -392,12 +392,18 @@ const salesreport= async (req, res) => {
           .populate({
               path: 'Products.products', 
               model: 'Product'
+          }).populate({
+            path: 'user',
+            model: 'User'
           }).skip((page - 1) * pageSize)
           .limit(pageSize)
           .lean()
           let totord = await order.find().populate({
             path: 'Products.products', 
             model: 'Product'
+        }).populate({
+          path: 'user',
+          model: 'User'
         }).exec();
         let overall=[];
           if(!req.query.start)
@@ -431,13 +437,20 @@ for (let index = startIndex; index < endIndex; index++) {
         
           const totalProducts = overall.length;
           const totalPages = Math.ceil(totalProducts / pageSize);
+          function generateOrderId() {
+            const{v4:uuidv4}=require('uuid')
+            const orderId = uuidv4();
+            return orderId;
+          }
+          let salesid= generateOrderId()
          
           
-      res.render('salesreport', {  orders, page, totalPages });
+      res.render('salesreport', {  orders, page, totalPages,salesid });
   } catch (error) {
       console.log(error.message);
   }
 }
+
 
 
 //user
