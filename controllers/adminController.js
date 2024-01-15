@@ -55,6 +55,14 @@ const dashboard=async(req,res)=>{
     try{
         let prodlen=await product.countDocuments();
         let catlen=await Category.countDocuments();
+        let totalUsers = await User.countDocuments();
+        let salesdash = await order.aggregate([
+          {
+            $match: {
+              "Products.orderStatus": { $nin: ["returned", "cancelled"] }
+            }}])
+            let saleslen=salesdash.length
+            
         //revenue
         let revenue=await order.aggregate([
             {
@@ -114,19 +122,25 @@ const dashboard=async(req,res)=>{
          
           //area chart
           //for orders yearly
-const chartYearData = await order.aggregate([
-    {
-      $group: {
-        _id: { $year: "$date" }, 
-        count: { $sum: 1 } 
-      }
-    },
-    {
-      $sort: {
-        _id: 1 
-      }
-    }
-  ]);
+          const chartYearData = await order.aggregate([
+            {
+              $match: {
+                "Products.orderStatus": { $nin: ["returned", "cancelled"] }
+              }
+            },
+            {
+              $group: {
+                _id: { $year: "$date" },
+                count: { $sum: 1 }
+              }
+            },
+            {
+              $sort: {
+                _id: 1
+              }
+            }
+          ]);
+          
   let  labels=[2021, 2022, 2023, 2024, 2025];let yeardata=[];
   for(let i=0;i<labels.length;i++)
   {let val=0
@@ -178,6 +192,11 @@ const chartYearData = await order.aggregate([
   //for orders monthly
   const orderdatamonth = await order.aggregate([
     {
+      $match: {
+        "Products.orderStatus": { $nin: ["returned", "cancelled"] }
+      }
+    },
+    {
       $group: {
         _id: { $month: "$date" }, 
         count: { $sum: 1 } 
@@ -205,7 +224,7 @@ const chartYearData = await order.aggregate([
     }
     monthorder.push(val)
   }
-console.log(monthorder)
+
 
   //for users monthly
   const userdatamonth = await User.aggregate([
@@ -237,15 +256,189 @@ console.log(monthorder)
     }
     monthuser.push(val)
   }
-console.log(monthuser,userdatamonth)
-  
+
+  //for barchart
+  const barprofit = await order.aggregate([
+    {
+      $match: {
+        "Products.orderStatus": "delivered"
+      }
+    },
+    {
+      $unwind: "$Products"
+    },
+    {
+      $group: {
+        _id: { $year: "$date" },
+        profit: {
+          $sum: { $multiply: [0.5, '$Products.total'] }
+        }
+      }
+    },
+    {
+      $sort: {
+        _id: 1
+      }
+    }
+  ]);
+  let  labelsprofit=[2021, 2022, 2023, 2024, 2025, 2026];let profit=[];
+  for(let i=0;i<labelsprofit.length;i++)
+  {let val=0
+    for(let j=0;j<barprofit.length;j++)
+    {
+        if(labelsprofit[i]==barprofit[j]._id)
+        {
+            b=true;
+            val=barprofit[j].profit;
+           break;
+            
+        }
+        
+    }
+    profit.push(val)
+  }
+
+  //payment chart pie chart kind of
+  let razor=await order.countDocuments({paymentMode:"razorpay"})||0
+  let cod=await order.countDocuments({paymentMode:"cashOnDelivery"})||0
+  let wal=await order.countDocuments({paymentMode:"wallet"})||0
+  let payment=[wal,cod,razor]
+
+  const razorpayamount = await order.aggregate([
+    {
+      $match: {
+        paymentMode: "razorpay"
+      }
+    },
+    {
+      $group: {
+        _id: "$paymentMode",
+        count: { $sum: 1 },
+        totalSum: { $sum: "$total" }
+      }
+    }
+  ]);
+  const walletamount = await order.aggregate([
+    {
+      $match: {
+        paymentMode: "wallet"
+      }
+    },
+    {
+      $group: {
+        _id: "$paymentMode",
+        count: { $sum: 1 },
+        totalSum: { $sum: "$total" }
+      }
+    }
+  ]);
+  const cashOnDeliveryamount = await order.aggregate([
+    {
+      $match: {
+        paymentMode: "cashOnDelivery"
+      }
+    },
+    {
+      $group: {
+        _id: "$paymentMode",
+        count: { $sum: 1 },
+        totalSum: { $sum: "$total" }
+      }
+    }
+  ]);
+ 
+  const razoramount=razorpayamount[0].totalSum;const codamount=cashOnDeliveryamount[0].totalSum;const walamount=walletamount[0].totalSum;
+  const page = parseInt(req.query.page) || 1;
+        const pageSize = 6; 
+        const totalorders = await order.countDocuments({"Products.orderStatus": { $in: ["delivered", "placed"] }});
+       
+        const totalPages = Math.ceil(totalorders / pageSize);
+  const orders = await order.find({
+    "Products.orderStatus": { $in: ["delivered", "placed"] }
+  })
+  .populate({
+    path: 'Products.products',
+    model: 'Product'
+  })
+  .populate({
+    path: 'user',
+    model: 'User'
+  }).skip((page - 1) * pageSize)
+  .limit(pageSize)
+  .exec();
+            
+          
         const message=req.query.message||'';
-        res.render('dashboard',{prodlen,catlen,revenuelen,pendlen,yeardata,yearuser,monthorder,monthuser})
+        res.render('dashboard',{prodlen,catlen,revenuelen,pendlen,yeardata,yearuser,monthorder,monthuser,profit,totalUsers,saleslen,payment,razoramount,codamount,walamount,orders,page,totalPages})
     }
     catch (error) {
         console.log(error.message);
       }
 }
+
+
+//to view sales report
+const salesreport= async (req, res) => {
+  try {
+    let startdate=req.query.start||'';
+    let enddate=req.query.end||'';
+     
+      const page = req.query.page || 1;
+      const pageSize = 4;
+    
+      let orders=[]
+    
+      let ord = await order.find()
+          .populate({
+              path: 'Products.products', 
+              model: 'Product'
+          }).skip((page - 1) * pageSize)
+          .limit(pageSize)
+          .lean()
+          let totord = await order.find().populate({
+            path: 'Products.products', 
+            model: 'Product'
+        }).exec();
+        let overall=[];
+          if(!req.query.start)
+          {
+            overall=[...totord]
+            orders=[...ord]
+          }
+          else{
+            let startDate = new Date(req.query.start);
+let endDate = new Date(req.query.end);
+
+totord.forEach((e)=>{
+  let orderDateObj = new Date(e.date);
+ if(orderDateObj >= startDate && orderDateObj <= endDate)
+ {
+   overall.push(e)
+ }
+})
+const startIndex = (page - 1) * pageSize;
+const endIndex = Math.min(startIndex + pageSize, overall.length);
+
+for (let index = startIndex; index < endIndex; index++) {
+  const e = overall[index];
+ 
+    orders.push(e);
+  
+}
+
+}
+
+        
+          const totalProducts = overall.length;
+          const totalPages = Math.ceil(totalProducts / pageSize);
+         
+          
+      res.render('salesreport', {  orders, page, totalPages });
+  } catch (error) {
+      console.log(error.message);
+  }
+}
+
 
 //user
 const users = async (req, res) => {
@@ -254,12 +447,13 @@ const users = async (req, res) => {
         const pageSize = 6; // Number of users per page
         const searchQuery = req.query.search || ''; // Get the search query
 
-        let query = {};
+        let query = {is_Admin:0};
 
         // Add search query to the database query if it exists
         if (searchQuery) {
             const regex = new RegExp(`^${searchQuery}`, 'i');
-            query = { Fname: regex };
+            query.Fname=regex
+           
         }
 
         const totalUsers = await User.countDocuments(query);
@@ -863,6 +1057,7 @@ module.exports={
     Login,
     LoginPost,
     dashboard,
+    salesreport,
     users,
     userblock,
     CategoryView,

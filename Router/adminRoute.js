@@ -41,6 +41,9 @@ adminRoute.post('/loginpost',mid.adminloginSes,adminController.LoginPost)
 //dashboard
 adminRoute.get('/dashboard',mid.adminloginNoSes,mid.adminloginNoSes,adminController.dashboard)
 
+//sales report
+adminRoute.get('/salesreport',mid.adminloginNoSes,mid.adminloginNoSes,adminController.salesreport)
+
 //users
 adminRoute.get('/users',mid.adminloginNoSes,adminController.users)
 
