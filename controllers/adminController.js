@@ -113,7 +113,7 @@ const dashboard=async(req,res)=>{
           let pendlen=pending.length;
          
           //area chart
-          //for orders
+          //for orders yearly
 const chartYearData = await order.aggregate([
     {
       $group: {
@@ -144,7 +144,7 @@ const chartYearData = await order.aggregate([
    yeardata.push(val)
   }
  
-  //for users
+  //for users yearly
   const chartUserData = await User.aggregate([
     {
       $group: {
@@ -174,10 +174,73 @@ const chartYearData = await order.aggregate([
     }
     yearuser.push(val)
   }
+
+  //for orders monthly
+  const orderdatamonth = await order.aggregate([
+    {
+      $group: {
+        _id: { $month: "$date" }, 
+        count: { $sum: 1 } 
+      }
+    },
+    {
+      $sort: {
+        _id: 1 
+      }
+    }
+  ]);
+  let  labelsmonth=[1,2,3,4,5,6,7,8,9,10,11,12];let monthorder=[];
+  for(let i=0;i<labelsmonth.length;i++)
+  {let val=0
+    for(let j=0;j<orderdatamonth.length;j++)
+    {
+        if(labelsmonth[i]==orderdatamonth[j]._id)
+        {
+            b=true;
+            val=orderdatamonth[j].count;
+           break;
+            
+        }
+        
+    }
+    monthorder.push(val)
+  }
+console.log(monthorder)
+
+  //for users monthly
+  const userdatamonth = await User.aggregate([
+    {
+      $group: {
+        _id: { $month: "$date" }, 
+        count: { $sum: 1 } 
+      }
+    },
+    {
+      $sort: {
+        _id: 1 
+      }
+    }
+  ]);
+  let monthuser=[];
+  for(let i=0;i<labelsmonth.length;i++)
+  {let val=0
+    for(let j=0;j<userdatamonth.length;j++)
+    {
+        if(labelsmonth[i]==userdatamonth[j]._id)
+        {
+            b=true;
+            val=userdatamonth[j].count;
+           break;
+            
+        }
+        
+    }
+    monthuser.push(val)
+  }
+console.log(monthuser,userdatamonth)
   
- 
         const message=req.query.message||'';
-        res.render('dashboard',{prodlen,catlen,revenuelen,pendlen,yeardata,yearuser})
+        res.render('dashboard',{prodlen,catlen,revenuelen,pendlen,yeardata,yearuser,monthorder,monthuser})
     }
     catch (error) {
         console.log(error.message);
