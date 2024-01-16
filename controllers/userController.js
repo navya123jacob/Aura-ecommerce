@@ -535,6 +535,25 @@ catch(error){
 }
 
 
+//about 
+const about = async (req, res) => {
+  try {
+     //for logi mid
+      categories=req.categories
+      ses=req.ses
+      const user = req.session.checkuser|| '' 
+      //logi mid end
+       
+      res.render('about', { categories,ses,user});
+      
+
+    
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  };
+
 
 const CatProductsView = async (req, res) => {
   try {
@@ -1903,7 +1922,8 @@ module.exports={
     getInvoice,
     productaddtowishlist,
     wishlistload,
-    productremovefromwish
+    productremovefromwish,
+    about
     
    
 }

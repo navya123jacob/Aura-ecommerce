@@ -14,6 +14,8 @@ const Product = require('../models/productModel.js');
 //home page
 userRoute.get('/',mid.otpmid,userController.Home)
 
+
+
 //Register page
 userRoute.get('/register',mid.UserSes,userController.loadRegister)
 
@@ -43,6 +45,9 @@ userRoute.get('/login',mid.otpmid,mid.UserSes,userController.loadLogin)
 userRoute.post('/userLogin',userController.PostLogin)
 
 
+
+//About Page
+userRoute.get('/about',mid.otpmid,mid.logiheader,userController.about)
 
 
 
