@@ -18,7 +18,7 @@ userRoute.get('/',mid.otpmid,userController.Home)
 userRoute.get('/register',mid.UserSes,userController.loadRegister)
 
 //Post on Register page(redirects to otp page)
-userRoute.post('/registerpost',userController.PostRegister)
+userRoute.post('/registerpost',mid.UserSes,userController.PostRegister)
 
 //to go back out of registpostotp page
 userRoute.post('/outotp',userController.outotp)

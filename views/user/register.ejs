@@ -8,7 +8,7 @@
                 <h3>Register</h3>
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
-                        <form id="registerForm" action="/registerpost" style="color: black;" method="POST" onsubmit="return validateForm()">
+                        <form id="registerForm" action="/registerpost?refcode=<%=userrefcode%>" style="color: black;" method="POST" onsubmit="return validateForm()">
                             <div class="form-group">
                                 <label for="register-first-name">First Name *</label>
                                 <input type="text" class="form-control" id="register-first-name" name="Fname" required>

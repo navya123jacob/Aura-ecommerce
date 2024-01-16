@@ -119,7 +119,12 @@ const userSchema=new mongoose.Schema({
             type: Number,
             required: true
         }
-    }]
+    }],
+        
+    refcode: {
+        type: String,
+        default:''
+    }
 
 
 })

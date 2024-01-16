@@ -75,6 +75,7 @@
 												</button>
 											</div><!-- End .form-footer -->
 										</form>
+										<a href="/register?refcode=12345" id="copyLink">Referal Link</a>
 								    </div><!-- .End .tab-pane -->
 
 	                		</div><!-- End .col-lg-9 -->
@@ -84,7 +85,8 @@
             </div><!-- End .page-content -->
 			</div>
         </main><!-- End .main -->
-
+        
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 		<script>
 			 function validateForm() {
         var firstName = document.getElementById('register-first-name').value.trim();
@@ -125,7 +127,38 @@
     }
  
 	
-	
+	document.getElementById('copyLink').addEventListener('click', function(event) {
+        // Prevent the default link behavior (preventing navigation)
+        event.preventDefault();
+
+        // Get the href attribute value
+        var hrefValue = this.getAttribute('href');
+
+        // Create a temporary input element
+        var tempInput = document.createElement('input');
+        tempInput.value = window.location.origin + hrefValue;
+
+        // Append the input element to the document
+        document.body.appendChild(tempInput);
+
+        // Select the input value
+        tempInput.select();
+
+        // Copy the selected text to the clipboard
+        document.execCommand('copy');
+
+        // Remove the temporary input element
+        document.body.removeChild(tempInput);
+
+        // Use SweetAlert for a more visually appealing alert
+        Swal.fire({
+            icon: 'success',
+            title: 'Link copied to clipboard!',
+            text: window.location.origin + hrefValue,
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    });
 		</script>
 		
     

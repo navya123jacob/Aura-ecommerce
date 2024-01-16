@@ -63,7 +63,7 @@ const hashPassword = async (password) => {
     return await bcrypt.compare(plainPassword, hashedPassword);
   };
 
-
+  
 //load Home Page
 const Home=async(req,res)=>{
   try{
@@ -148,9 +148,9 @@ const loadLogin=async(req,res)=>{
 
 //load user Register
 const loadRegister=async(req,res)=>{
-    try{
-    
-      
+    try{let userrefcode=req.query.refcode||'';
+     
+   
       if(req.session.userId)
        {
         const UserOTPVerificationRecords = await UserOTP.find({userId:req.session.userId});
@@ -180,7 +180,7 @@ const loadRegister=async(req,res)=>{
 
         
       const message = req.query.message || ''  
-     res.render('register',{message,ses,user,categories})
+     res.render('register',{message,ses,user,categories,userrefcode})
         }
 }
    catch (error) {
@@ -251,14 +251,17 @@ const transporter = nodemailer.createTransport({
 //post user Register
 const PostRegister=async(req,res)=>{
     try{ 
-      
+      let userrefcode=req.query.refcode||''
+          
         const foundUser=await User.findOne({email:req.body.regemail})
-       
+       console.log(userrefcode)
         if(foundUser)
         {
          res.redirect('/register?message=Already registered')
         }
         else{
+          
+          const randomcode = Math.floor(10000 + Math.random() * 90000).toString();
           const hashedPassword = await hashPassword(req.body.password);
           const userData = new User({
           Fname:req.body.Fname,
@@ -268,9 +271,24 @@ const PostRegister=async(req,res)=>{
           password:hashedPassword,
           verified:false,
           is_Admin:0,
-          is_blocked:false
+          is_blocked:false,
+          refcode:randomcode
+          
           });
-    
+         
+          if(userrefcode)
+          {
+            
+            const user = await User.findOne({ refcode: userrefcode.trim() });
+            if(user)
+            {
+              
+              userData.wallet=500;
+
+            }
+            
+          }
+         
           userData.save().then(async(result) => {
             const date=await sendOTPverifyEmail(result,res); 
             // and result saved document is also passed into user parameter
@@ -337,6 +355,7 @@ const loadRegisterOTP=async(req,res)=>{
 
           const userId=req.session.userId
           const message = req.query.message ||''
+          
           res.render('otp',{message,userId,isoFormattedDate,nowisoFormattedDate,user,categories,ses})
     
 
@@ -1514,9 +1533,9 @@ const account=async(req,res)=>{
     const user = req.session.checkuser|| '' 
     //logi mid end
     const myuser=await User.findOne({email:req.session.email})
-    
+    const refcode=myuser.refcode
    
-      res.render('account',{user,ses,categories,myuser})
+      res.render('account',{user,ses,categories,myuser,refcode})
   }
   catch (error) {
       console.log(error.message);
