@@ -398,7 +398,7 @@
                     const qtyValue = 1;
                
                 fetch(`/productaddtocart?name=${prodname}&email=${email}&qtyValue=${qtyValue}`, {
-                method: 'POST', // Use POST or PATCH for updating data
+                method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
                  },
@@ -407,11 +407,10 @@
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-                // You can handle the response if needed
+               
                 return response.json();
             })
             .then(data => {
-                // Update the button text and class
                 
                 
                 document.getElementById(`cart${i}`).textContent = 'Added to Cart';

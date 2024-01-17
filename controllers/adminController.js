@@ -146,7 +146,7 @@ const dashboard=async(req,res)=>{
             }
           ]);
           
-  let  labels=[2021, 2022, 2023, 2024, 2025];let yeardata=[];
+  let  labels=[2021, 2022, 2023, 2024, 2025,2026];let yeardata=[];
   for(let i=0;i<labels.length;i++)
   {let val=0
     for(let j=0;j<chartYearData.length;j++)
@@ -467,12 +467,12 @@ for (let index = startIndex; index < endIndex; index++) {
 
 ///to get invoice
 // invoice 
-const getInvoice = (req, res) => {
+const getInvoice = async(req, res) => {
   try {
       console.log('invoice ')
       const orderId = req.params.id;
       
-      const invoiceP = generateInvoice(invsales,orderId);
+      const invoiceP = await generateInvoice(invsales,orderId);
       
 
      const invoicePath = path.join(__dirname, 'invoices', `invoice_${orderId}.pdf`);
@@ -492,55 +492,65 @@ fileStream.pipe(res);
 }
 
 
-function generateInvoice(orders, salesid) {
-  const invoicePath = path.join(__dirname, 'invoices', `invoice_${salesid}.pdf`);
-  const doc = new pdf();
+async function generateInvoice(orders, salesid) {
+  return new Promise(async (resolve, reject) => {
+    const invoicePath = path.join(__dirname, 'invoices', `invoice_${salesid}.pdf`);
+    const doc = new pdf();
 
-  // Pipe the PDF to a writable stream and create the invoice
-  doc.pipe(fs.createWriteStream(invoicePath));
+    // Pipe the PDF to a writable stream and create the invoice
+    const writeStream = fs.createWriteStream(invoicePath);
 
-  // Set font and font size
-  doc.font('Helvetica-Bold');
-  doc.fontSize(14);
+    // Handle stream errors
+    writeStream.on('error', (err) => {
+      reject(err);
+    });
 
-  // Company Name
-  doc.text('AURA', { align: 'center' });
+    // Handle the end of the stream
+    writeStream.on('finish', () => {
+      resolve(invoicePath);
+    });
 
-  // Add a horizontal line
-  doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
-  doc.moveDown();
+    doc.pipe(writeStream);
 
-  // Invoice Header
-  doc.fontSize(12).text('Invoice', { align: 'center' }).fontSize(12);
-  doc.moveDown();
+    // Set font and font size
+    doc.font('Helvetica-Bold');
+    doc.fontSize(14);
 
-  // Order details
-  doc.fontSize(14).text('Sales Report', { underline: true });
-  
+    // Company Name
+    doc.text('AURA', { align: 'center' });
 
-  // Display Order ID and Payment Mode
-  doc.moveDown(); // Move to the next line
-  orders.forEach((order, index) => {
-    doc.text(`${index + 1}. Name: ${order.user.Fname}`);
-  doc.text(`Name: ${order.user.Fname}`);
-  doc.text(`Email: ${order.user.email}`);
-  doc.text(`Order ID: ${order._id}`);
-  doc.text(`Date: ${new Date(order.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}`);
-  let matchingAddress = order.user.addressField.find(address => address._id.toString() === order.address.toString());
-  let addressString
-  if (matchingAddress){
-    addressString =  `${matchingAddress.address}, ${matchingAddress.district}, ${matchingAddress.state} ${matchingAddress.pincode}`
-   
-  }
-  doc.text(`Address: ${addressString}`);
-  doc.text(`Payment Mode: ${order.paymentMode}`);
-  doc.moveDown(); // Move to the next line
-})
-  doc.end(); // Finalize the PDF
+    // Add a horizontal line
+    doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+    doc.moveDown();
 
-  return invoicePath;
+    // Invoice Header
+    doc.fontSize(12).text('Invoice', { align: 'center' }).fontSize(12);
+    doc.moveDown();
+
+    // Order details
+    doc.fontSize(14).text('Sales Report', { underline: true });
+
+    // Display Order ID and Payment Mode
+    doc.moveDown(); // Move to the next line
+    for (const [index, order] of orders.entries()) {
+      doc.text(`${index + 1}. Name: ${order.user.Fname}`);
+      doc.text(`Name: ${order.user.Fname}`);
+      doc.text(`Email: ${order.user.email}`);
+      doc.text(`Order ID: ${order._id}`);
+      doc.text(`Date: ${new Date(order.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}`);
+      let matchingAddress = order.user.addressField.find(address => address._id.toString() === order.address.toString());
+      let addressString;
+      if (matchingAddress) {
+        addressString = `${matchingAddress.address}, ${matchingAddress.district}, ${matchingAddress.state} ${matchingAddress.pincode}`;
+      }
+      doc.text(`Address: ${addressString}`);
+      doc.text(`Payment Mode: ${order.paymentMode}`);
+      doc.moveDown(); // Move to the next line
+    }
+
+    doc.end(); // Finalize the PDF
+  });
 }
-
 
 
 //user

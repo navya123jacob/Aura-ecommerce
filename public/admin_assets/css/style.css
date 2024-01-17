@@ -11394,6 +11394,7 @@ input[type="button"].btn-block {
       color: #fff; }
 
 .card {
+  color: whitesmoke;
   position: relative;
   display: flex;
   flex-direction: column;

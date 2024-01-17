@@ -1,6 +1,7 @@
-<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+
 <%- include('./layouts/header.ejs') %>
 <style>
+  
     .table-container {
         overflow-x: auto;
     }
@@ -27,7 +28,11 @@
     }
     .toolbox-right {
     display: flex;
-    align-items: center;
+    flex-wrap: wrap; 
+}
+.toolbox-right button {
+    width: auto;
+    flex-shrink: 0; 
 }
 
 .toolbox-sort {
@@ -70,9 +75,10 @@
                             </div>
                         </div>
                 
-                        <button class="btn custom-outline-white" onclick="sortOrdersByDateRange()">Sort</button>
-                        <div id="sorterrorText" class="text-danger"></div>
+                       
                     </div><!-- End .toolbox-right -->
+                    <button class="btn custom-outline-white" onclick="sortOrdersByDateRange()">Sort</button>
+                    <div id="sorterrorText" class="text-danger"></div>
                 </div>
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel"
@@ -185,7 +191,6 @@
 
 <!-- Bootstrap JS -->
 <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
 <script>
 function cancelOrder(orderId, productId) {
     Swal.fire({
