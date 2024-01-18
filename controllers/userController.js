@@ -101,7 +101,7 @@ const Home=async(req,res)=>{
       }
       
     const user = req.session.checkuser|| '' 
-    const email=req.session.email
+    const email=req.session.email||''
    
       res.render('home',{user,ses,products,categories,email})
   }
@@ -642,7 +642,7 @@ const CatProductsView = async (req, res) => {
   }  
   
       
-        res.render('categories', { products, categories, page, totalPages,cat,ses,user,email,searchQuery,totalprice});
+        res.render('categories', { products, categories, page, totalPages,cat,ses,user,email,searchQuery,totalprice,totalProducts});
       
 
     
@@ -849,7 +849,7 @@ const cartload=async(req,res)=>{
       b=1
       
       
-      usercart.Products.forEach(async(product) => {
+      usercart.Products.forEach(async(product,index) => {
           let productPrice = parseFloat(product.total);
           let individualprice=product.price;let discountpercent=0
           
@@ -878,8 +878,11 @@ const cartload=async(req,res)=>{
           {
             await cart.updateOne({user:myuser._id}, { $pull: { 'Products': { 'products': product.products} } })
             totalproprice.pop();proprice.pop();
+           
+            
           }
       });
+      usercart.Products = usercart.Products.filter((product) => product.products.quantity != 0);
       
         if (Total < 500) {
             shipping = 40;

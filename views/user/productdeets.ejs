@@ -74,15 +74,20 @@
                         <div class="product-content">
                             <p><%=products.description%></p>
                         </div><!-- End .product-content -->
-
-                        
+                        <% if (products.quantity == 0) { %>
+                            <h5 style="color: red;">OUT OF STOCK!</h5>
+                            <% } else if(products.quantity ==1) { %>
+                                <span style="color: #71af71;">Only <%=products.quantity%> item left!</span>
+                                <% } else if(products.quantity <=15) { %>
+                                    <span style="color: #71af71;">Only <%=products.quantity%> items left!</span>
+                                    <% } %>
 
                         <div class="product-details-action">
                             <div class="details-action-col">
                                 <div class="product-details-quantity">
                                     <input type="number" id="qty" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
                                 </div><!-- End .product-details-quantity -->
-                                <button class="btn-product btn-cart" onclick="addtocart('<%=products.name%>','<%=email%>')">Add to cart</button>
+                                <button class="btn-product btn-cart" onclick="addtocart('<%=products.name%>','<%=email%>','<%=products.quantity%>')">Add to cart</button>
                                
                             </div><!-- End .details-action-col -->
 
@@ -117,12 +122,39 @@
         </main><!-- End .main -->
 
         
-
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <script>
             // Get the value of the input with id "qty"
            
-            function addtocart(prodname,email)
+            function addtocart(prodname,email,quantity)
             {
+                if (!email) {
+    Swal.fire({
+        title: 'Login to Purchase',
+        text: 'To make a purchase, please log in.',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Login'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            
+            window.location.href = '/login';
+        }
+    });
+}
+if (quantity == 0) {
+    Swal.fire({
+        title: 'Product Out of Stock',
+        text: 'Sorry, this product is currently out of stock.',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+    });
+    return 
+}
+
                 const qtyValue = document.getElementById('qty').value;
            
             fetch(`/productaddtocart?name=${prodname}&email=${email}&qtyValue=${qtyValue}`, {
@@ -159,6 +191,22 @@
 
     function addtowish(prodname,email)
             {
+                if (!email) {
+    Swal.fire({
+        title: 'Login to Purchase',
+        text: 'To make a purchase, please log in.',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Login'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            
+            window.location.href = '/login';
+        }
+    });
+}
                 
            
             fetch(`/productaddtowishlist?name=${prodname}&email=${email}`, {

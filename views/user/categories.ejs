@@ -38,7 +38,7 @@
                         <input type="text" class="form-control" id="searchInput" placeholder="Search by name" oninput="searchUsers(this.value)" value="<%= searchQuery %>">
                         <div class="toolbox-left">
                 					<div class="toolbox-info">
-                						Showing <span>4 of <%=products.length%></span> Products
+                						Showing <span> <%=products.length%> of <%=totalProducts%></span> Products
                 					</div><!-- End .toolbox-info -->
                 				</div><!-- End .toolbox-left -->
 
@@ -80,7 +80,7 @@
                                                     <button href="#" class="btn-product-icon btn-wishlist btn-expandable" title="Add to wishlist"  onclick="addtowish('<%=products[i].name%>','<%=email%>',<%=i%>)"><span id="wish<%=i%>">Add to Wishlist</span></button>
                                                 </div><!-- End .product-action -->
                                                 <div class="product-action product-action-transparent">
-                                                  <button class="btn-product btn-cart" id="cart<%=i%>" onclick="addtocart('<%=products[i].name%>','<%=email%>',<%=i%>)">Add to cart</button>
+                                                  <button class="btn-product btn-cart" id="cart<%=i%>" onclick="addtocart('<%=products[i].name%>','<%=email%>',<%=i%>,'<%=products[i].quantity%>')">Add to cart</button>
                                                 </div><!-- End .product-action -->
                                             </figure><!-- End .product-media -->
                                             <div class="product-body">
@@ -98,6 +98,13 @@
                                               </div>
                                                 <!-- Other product details can be added here -->
                                             </div><!-- End .product-body -->
+                                            <% if (products[i].quantity == 0) { %>
+                                              <h5 style="color: red;">OUT OF STOCK!</h5>
+                                              <% } else if(products[i].quantity ==1) { %>
+                                                  <span style="color: #71af71;">Only <%=products[i].quantity%> item left!</span>
+                                                  <% } else if(products[i].quantity <=15) { %>
+                                                      <span style="color: #71af71;">Only <%=products[i].quantity%> items left!</span>
+                                                      <% } %>
                                         </div><!-- End .product-2 -->
                             
                                        
@@ -182,13 +189,41 @@
                 </div><!-- End .container -->
             </div><!-- End .page-content -->
         </main><!-- End .main -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <script>
           function searchUsers(searchvalue) {
  $('#toload').load(`/category?search=${searchvalue}&cat=<%=cat%> #toload`)}
 
   
-  function addtocart(prodname,email,i)
+  function addtocart(prodname,email,i,quantity)
             {
+              if (!email) {
+    Swal.fire({
+        title: 'Login to Purchase',
+        text: 'To make a purchase, please log in.',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Login'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            
+            window.location.href = '/login';
+        }
+    });
+    
+}
+if (quantity == 0) {
+    Swal.fire({
+        title: 'Product Out of Stock',
+        text: 'Sorry, this product is currently out of stock.',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+    });
+    return 
+}
                 const qtyValue = 1;
            
             fetch(`/productaddtocart?name=${prodname}&email=${email}&qtyValue=${qtyValue}`, {
@@ -226,6 +261,22 @@
        
   function addtowish(prodname,email,i)
             {
+              if (!email) {
+    Swal.fire({
+        title: 'Login to Purchase',
+        text: 'To make a purchase, please log in.',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Login'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            
+            window.location.href = '/login';
+        }
+    });
+}
                
            
             fetch(`/productaddtowishlist?name=${prodname}&email=${email}`, {
