@@ -8585,14 +8585,22 @@ pre {
 .table-sm td {
   padding: 0.3rem; }
 
-.table-bordered {
-  border: 1px solid #2c2e33; }
+  .table-bordered {
+    border-collapse: separate;
+    border-spacing: 8px;
+    width: 100%;
+  }
+  
   .table-bordered th,
   .table-bordered td {
-    border: 1px solid #2c2e33; }
+    border: 1px solid #2c2e33;
+    padding: 8px; /* Adjust the padding value as needed */
+  }
+  
   .table-bordered thead th,
   .table-bordered thead td {
-    border-bottom-width: 2px; }
+    border-bottom-width: 2px;
+  }
 
 .table-borderless th,
 .table-borderless td,

@@ -38,11 +38,11 @@
                 </div>
     
                 <button type="button" class="btn btn-primary mr-2" onclick="validateAndSubmit()">Submit</button>
-                <button type="button" class="btn btn-dark">Cancel</button>
+                
                 <p class="text-success"> <%=message%></p>
             </form>
                     
-                      
+            <button class="btn btn-dark" onclick="cancelAction()">Cancel</button>      
                 </div>
             </div>
 
@@ -141,4 +141,9 @@
         });
     }
 }
+
+function cancelAction() {
+    window.location.href = "/admin/categories";
+   
+  }
 </script>

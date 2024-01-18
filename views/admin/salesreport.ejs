@@ -48,7 +48,6 @@
   color: #007bff;}
 </style>
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <div class="container-fluid page-body-wrapper">
   <!-- partial:partials/_navbar.html -->
   <%- include('./layouts/nav.ejs') %>
@@ -57,34 +56,34 @@
     <div class="content-wrapper">
 
       <div class="row" >
-       
+        <div class="toolbox ">
+          <div class="toolbox-right"> 
+              <div class="toolbox-sort m-4">
+                  <label for="startDate">Start Date:</label>
+                  <div class="select-custom">
+                      <input type="date" id="startDate" name="startDate">
+                  </div>
+              </div>
+      
+              <div class="toolbox-sort m-4">
+                  <label for="endDate">End Date:</label>
+                  <div class="select-custom">
+                      <input type="date" id="endDate" name="endDate">
+                  </div>
+              </div>
+      
+             
+          </div><!-- End .toolbox-right -->
+          <button class="btn custom-outline-white" onclick="sortOrdersByDateRange()">Sort</button>
+          <div id="sorterrorText" class="text-danger"></div>
+      </div>
             <div class="col-12 grid-margin" id="tabletoload">
-                <div class="toolbox ">
-                    <div class="toolbox-right"> 
-                        <div class="toolbox-sort m-4">
-                            <label for="startDate">Start Date:</label>
-                            <div class="select-custom">
-                                <input type="date" id="startDate" name="startDate">
-                            </div>
-                        </div>
                 
-                        <div class="toolbox-sort m-4">
-                            <label for="endDate">End Date:</label>
-                            <div class="select-custom">
-                                <input type="date" id="endDate" name="endDate">
-                            </div>
-                        </div>
-                
-                       
-                    </div><!-- End .toolbox-right -->
-                    <button class="btn custom-outline-white" onclick="sortOrdersByDateRange()">Sort</button>
-                    <div id="sorterrorText" class="text-danger"></div>
-                </div>
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel"
                         aria-labelledby="tab-dashboard-link">
                         <div class="table-container" style="display: flex;align-items: center;">
-                <table class="order-details" >
+                <table class="table-bordered" >
                     <thead>
                         <tr>
                             <th>Username</th>
@@ -298,6 +297,9 @@ const encodedEndDate = encodeURIComponent(endDateObj.toISOString());
 $('#tabletoload').load(`/admin/salesreport?start=${encodedStartDate}&end=${encodedEndDate} #tabletoload`);
 }
 
-
+$(document).ready(function () {
+  console.log("Document ready");
+});
 
 </script>
+<%- include('./layouts/footer.ejs') %>

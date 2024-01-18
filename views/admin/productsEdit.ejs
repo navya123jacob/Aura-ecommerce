@@ -85,8 +85,10 @@
                         <!-- Other form fields... -->
 
                         <button type="button" class="btn btn-primary mr-2" onclick="return validateForm(<%=editProduct.pictures.length%>);">Submit</button>
-                        <button class="btn btn-dark">Cancel</button>
+                        
+
                     </form>
+                    <button class="btn btn-dark" onclick="cancelAction()">Cancel</button>
                     <p class="text-success"> <%= message %></p>
                 </div>
             </div>
@@ -325,4 +327,8 @@ function displaySelectedNewImage(input) {
         reader.readAsDataURL(file);
     }
 }
+function cancelAction() {
+    window.location.href = "/admin/products";
+   
+  }
 </script>

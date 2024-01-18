@@ -45,9 +45,9 @@
                         
                     
                         <button type="submit" class="btn btn-primary mr-2" onclick="validateForm(event)">Submit</button>
-                        <button class="btn btn-dark">Cancel</button>
+                       
                     </form>
-                    
+                    <button class="btn btn-dark" onclick="cancelAction()">Cancel</button>   
                     <p class="text-success" id="messageid"> <%= message %></p>
                 </div>
                 
@@ -150,7 +150,10 @@ if(count==1)
    
 }
 
-
+function cancelAction() {
+    window.location.href = "/admin/offers";
+   
+  }
     
 
 </script>

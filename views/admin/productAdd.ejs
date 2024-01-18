@@ -79,8 +79,9 @@
                         <!-- Other form fields... -->
             
                         <button type="button" class="btn btn-primary mr-2" onclick="return validateForm()" >Submit</button>
-                        <button class="btn btn-dark">Cancel</button>
+                        
                     </form>
+                    <button class="btn btn-dark" onclick="cancelAction()">Cancel</button>
                     <p class="text-success"> <%= message %></p>
                 </div>
             </div>
@@ -330,7 +331,12 @@ function displaySelectedNewImage() {
         var previewContainer = document.getElementById('imagePreview');
         previewContainer.innerHTML = ''; // Clear the preview container
         v=[]
-    }</script>
+    }
+    function cancelAction() {
+    window.location.href = "/admin/products";
+   
+  }
+    </script>
 
 
 <%- include('./layouts/footer.ejs') %>
