@@ -178,7 +178,7 @@ if (productDescription === '') {
 
 
 // Product Quantity Validation
-if (isNaN(productQuantity) || productQuantity <= 0) {
+if (isNaN(productQuantity) || productQuantity < 0) {
     errors.productQuantity = 'Quantity should be a valid positive number.';
     quantityError.textContent = errors.productQuantity;
     productQuantityInput.focus();

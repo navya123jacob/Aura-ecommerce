@@ -589,7 +589,7 @@ const CatProductsView = async (req, res) => {
   let tot=[]
   let protot = await product.find(query).populate({
         path: 'category',
-        model: 'Category'}).exec()
+        model: 'Category'}).sort({ price: sortvalue}).exec()
         protot.forEach((e)=>{
     
           if(e.category.status=='active')
@@ -598,22 +598,16 @@ const CatProductsView = async (req, res) => {
           }
         })
     
-      let pro = await product
-      .find(query)
-      .populate({
-        path: 'category',
-        model: 'Category',
-      })
-      .sort({ price: sortvalue})
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .lean() 
-      pro.forEach((e)=>{
-        if(e.category.status=='active')
-        {
-          products.push(e)
+        const startIndex = (page - 1) * pageSize;
+        const endIndex = Math.min(startIndex + pageSize, tot.length);
+        
+        for (let index = startIndex; index < endIndex; index++) {
+          const e = tot[index];
+         
+            products.push(e);
+          
         }
-      })
+     
     
     const totalProducts = tot.length
     const totalPages = Math.ceil(totalProducts / pageSize);
@@ -1077,7 +1071,7 @@ couponfind = couponfind.filter(co => {
       b=1
       let Total = 0;
       
-      usercart.Products.forEach(product => {
+      usercart.Products.forEach(async(product)=> {
         let productPrice = parseFloat(product.total);
         let individualprice=product.price;let discountpercent=0
         
@@ -1100,6 +1094,11 @@ couponfind = couponfind.filter(co => {
         Total = Total + parseFloat(productPrice);
         totalproprice.push(parseFloat(productPrice))
         proprice.push(parseFloat(individualprice))
+        if(product.products.quantity==0)
+          {
+            await cart.updateOne({user:myuser._id}, { $pull: { 'Products': { 'products': product.products} } })
+            totalproprice.pop();proprice.pop();
+          }
     });
     
         if (Total < 500) {

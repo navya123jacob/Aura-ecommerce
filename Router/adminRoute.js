@@ -73,7 +73,7 @@ adminRoute.get('/categories/edit',mid.adminloginNoSes,adminController.CategoryEd
 adminRoute.post('/categories/editpost',mid.adminloginNoSes,adminController.CategoryEditpost)
 
 //categories active/blocked
-adminRoute.get('/categories/toggle',mid.adminloginNoSes,adminController.CategoryToggle)
+adminRoute.patch('/categories/toggle',mid.adminloginNoSes,adminController.CategoryToggle)
 
 //PRODUCTS
 

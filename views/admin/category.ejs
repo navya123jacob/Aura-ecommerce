@@ -7,15 +7,15 @@
   <div class="main-panel">
     <div class="content-wrapper">
 
-      <div class="row">
-        <div class="col-12 grid-margin">
+      <div class="row" >
+        <div class="col-12 grid-margin" >
           <div class="card" >
             <div class="card-body">
               <div class="col-md-6">
                 <input type="text" class="form-control" id="searchInput" placeholder="Search by name" oninput="searchUsers()">
               </div>
-              <div class="table-responsive" >
-                <table class="table-bordered" id="toload">
+              <div class="table-responsive" id="toload">
+                <table class="table-bordered" >
                   <thead >
                     <tr>
                       <th >#</th>
@@ -110,18 +110,46 @@
         window.location.href = `/admin/categories/edit?categoryId=${categoryId}&name=${categoryName}`;
           break;
         case 'Toggle':
-          $('#toload').load(`/admin/categories/toggle?categoryId=${categoryId}&name=${categoryName} #toload`);
+        toggleCatBlock(categoryId,categoryName)
           break;
         default:
         
           break;
       }
 
-      
+      // $('#toload').load(`/admin/categories?toggle=yes&categoryId=${categoryId}&name=${categoryName} #toload`);
 
       // Hide the modal after confirming
       $('#confirmationModal').modal('hide');
     });
+  }
+
+  function toggleCatBlock(categoryId,categoryName)
+  {
+    fetch(`/admin/categories/toggle?categoryId=${categoryId}&name=${categoryName}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+          
+            return response.json();
+        })
+        .then(data => {
+            // Update the button text and class
+ 
+            $('#toload').load('/admin/categories #toload')
+            
+           
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
   }
 
   

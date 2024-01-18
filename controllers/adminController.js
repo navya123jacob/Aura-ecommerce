@@ -728,7 +728,7 @@ const CategoryToggle=async(req,res)=>{
         {
             await Category.updateOne({_id:req.query.categoryId},{$set:{status:'active'}})
         }
-        res.redirect('/admin/categories')
+        res.json({ success: true})
        
     }
     
