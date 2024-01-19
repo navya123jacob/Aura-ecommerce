@@ -19,6 +19,9 @@
             
             <div class="table-responsive"  >
               <table class="table-bordered" id="block">
+                <% if (coupons.length === 0) { %>
+                  <span style="font-size:x-large">No Coupons</span>
+                <% } else { %>
                 <thead>
                     <tr>
                         <th>#</th>
@@ -62,6 +65,7 @@
                     <% }); %>
                 </tbody>
             </table>
+            <% } %>
             </div>
           <!-- Pagination -->
            

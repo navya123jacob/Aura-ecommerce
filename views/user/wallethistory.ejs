@@ -45,6 +45,9 @@
             </aside><!-- End .col-lg-3 -->
             <div class="col-md-8 col-lg-9">
                 <div class="wallet-history-container">
+                    <% if (myuser.walletHistory.length === 0) { %>
+                        <span style="font-size:x-large">No transactions</span>
+                      <% } else { %>
                     <table class="wallet-history" id="tabletoload">
                         <thead>
                             <tr>
@@ -65,6 +68,7 @@
                             <% }); %>
                         </tbody>
                     </table>
+                    <% }%>
                 </div><!-- End .wallet-history-container -->
         </div><!-- End .row -->
     </div><!-- End .container -->

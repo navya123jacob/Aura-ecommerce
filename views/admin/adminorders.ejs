@@ -25,6 +25,9 @@
             </div>
            
             <div class="table-responsive" id="blok">
+              <% if (orders.length === 0) { %>
+                <span style="font-size:x-large">No orders</span>
+              <% } else { %>
               <table class="order-details">
                 <thead>
                   <tr>
@@ -81,6 +84,7 @@
                   <% }); %>
               </tbody>
             </table>
+            <% } %>
             </div>
 
             <!-- Pagination -->

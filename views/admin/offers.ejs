@@ -18,6 +18,9 @@
             </div>
             
             <div class="table-responsive"  >
+              <% if (offers.length === 0) { %>
+                <span style="font-size:x-large">No offers</span>
+              <% } else { %>
                 <table class="table-bordered" id="block">
                     <thead>
                         <tr>
@@ -52,6 +55,7 @@
                         <% }); %>
                     </tbody>
                 </table>
+                <% } %>
             </div>
           <!-- Pagination -->
            

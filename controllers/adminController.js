@@ -58,6 +58,7 @@ const LoginPost=async(req,res)=>{
 //dashboard
 const dashboard=async(req,res)=>{
     try{
+      
         let prodlen=await product.countDocuments();
         let catlen=await Category.countDocuments();
         let totalUsers = await User.countDocuments();
@@ -122,7 +123,8 @@ const dashboard=async(req,res)=>{
               }
             }
           ]);
-          let revenuelen=revenue[0].total+revenue[0].total;
+          let revenuelen = revenue.length > 0 ? revenue[0].total : 0;
+          revenuelen += revenue2.length > 0 ? revenue2[0].total : 0;
           let pendlen=pending.length;
          
           //area chart
@@ -308,7 +310,6 @@ const dashboard=async(req,res)=>{
   let cod=await order.countDocuments({paymentMode:"cashOnDelivery"})||0
   let wal=await order.countDocuments({paymentMode:"wallet"})||0
   let payment=[wal,cod,razor]
-
   const razorpayamount = await order.aggregate([
     {
       $match: {
@@ -351,8 +352,12 @@ const dashboard=async(req,res)=>{
       }
     }
   ]);
- 
-  const razoramount=razorpayamount[0].totalSum;const codamount=cashOnDeliveryamount[0].totalSum;const walamount=walletamount[0].totalSum;
+  let razoramount,codamount,walamount;
+  razoramount=codamount=walamount=0
+ if(razorpayamount.length>0){ razoramount=razorpayamount[0].totalSum;}
+ if(cashOnDeliveryamount.length>0){codamount=cashOnDeliveryamount[0].totalSum;}
+ if(walamount.length>0){walamount=walletamount[0].totalSum;}
+
   const page = parseInt(req.query.page) || 1;
         const pageSize = 6; 
         const totalorders = await order.countDocuments({"Products.orderStatus": { $nin: ["returned", "cancelled"] }});

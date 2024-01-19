@@ -237,8 +237,12 @@
                                     }
                                 }
                             }'>
-                           
-                            <% for (let i = 0; i < Math.min(products.length, 4); i++) { %>
+                            <% let len=4  %>
+                            <% for (let i = 0; i < Math.min(products.length, len); i++) { %>
+                                <% if (products[i].quantity == 0) { %>
+                                    <%len++; %>
+                                    <% continue; %>
+                                  <% } %>
                                 <div class="product product-2">
                                     <figure class="product-media"  style="height:70%;">
                                         <%  let s1=products[i].pictures[0].replace('public','') %>
