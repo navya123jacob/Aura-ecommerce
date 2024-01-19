@@ -57,7 +57,7 @@ const LoginPost=async(req,res)=>{
 
 //dashboard
 const dashboard=async(req,res)=>{
-    try{
+    try{await order.deleteMany({paymentstatus:'pending'});
       
         let prodlen=await product.countDocuments();
         let catlen=await Category.countDocuments();
@@ -747,6 +747,7 @@ const CategoryToggle=async(req,res)=>{
 //order section
 const orders = async (req, res) => {
     try {
+      await order.deleteMany({paymentstatus:'pending'})
         // for login mid
         categories = req.categories;
         ses = req.ses;
@@ -891,7 +892,7 @@ const ordersstatus = async (req, res) => {
                   if(walletmoney!=0)
             {
                 const walletEntry = {
-                    amount: walletmoney, 
+                    amount: (walletmoney).toFixed(2), 
                     description: `Amount refunded on order payed via ${result[0].paymentMode}`, 
                     date: new Date() ,
                     status:req.body.status
@@ -1162,7 +1163,7 @@ const offerremove=async (req, res) => {
 const adminlogout=async(req,res)=>{
     try{
       
-       req.session.destroy()  //req.session.destroy is called, it destroys the session associated with the current request based on the session ID.
+      req.session.admincheck='';//req.session.destroy is called, it destroys the session associated with the current request based on the session ID.
        
        res.redirect('/admin')
     }

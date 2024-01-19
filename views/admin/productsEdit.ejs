@@ -111,7 +111,7 @@
 <%- include('./layouts/footer.ejs') %>
 <script>
      let v=[];let pictures=[]
-    function validateForm(l) {
+    async function validateForm(l) {
         
    const productNameInput = document.getElementById('productName');
     const productDescriptionInput = document.getElementById('productDescription');
@@ -136,15 +136,13 @@
     const nameRegex = /^[a-zA-Z]+$/;
  
     let errors = {};
+    console.log(productImages)
     for (let i = 0; i < productImages.length; i++) {
-        if(!v.includes(i))
-        {
-            pictures.push( productImages[i])
-            
-        }
-       
+    if (!v.includes(i)) {
+      await appendImageToPictures(productImages[i], pictures);
     }
-   
+  }
+    console.log(pictures)
    
 if (productName === '') {
     errors.productName = 'Product name should contain only letters and cannot be empty.';
@@ -201,16 +199,17 @@ if (!validateImages(pictures,l)) {
 
 const productOffersInput = document.getElementById('productOffers');
     const productOffers = productOffersInput.value;
+    console.log(v)
 
 const formData = new FormData();
     formData.append('name', productName);
     formData.append('description', productDescription);
-    formData.append('quantity', productQuantity);
-    formData.append('price', productPrice);
+   formData.append('quantity', productQuantity);
+   formData.append('price', productPrice);
     for (let i = 0; i < pictures.length; i++) {
        
             
-            formData.append('newImages', pictures[i]);
+        formData.append('newImages', pictures[i]);
         
        
     }
@@ -218,8 +217,6 @@ const formData = new FormData();
 formData.append('offers', productOffers);
 
     
-    console.log(pictures)
-
     // Fetch request to send data to the server
     fetch(`/admin/products/editpost?id=<%= editProduct._id %>`, {
         method: 'POST',
@@ -242,10 +239,23 @@ formData.append('offers', productOffers);
 
     return true;
 }
+
+async function appendImageToPictures(file, pictures) {
+  return new Promise((resolve) => {
+    let reader = new FileReader();
+
+    reader.onload = function (e) {
+      pictures.push(file);
+      resolve();
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
     function validateImages(images,len) {
     const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'];
     let newlen=images.length+len
-    console.log(images.length,len,newlen)
+    
     if (newlen === 0 || newlen > 5) {
         return false;
     }

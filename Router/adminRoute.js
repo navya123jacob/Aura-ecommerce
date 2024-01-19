@@ -17,13 +17,16 @@ const mid=require('../middleware.js')
 
 // Set storage engine
 const storage = multer.diskStorage({
-    destination: 'public/admin_assets/product_images', // Set the destination folder for uploads
-    filename: function (req, file, cb) {
-      // // Specify how the uploaded files should be named,Set the filename to be unique
-      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    //   diskStorage is a storage engine provided by Multer for handling file uploads to a disk. In the context of Multer, a storage engine defines how and where the uploaded files will be stored.Multer parses the incoming form data, extracts the files, and uses the configured storage engine to handle the storage details.
-}
-  });
+  destination: 'public/admin_assets/product_images',
+  filename: function (req, file, cb) {
+    
+    const uniqueIdentifier = Date.now() + '-' + Math.round(Math.random() * 1E9);
+
+    const uniqueFilename = file.fieldname + '-' + uniqueIdentifier + path.extname(file.originalname);
+
+    cb(null, uniqueFilename);
+  },
+});
   
   // Initialize multer
   const upload = multer({

@@ -380,7 +380,7 @@ const outotp= async (req, res) => {
     {
       await User.deleteOne({ _id: req.session.userId});
     }
-    req.session.destroy();
+    req.session.userId='';
     data= {
       success : true,
       
@@ -417,7 +417,7 @@ const verifyUserOTP = async (req, res) => {
         {
           await User.deleteOne({ _id: req.session.userId});
         }
-        req.session.destroy();
+        req.session.userId='';
         data= {
           success : true,
           message:'otp expired'
@@ -440,7 +440,7 @@ const verifyUserOTP = async (req, res) => {
             await User.updateOne({ _id: req.session.userId}, { verified: true });
             await UserOTP.deleteMany({ userId:req.session.userId});
             // Destroy the session
-            req.session.destroy();    //Each tab or browser is treated as a separate client by the server, and they can have different interactions with the server. Logging out from one tab doesn't automatically log out from another tab because each tab maintains its own state.
+            req.session.userId='';    //Each tab or browser is treated as a separate client by the server, and they can have different interactions with the server. Logging out from one tab doesn't automatically log out from another tab because each tab maintains its own state.
             data= {
               success : true,
             message:'successfully registered'
@@ -1329,11 +1329,7 @@ res.status(500).json({ success: false, error: error.message });
 //split payment 
 const splitorder=async(req,res)=>{
   try{
-    await User.updateOne(
-      { email: req.session.email },
-      { $set: { wallet:0} }
-    );
-    await order.updateOne({ _id: req.body.currentid }, { $set: { paymentstatus: 'placed' } });
+   
     generateRazorpay(req.body.currentid,req.body.difference).then((response)=>{
       response.success='razor';
       
@@ -1366,8 +1362,16 @@ const verifyrazorpayment=async(req,res)=>{
       
      
     if(razorpay_signature==hmac){ 
+      
       if(!req.query.wallet)
+      {const orderwallet=await order.findOne({_id: receipt})
+        if(orderwallet.paymentMode=='wallet')
       {
+        await User.updateOne(
+          { email: req.session.email },
+          { $set: { wallet:0} }
+        );
+      }
         await order.updateOne({ _id: receipt }, { $set: { paymentstatus: 'placed' } });
       }
       else{ const realamount=(amount/100).toFixed(2)
@@ -1879,8 +1883,8 @@ const logout=async(req,res)=>{
   try{
     
     
-     req.session.destroy()  //req.session.destroy is called, it destroys the session associated with the current request based on the session ID.
-     
+    req.session.checkuser=''  //req.session.destroy is called, it destroys the session associated with the current request based on the session ID.
+    req.session.email='' 
      res.redirect('/')
   }
   catch (error) {
