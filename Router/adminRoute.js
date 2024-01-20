@@ -137,6 +137,7 @@ adminRoute.post('/addofferpost',mid.adminloginNoSes,adminController.addofferspos
 //to remove offer
 adminRoute.post('/Offerremove',mid.adminloginNoSes,adminController.offerremove)
 
+
 //logout
 adminRoute.get('/logout',adminController.adminlogout)
 

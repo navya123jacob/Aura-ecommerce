@@ -245,6 +245,13 @@
                                   <% } %>
                                 <div class="product product-2">
                                     <figure class="product-media"  style="height:70%;">
+                                        <% if (products[i].offername !== '') { %>
+                                                
+                                            <span class="product-label label-new"><%= products[i].offername %> offer</span>
+                                        <% } else if (products[i].category && products[i].category.offername !== '') { %>
+                                            
+                                            <span class="product-label label-new"><%= products[i].category.offername %> offer</span>
+                                        <% } %>
                                         <%  let s1=products[i].pictures[0].replace('public','') %>
                                         <%  let s2=products[i].pictures[1].replace('public','') %>
                                         <a href="/productdetails?id=<%=products[i]._id%>" style="display: block; height: 100%;">
@@ -268,7 +275,12 @@
                                         </div><!-- End .product-cat -->
                                         <h3 class="product-title"><a href="<%= '/product/' + products[i]._id %>"><%= products[i].name %></a></h3><!-- End .product-title -->
                                         <div class="product-price">
-                                            ₹<%= products[i].price %>
+                                           <% if (products[i].offer != 0 ||products[i].category.offer!=0 ) { %>
+                                                <span style="color: grey; text-decoration: line-through;">₹<%= products[i].price %></span>
+                                                      <span style="margin-left: 5px;">₹<%= totalprice[i] %></span>
+                                                  <% } else { %>
+                                                      ₹<%= totalprice[i] %>
+                                                  <% } %>
                                         </div><!-- End .product-price -->
                             
                                         <!-- Other product details can be added here -->

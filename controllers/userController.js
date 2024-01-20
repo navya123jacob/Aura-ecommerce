@@ -15,6 +15,7 @@ const fs = require('fs');
 const path = require('path'); 
 const pdf = require('pdfkit');
 const os=require('os')
+const offer=require('../models/offerModel')
 
 const invoiceDir = path.join(__dirname, 'invoices');
 
@@ -86,6 +87,50 @@ const Home=async(req,res)=>{
         products.push(e)
       }
     })
+    
+//offer
+let totalprice=[]
+for (let i = 0; i < products.length; i ++) {
+  
+  if(products[i].offer==0 && products[i].category.offer==0 )
+  {
+    totalprice.push(products[i].price)
+  }
+  else{
+    let discountpercent=0
+    if (products[i].offer!=0)
+     {let off=await offer.findOne({name:products[i].offername,status:true})
+     if(off)
+     {
+      discountpercent = products[i].offer;
+     }
+     else{
+      discountpercent =0;
+      await product.updateOne({_id:products[i]._id},{$set:{offername:'',offer:0}})
+     }
+      
+  } 
+  else if(products[i].category.offer!=0) 
+  {
+    let off=await offer.findOne({name:products[i].category.offername,status:true})
+     if(off)
+     {
+      discountpercent = products[i].category.offer;
+    }
+    else{
+     discountpercent =0;
+     await category.updateOne({_id:products[i].category._id},{$set:{offername:'',offer:0}})
+    }
+  }
+  
+
+    let newtotal = (products[i].price - (discountpercent / 100) * products[i].price).toFixed(2);
+    totalprice.push(newtotal)
+    
+  }
+  
+
+}  
 
   const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
   if(buser)
@@ -103,7 +148,7 @@ const Home=async(req,res)=>{
     const user = req.session.checkuser|| '' 
     const email=req.session.email||''
    
-      res.render('home',{user,ses,products,categories,email})
+      res.render('home',{user,ses,products,categories,email,totalprice})
   }
   catch (error) {
       console.log(error.message);
@@ -624,12 +669,28 @@ const CatProductsView = async (req, res) => {
     else{
       let discountpercent=0
       if (products[i].offer!=0)
+       {let off=await offer.findOne({name:products[i].offername,status:true})
+       if(off)
        {
         discountpercent = products[i].offer;
+       }
+       else{
+        discountpercent =0;
+        await product.updateOne({_id:products[i]._id},{$set:{offername:'',offer:0}})
+       }
+        
     } 
     else if(products[i].category.offer!=0) 
     {
+      let off=await offer.findOne({name:products[i].category.offername,status:true})
+       if(off)
+       {
         discountpercent = products[i].category.offer;
+      }
+      else{
+       discountpercent =0;
+       await category.updateOne({_id:products[i].category._id},{$set:{offername:'',offer:0}})
+      }
     }
     
   

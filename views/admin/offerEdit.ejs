@@ -1,0 +1,149 @@
+<%- include('./layouts/header.ejs') %>
+
+<div class="container-fluid page-body-wrapper">
+    <!-- partial:partials/_navbar.html -->
+    <%- include('./layouts/nav.ejs') %>
+    <!-- partial -->
+    <div class="main-panel">
+        <div class="content-wrapper">
+            <div class="card" id="toload">
+                <div class="card-body" >
+                    <form class="forms-sample">
+
+                        <div class="form-group row">
+                            <label for="couponName" class="col-sm-3 col-form-label">Offer Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="couponName" name="name" placeholder="Offer Name" value="<%= offers.name %>" required>
+                                <h6 class="text-danger error-message" id="couponNameError"></h6>
+                            </div>
+                        </div>
+                    
+                        <div class="form-group row">
+                            <label for="discountAmount" class="col-sm-3 col-form-label">Discount Percentage</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" id="discountAmount" name="discount" placeholder="Discount Percentage" min="1" max="100" value="<%= offers.discount %>" required>
+                                <p class="text-danger error-message" id="coupondiscountError"></p>
+                            </div>
+                        </div>
+                    
+                        <div class="form-group row">
+                            <label for="startingDate" class="col-sm-3 col-form-label">Starting Date</label>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control" id="startingDate" name="startingDate" placeholder="Starting Date" value="<%= offers.startingDate ? offers.startingDate.toISOString().split('T')[0] : '' %>">
+                                <p class="text-danger error-message" id="couponstartingDateError"></p>
+                            </div>
+                        </div>
+                    
+                        <div class="form-group row">
+                            <label for="expiryDate" class="col-sm-3 col-form-label">Expiry Date</label>
+                            <div class="col-sm-9">
+                                <input type="date" class="form-control" id="expiryDate" name="expiryDate" placeholder="Expiry Date" value="<%= offers.expiryDate ? offers.expiryDate.toISOString().split('T')[0] : '' %>" required>
+                                <p class="text-danger error-message" id="couponexpiryDateError"></p>
+                            </div>
+                        </div>
+                    
+                        <button type="submit" class="btn btn-primary mr-2" onclick="validateForm(event)">Submit</button>
+                    
+                    </form>
+                    <button class="btn btn-dark" onclick="cancelAction()">Cancel</button>   
+                    <p class="text-success" id="messageid"> <%= message %></p>
+                </div>
+                
+            </div>
+            
+    <!-- content-wrapper ends -->
+    <!-- partial:partials/_footer.html -->
+    <footer class="footer" >
+        <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Aura Beauty</span>
+        </div>
+    </footer>
+    <!-- partial -->
+    </div>
+    <!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+
+    function validateForm(event) {
+        event.preventDefault();
+        let count=1;
+        document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
+
+        const name = document.getElementById('couponName').value;
+        const discount = document.getElementById('discountAmount').value;
+        const startingDate = document.getElementById('startingDate').value;
+        const expiryDate = document.getElementById('expiryDate').value;
+
+        if (!name.trim()) {
+            document.getElementById('couponNameError').textContent = 'Offer Name is required';
+            count=0;
+        }
+
+        if (discount < 1 || discount > 100) {
+            document.getElementById('coupondiscountError').textContent = 'Discount Percentage must be between 1 and 100';
+            count=0;
+        }
+
+        if (!startingDate || !expiryDate) {
+            document.getElementById('couponstartingDateError').textContent = 'Starting Date and Expiry Date are required';
+            count=0;
+        }
+
+        if (new Date(startingDate) >= new Date(expiryDate)) {
+            document.getElementById('couponstartingDateError').textContent = 'Starting Date must be before Expiry Date';
+            count=0;
+        }
+
+    
+
+if(count==1)
+{
+    const formData = {
+        name,
+        discount,
+        startingDate,
+        expiryDate,
+    };
+   
+   fetch('/admin/editofferpost?name=<%=offers.name%>', {
+        method: 'POST', 
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+    })
+        .then(response => {
+            
+           
+            return response.json();
+        })
+        .then(data => {
+            
+                var encodedMessage = encodeURIComponent(data.message);
+                var encodedname = encodeURIComponent(data.name);
+                
+        $('#toload').load(`/admin/editoffers?message=${encodedMessage}&name=${encodedname} #toload`)
+ 
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+
+   
+}
+
+function cancelAction() {
+    window.location.href = "/admin/offers";
+   
+  }
+    
+
+</script>
+
+<%- include('./layouts/footer.ejs') %>

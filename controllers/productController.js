@@ -132,9 +132,12 @@ const ProductToggle=async(req,res)=>{
     //products edit get
 const ProductEdit=async(req,res)=>{
     try{let message=req.query.message||'';
-       const editProduct=await product.findOne({_id:req.query.id})
+       const editProduct=await product.findOne({_id:req.query.id}) .populate({
+        path: 'category',
+      }).exec()
        const offers=await offer.find({status:true})
-        res.render('productsEdit',{editProduct,message,offers})
+       const categories=await Category.find()
+        res.render('productsEdit',{editProduct,message,offers,categories})
     }
     catch(error)
     {
@@ -167,6 +170,7 @@ const ProductEditpost = async (req, res) => {
           $set: {
               name: req.body.name,
               description: req.body.description,
+              category:req.body.category,
               price: req.body.price,
               quantity: req.body.quantity,
               offer:offerdiscount,

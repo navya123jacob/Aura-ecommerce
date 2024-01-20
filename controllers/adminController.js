@@ -1117,6 +1117,8 @@ const addoffers= async (req, res) => {
     }
 };
 
+
+
 // add offers post
  const addofferspost=async (req, res) => {
     try {
@@ -1144,6 +1146,7 @@ const addoffers= async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+
 
 //remove offer
 const offerremove=async (req, res) => {
