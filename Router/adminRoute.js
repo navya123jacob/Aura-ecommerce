@@ -124,18 +124,42 @@ adminRoute.post('/addcouponpost',mid.adminloginNoSes,adminController.addcouponpo
 //to remove coupon
 adminRoute.post('/couponremove',mid.adminloginNoSes,adminController.couponremove)
 
-
 //to view offers
 adminRoute.get('/offers',mid.adminloginNoSes,adminController.offers)
 
+
+
 //to add offers
 adminRoute.get('/offersAdd',mid.adminloginNoSes,adminController.addoffers)
+
 
 //offer add post
 adminRoute.post('/addofferpost',mid.adminloginNoSes,adminController.addofferspost)
 
 //to remove offer
 adminRoute.post('/Offerremove',mid.adminloginNoSes,adminController.offerremove)
+
+//to view banners
+adminRoute.get('/banners',mid.adminloginNoSes,adminController.banners)
+
+
+//to add banners
+adminRoute.get('/bannersadd',mid.adminloginNoSes,adminController.bannersadd)
+
+//add banners post 
+adminRoute.post('/bannersaddpost', mid.adminloginNoSes,upload.array('images', 5), adminController.bannersaddpost);
+
+
+//to remove banner
+adminRoute.post('/bannerremove',mid.adminloginNoSes,adminController.bannerremove)
+
+//to toggle banner
+adminRoute.post('/bannertoggle',mid.adminloginNoSes,adminController.bannertoggle)
+
+
+//to remove banner
+adminRoute.post('/bannerremove',mid.adminloginNoSes,adminController.bannerremove)
+
 
 
 //logout

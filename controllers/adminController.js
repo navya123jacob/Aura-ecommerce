@@ -7,6 +7,7 @@ const order = require('../models/orderModel');
 const product = require('../models/productModel');
 const coupon = require('../models/couponModel');
 const offer = require('../models/offerModel');
+const banner = require('../models/bannerModel');
 const fs = require('fs');
 const path = require('path'); 
 const pdf = require('pdfkit');
@@ -1000,6 +1001,7 @@ const coupons= async (req, res) => {
 };
 
 
+
 //add coupons
 const addcoupons= async (req, res) => {
     try {
@@ -1016,6 +1018,8 @@ const addcoupons= async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+
+
 
 
 //add coupon post 
@@ -1051,6 +1055,7 @@ const addcouponpost=async (req, res) => {
 };
 
 
+
 //remove coupon
 const couponremove=async (req, res) => {
     try {
@@ -1064,6 +1069,7 @@ const couponremove=async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+
 
 
 //to view offers
@@ -1162,6 +1168,115 @@ const offerremove=async (req, res) => {
     }
 };
 
+//banners
+const banners= async (req, res) => {
+  try {
+      const message=req.query.message||''
+
+      const pageSize = 5; // Number of products per page
+      const page = parseInt(req.query.page) || 1;
+      const searchQuery = req.query.search || '';
+      let query = {};
+      let banners;
+      if (searchQuery) {
+        const regex = new RegExp(`^${searchQuery}`, 'i');
+        query = {occasion: regex};
+        
+    }
+    
+    
+    const totalProducts = await banner.countDocuments(query);
+   
+  const totalPages = Math.ceil(totalProducts / pageSize);
+     banners=await banner.find(query).skip((page - 1) * pageSize)
+     .limit(pageSize)
+     .exec();
+     
+      res.render('banners', { message,banners,searchQuery, page, totalPages});
+
+     
+  } catch (error) {
+      console.log(error.message);
+      res.status(500).send('Internal Server Error');
+  }
+};
+
+//add Banners
+const bannersadd= async (req, res) => {
+try {
+ 
+    const message=req.query.message||''
+    
+    
+   
+    res.render('addbanner', { message});
+
+   
+} catch (error) {
+    console.log(error.message);
+    res.status(500).send('Internal Server Error');
+}
+};
+
+const bannersaddpost = async (req, res) => {
+  try {
+    const existingBanner = await banner.findOne({ description: req.body.description });
+
+    if (!existingBanner) {
+      
+      const bannerData = new banner({
+        title: req.body.title,
+        description: req.body.description,
+        occasion: req.body.occasion,
+        image: req.files.map(file => file.path),
+        status: false, 
+      });
+
+      await bannerData.save();
+
+      res.json({ success: true });
+    } else {
+      res.json({ success: false, message: 'Banner already added' });
+    }
+  } catch (error) {
+    console.error('Error in bannersaddpost:', error.message);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+//remove banner
+const bannerremove=async (req, res) => {
+  try {
+      
+      await banner.deleteOne({_id:req.query.id })
+     const bannerData=await banner.findOne({_id:req.query.id })
+      for (const imagePath of bannerData.image) {
+        const fullPath = path.join(__dirname, '..', imagePath); 
+        await fs.unlink(fullPath);
+      }  
+  res.json({success:true})          
+  } catch (error) {
+      console.log(error.message);
+      res.status(500).send('Internal Server Error');
+  }
+};
+
+//to select banner
+const bannertoggle= async (req, res) => {
+  try {
+    const id = req.query.id;
+    
+    await banner.updateOne({ _id: id }, { status: true });
+    await banner.updateMany({ _id: { $ne: id } }, { status: false });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
+
+
 //logout
 const adminlogout=async(req,res)=>{
     try{
@@ -1201,6 +1316,10 @@ module.exports={
     addoffers,
     addofferspost,
     offerremove,
-    
+    banners,
+    bannersadd,
+    bannersaddpost,
+    bannerremove,
+    bannertoggle,
     adminlogout
 }

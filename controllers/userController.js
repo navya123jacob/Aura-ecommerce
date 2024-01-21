@@ -15,7 +15,8 @@ const fs = require('fs');
 const path = require('path'); 
 const pdf = require('pdfkit');
 const os=require('os')
-const offer=require('../models/offerModel')
+const offer=require('../models/offerModel');
+const banner = require('../models/bannerModel');
 
 const invoiceDir = path.join(__dirname, 'invoices');
 
@@ -105,7 +106,7 @@ for (let i = 0; i < products.length; i ++) {
       discountpercent = products[i].offer;
      }
      else{
-      discountpercent =0;
+      discountpercent =0;products[i].offername='';products[i].offer=0;
       await product.updateOne({_id:products[i]._id},{$set:{offername:'',offer:0}})
      }
       
@@ -118,7 +119,7 @@ for (let i = 0; i < products.length; i ++) {
       discountpercent = products[i].category.offer;
     }
     else{
-     discountpercent =0;
+     discountpercent =0;products[i].category.offer=0;products[i].category.offername='';
      await category.updateOne({_id:products[i].category._id},{$set:{offername:'',offer:0}})
     }
   }
@@ -148,7 +149,18 @@ for (let i = 0; i < products.length; i ++) {
     const user = req.session.checkuser|| '' 
     const email=req.session.email||''
    
-      res.render('home',{user,ses,products,categories,email,totalprice})
+    const banners=await banner.findOne({status:true})
+
+    const images = [];
+
+    for (let j = 0; j < banners.image.length; j++) {
+        const filePath = banners.image[j];
+        const baseName = path.basename(filePath);
+        images.push(baseName);
+    }
+
+   
+      res.render('home',{user,ses,products,categories,email,totalprice,banners,images})
   }
   catch (error) {
       console.log(error.message);
@@ -675,7 +687,7 @@ const CatProductsView = async (req, res) => {
         discountpercent = products[i].offer;
        }
        else{
-        discountpercent =0;
+        discountpercent =0;products[i].offername='';products[i].offer=0;
         await product.updateOne({_id:products[i]._id},{$set:{offername:'',offer:0}})
        }
         
@@ -688,7 +700,7 @@ const CatProductsView = async (req, res) => {
         discountpercent = products[i].category.offer;
       }
       else{
-       discountpercent =0;
+       discountpercent =0;products[i].category.offername='';products[i].category.offer=0;
        await category.updateOne({_id:products[i].category._id},{$set:{offername:'',offer:0}})
       }
     }
@@ -763,7 +775,7 @@ for (let i = 0; i < products.pictures.length; i++) {
         discountpercent = products.offer;
       }
       else{
-       discountpercent =0;
+       discountpercent =0;products.offername='';products.offer=0;
        await product.updateOne({_id:products._id},{$set:{offername:'',offer:0}})
       }
     } 
@@ -774,7 +786,7 @@ for (let i = 0; i < products.pictures.length; i++) {
         discountpercent = products.category.offer;
       }
       else{
-       discountpercent =0;
+       discountpercent =0;products.category.offer=0;products.category.offername='';
        await category.updateOne({_id:products.category._id},{$set:{offername:'',offer:0}})
       }
     }
@@ -947,9 +959,15 @@ const cartload=async(req,res)=>{
                 productPrice = discountedPrice.toFixed(2);
                 individualprice = (individualprice - ((discountpercent / 100) * individualprice)).toFixed(2);
             } else {
-              
-                await product.updateOne({ _id: prod.products._id }, { $set: { offername: '', offer: 0 } });
-                await category.updateOne({ _id: prod.products.category._id }, { $set: { offername: '', offer: 0 } });
+                if(prod.products.offer !== 0)
+                {
+                  await product.updateOne({ _id: prod.products._id }, { $set: { offername: '', offer: 0 } });
+                }
+                else{
+                  await category.updateOne({ _id: prod.products.category._id }, { $set: { offername: '', offer: 0 } });       
+                }
+               
+               
            
             }
         }
