@@ -1190,6 +1190,7 @@ const banners= async (req, res) => {
   const totalPages = Math.ceil(totalProducts / pageSize);
      banners=await banner.find(query).skip((page - 1) * pageSize)
      .limit(pageSize)
+     .sort({occasion:1})
      .exec();
      
       res.render('banners', { message,banners,searchQuery, page, totalPages});
@@ -1245,30 +1246,46 @@ const bannersaddpost = async (req, res) => {
 };
 
 //remove banner
-const bannerremove=async (req, res) => {
-  try {
-      
-      await banner.deleteOne({_id:req.query.id })
-     const bannerData=await banner.findOne({_id:req.query.id })
-      for (const imagePath of bannerData.image) {
-        const fullPath = path.join(__dirname, '..', imagePath); 
-        await fs.unlink(fullPath);
-      }  
-  res.json({success:true})          
-  } catch (error) {
-      console.log(error.message);
-      res.status(500).send('Internal Server Error');
+const bannerremove= async(req, res) => {
+  try{
+
+    const bannerData=await banner.findOne({ _id: req.query.id })
+
+    if (!bannerData) {
+        return res.status(404).json({ success: false, message: 'Banner not found' });
+    }
+  
+    for (let i = 0; i < bannerData.image.length; i++) {
+        const fullPath = path.join(__dirname, '..', bannerData.image[i]);
+
+        (function (fullPath) {
+            fs.unlink(fullPath, (unlinkErr) => {
+                if (unlinkErr) {
+                    console.error('Error deleting file:', unlinkErr.message);
+                }
+            });
+        })(fullPath);
+    }
+
+   await banner.deleteOne({ _id: req.query.id });
+   res.json({ success: true });
   }
-};
+   catch (error) {
+      console.error(error.message);
+      res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+  };
+ 
+
 
 //to select banner
 const bannertoggle= async (req, res) => {
   try {
     const id = req.query.id;
-    
-    await banner.updateOne({ _id: id }, { status: true });
-    await banner.updateMany({ _id: { $ne: id } }, { status: false });
-
+    const b1=await banner.findOne({ _id: id})
+     await banner.updateOne({ _id: id,occasion:b1.occasion }, {$set:{ status: true }});
+      await banner.updateMany({ _id: { $ne: id },occasion:b1.occasion}, {$set:{ status: false }});  
+   
     res.json({ success: true });
   } catch (error) {
     console.error(error.message);

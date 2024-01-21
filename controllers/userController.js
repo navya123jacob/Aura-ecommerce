@@ -149,7 +149,8 @@ for (let i = 0; i < products.length; i ++) {
     const user = req.session.checkuser|| '' 
     const email=req.session.email||''
    
-    const banners=await banner.findOne({status:true})
+    const banners=await banner.findOne({status:true,occasion:"HOME1"})
+    const banners2=await banner.findOne({status:true,occasion:"HOME2"})
 
     const images = [];
 
@@ -158,9 +159,16 @@ for (let i = 0; i < products.length; i ++) {
         const baseName = path.basename(filePath);
         images.push(baseName);
     }
+    const images2 = [];
+
+    for (let j = 0; j < banners2.image.length; j++) {
+        const filePath = banners2.image[j];
+        const baseName = path.basename(filePath);
+        images2.push(baseName);
+    }
 
    
-      res.render('home',{user,ses,products,categories,email,totalprice,banners,images})
+      res.render('home',{user,ses,products,categories,email,totalprice,banners,images,banners2,images2})
   }
   catch (error) {
       console.log(error.message);

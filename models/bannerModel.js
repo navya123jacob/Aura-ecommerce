@@ -15,7 +15,7 @@ const bannerSchema = new mongoose.Schema({
   },
   occasion: {
     type: String,
-    required: true,
+    required: true, //location
   },
   status: {
     type: Boolean,
