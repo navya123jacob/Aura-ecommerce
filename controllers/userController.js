@@ -757,12 +757,26 @@ for (let i = 0; i < products.pictures.length; i++) {
     else{
       let discountpercent=0
       if (products.offer!=0)
+       {let off=await offer.findOne({name:products.offername,status:true})
+       if(off)
        {
         discountpercent = products.offer;
+      }
+      else{
+       discountpercent =0;
+       await product.updateOne({_id:products._id},{$set:{offername:'',offer:0}})
+      }
     } 
     else if(products.category.offer!=0) 
+    {let off=await offer.findOne({name:products.category.offername,status:true})
+    if(off)
     {
         discountpercent = products.category.offer;
+      }
+      else{
+       discountpercent =0;
+       await category.updateOne({_id:products.category._id},{$set:{offername:'',offer:0}})
+      }
     }
       
       let newtotal = (products.price - (discountpercent / 100) * products.price).toFixed(2);
@@ -888,16 +902,16 @@ const cartload=async(req,res)=>{
     const email=req.session.email
     const myuser=await User.findOne({email:req.session.email})
     const usercart = await cart
-  .findOne({ user: myuser._id })
-  .populate({
-    path: 'Products.products',
-    populate: {
-      path: 'category', 
-      select: 'offername', // Select the fields from the Category model
-      select: 'offer'
-    },
-  })
-  .exec();
+    .findOne({ user: myuser._id })
+    .populate({
+      path: 'Products.products',
+      populate: {
+        path: 'category',
+        select: 'offername offer',
+      },
+    })
+    .exec();
+  
     let Total = 0;
     let shipping = 0;
     let grandtotal = 0;
@@ -910,39 +924,47 @@ const cartload=async(req,res)=>{
       b=1
       
       
-      usercart.Products.forEach(async(product,index) => {
-          let productPrice = parseFloat(product.total);
-          let individualprice=product.price;let discountpercent=0
-          
-          if(product.products.category.offer != 0)
-          {
-            discountpercent=product.products.category.offer
-          }
-          if(product.products.offer != 0)
-          {
-            discountpercent=product.products.offer
-          }
-          
-          if (product.products.offer != 0 ||product.products.category.offer!= 0 ) {
-              const discountAmount = (discountpercent / 100) * productPrice;
-              const discountedPrice = productPrice - discountAmount;
-              productPrice = discountedPrice.toFixed(2);
-              individualprice=(individualprice-((discountpercent / 100) * individualprice)).toFixed(2);
-          }
-          
+      for (const prod of usercart.Products) {
+        let productPrice = parseFloat(prod.total);
+        let individualprice = prod.price;
+        let discountpercent = 0;
       
-          Total = Total + parseFloat(productPrice);
-          totalproprice.push(parseFloat(productPrice))
-          proprice.push(parseFloat(individualprice))
-          
-          if(product.products.quantity==0)
-          {
-            await cart.updateOne({user:myuser._id}, { $pull: { 'Products': { 'products': product.products} } })
-            totalproprice.pop();proprice.pop();
+        if (prod.products.offer !== 0 || prod.products.category.offer !== 0) {
+            let off;
+    
+            if (prod.products.offer != 0) {
+                off = await offer.findOne({ name: prod.products.offername, status: true });
+            } else if (prod.products.category.offer != 0) {
+                off = await offer.findOne({ name: prod.products.category.offername, status: true });
+               
+            }
+    
+            if (off) {
+                discountpercent = prod.products.offer || prod.products.category.offer;
+    
+                const discountAmount = (discountpercent / 100) * productPrice;
+                const discountedPrice = productPrice - discountAmount;
+                productPrice = discountedPrice.toFixed(2);
+                individualprice = (individualprice - ((discountpercent / 100) * individualprice)).toFixed(2);
+            } else {
+              
+                await product.updateOne({ _id: prod.products._id }, { $set: { offername: '', offer: 0 } });
+                await category.updateOne({ _id: prod.products.category._id }, { $set: { offername: '', offer: 0 } });
            
-            
-          }
-      });
+            }
+        }
+    
+        Total = Total + parseFloat(productPrice);
+        totalproprice.push(parseFloat(productPrice));
+        proprice.push(parseFloat(individualprice));
+    
+        if (prod.products.quantity === 0) {
+            await cart.updateOne({ user: myuser._id }, { $pull: { 'Products': { 'products': prod.products } } });
+            totalproprice.pop();
+            proprice.pop();
+        }
+    }
+    
       usercart.Products = usercart.Products.filter((product) => product.products.quantity != 0);
       
         if (Total < 500) {
