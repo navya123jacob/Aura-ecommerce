@@ -610,8 +610,9 @@ const about = async (req, res) => {
       ses=req.ses
       const user = req.session.checkuser|| '' 
       //logi mid end
+      const userlen=await User.countDocuments()
        
-      res.render('about', { categories,ses,user});
+      res.render('about', { categories,ses,user,userlen});
       
 
     

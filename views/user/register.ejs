@@ -11,25 +11,25 @@
                         <form id="registerForm" action="/registerpost?refcode=<%=userrefcode%>" style="color: black;" method="POST" onsubmit="return validateForm()">
                             <div class="form-group">
                                 <label for="register-first-name">First Name *</label>
-                                <input type="text" class="form-control" id="register-first-name" name="Fname" required>
+                                <input type="text" class="form-control" id="register-first-name" name="Fname" >
                                 <small id="firstNameError" class="text-danger"></small>
                             </div><!-- End .form-group -->
 
                             <div class="form-group">
                                 <label for="register-last-name">Last Name *</label>
-                                <input type="text" class="form-control" id="register-last-name" name="Lname" required>
+                                <input type="text" class="form-control" id="register-last-name" name="Lname">
                                 <small id="lastNameError" class="text-danger"></small>
                             </div><!-- End .form-group -->
 
                             <div class="form-group">
                                 <label for="register-mobile">Mobile Number *</label>
-                                <input type="tel" class="form-control" id="register-mobile" name="mobile" required>
+                                <input type="tel" class="form-control" id="register-mobile" name="mobile" >
                                 <small id="mobileError" class="text-danger"></small>
                             </div><!-- End .form-group -->
 
                             <div class="form-group">
                                 <label for="register-email-2">Your email address *</label>
-                                <input type="email" class="form-control" id="register-email-2" name="regemail" required>
+                                <input type="email" class="form-control" id="register-email-2" name="regemail" >
                                 <small id="emailError" class="text-danger"></small>
                             </div><!-- End .form-group -->
 
@@ -37,7 +37,7 @@
 <div class="form-group">
     <label for="register-password-2">Password *</label>
     <div class="input-group">
-        <input type="password" class="form-control" id="register-password-2" name="password" required>
+        <input type="password" class="form-control" id="register-password-2" name="password">
         <div class="input-group-append">
             <div class="input-group-text">
                 <input type="checkbox" id="password-toggle" onclick="togglePassword()">
@@ -51,7 +51,7 @@
 <div class="form-group">
     <label for="confirm-password">Confirm Password *</label>
     <div class="input-group">
-        <input type="password" class="form-control" id="confirm-password" name="confirmPassword" required>
+        <input type="password" class="form-control" id="confirm-password" name="confirmPassword">
         <div class="input-group-append">
             <div class="input-group-text">
                 <input type="checkbox" id="password-toggle" onclick="togglePassword2()">
@@ -116,41 +116,42 @@
         mobileError.textContent = '';
         emailError.textContent = '';
         passwordError.textContent = '';
+        let isvalid=true;
 
         // Add your validation logic here
         if (firstName.length < 2) {
             firstNameError.textContent = 'First name must be at least 2 characters.';
-            return false;
+            isvalid=false;
         }
 
         if (lastName.length < 1) {
             lastNameError.textContent = 'Last name must be at least 1 character.';
-            return false;
+            isvalid=false;
         }
 
         if (!/^\d{10}$/.test(mobile)) {
             mobileError.textContent = 'Please enter a valid 10-digit mobile number.';
-            return false;
+            isvalid=false;
         }
 
         if (!/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(email)) {
             emailError.textContent = 'Please enter a valid email address.'; //user.domain is invalid
-            return false;
+            isvalid=false;
         }
 
         // Stronger password requirements
         if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(password)) { // must be at least 6 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character from the set @$!%*?&
             passwordError.textContent = 'Password must be at least 6 characters and include at least one uppercase letter, one lowercase letter, one number, and one special character.';
-            return false;
+            isvalid=false;
         }
 
         if (password !== confirmPasswordInput) {
             confirmPasswordError.textContent = "Passwords do not match";
-            return false;
+            isvalid=false;
         }
 
         // Form is valid
-        return true;
+        return isvalid;
     }
 
     function togglePassword() {
