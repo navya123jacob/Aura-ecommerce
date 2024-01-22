@@ -58,6 +58,9 @@
                           <button class="btn <%= banner.status ? 'btn-success' : 'btn-danger' %>" onclick="toggleStatus('<%= banner._id %>')">
                             <%= banner.status ? 'Selected' : 'Deselected' %>
                         </button>
+                        <button class="btn btn-primary" onclick="editBanner('<%= banner._id %>')">
+                          Edit
+                      </button>
                         </td>
                       </tr>
                       <% i++ %>
@@ -215,6 +218,11 @@ function toggleStatus(bannerId) {
           });
       }
     });
+  }
+
+  function editBanner(id)
+  {let myid=decodeURIComponent(id)
+    window.location.href=`/admin/editbanners?id=${myid}`
   }
 </script>
 

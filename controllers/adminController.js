@@ -60,9 +60,11 @@ const LoginPost=async(req,res)=>{
 const dashboard=async(req,res)=>{
     try{await order.deleteMany({paymentstatus:'pending'});
       
-        let prodlen=await product.countDocuments();
-        let catlen=await Category.countDocuments();
-        let totalUsers = await User.countDocuments();
+    const [prodlen, catlen, totalUsers] = await Promise.all([
+      product.countDocuments(),
+      Category.countDocuments(),
+      User.countDocuments()
+  ]);
         let salesdash = await order.aggregate([
           {
             $match: {
@@ -1188,6 +1190,7 @@ const banners= async (req, res) => {
     const totalProducts = await banner.countDocuments(query);
    
   const totalPages = Math.ceil(totalProducts / pageSize);
+  
      banners=await banner.find(query).skip((page - 1) * pageSize)
      .limit(pageSize)
      .sort({occasion:1})
@@ -1294,6 +1297,86 @@ const bannertoggle= async (req, res) => {
 };
 
 
+//edit Banners
+const editbanners= async (req, res) => {
+  try {
+   
+      const message=req.query.message||''
+      
+      const id=req.query.id
+     const banners=await banner.findOne({_id:id})
+     let images=[]
+     for(let i=0;i<banners.image.length;i++)
+     {
+      const imageName = path.basename(banners.image[i]);
+    
+    images.push(imageName);
+     }
+      res.render('banneredit', { message,banners,images});
+  
+     
+  } catch (error) {
+      console.log(error.message);
+      res.status(500).send('Internal Server Error');
+  }
+  };
+
+  const bannerseditpost = async (req, res) => {
+    try {
+        const bannerId = req.query.id; 
+
+        const existingBanner = await banner.findById(bannerId);
+
+        if (existingBanner) {
+           
+            existingBanner.title = req.body.name;
+            existingBanner.description = req.body.description;
+            existingBanner.occasion = req.body.occasion;
+            existingBanner.image = existingBanner.image.concat(req.files.map(file => file.path));
+
+            await existingBanner.save();
+
+            res.json({ success: true, message: ''});
+        } else {
+            res.json({ success: true, message: 'Banner not found' });
+        }
+    } catch (error) {
+        console.error('Error in bannerseditpost:', error.message);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+const BannerEditDelete = async (req, res) => {
+  try {
+      const imagePath = path.join(__dirname, '..', req.query.img);
+
+      fs.unlink(imagePath, (err) => {
+          if (err) {
+              console.error('Error deleting file:', err);
+          } else {
+              console.log('File deleted successfully');
+          }
+      });
+
+      await banner.updateOne(
+          { _id: req.query.id },
+          {
+              $pull: {
+                  image: req.query.img
+              }
+          }
+      );
+
+      const editedBanner = await banner.findOne({ _id: req.query.id });
+
+      res.redirect(`/admin/editbanners?id=${req.query.id}`);
+  } catch (error) {
+      console.log(error.message);
+      res.status(500).send('Internal Server Error');
+  }
+};
+  
+
 //logout
 const adminlogout=async(req,res)=>{
     try{
@@ -1338,5 +1421,8 @@ module.exports={
     bannersaddpost,
     bannerremove,
     bannertoggle,
+    editbanners,
+    bannerseditpost,
+    BannerEditDelete,
     adminlogout
 }

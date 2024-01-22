@@ -161,6 +161,19 @@ adminRoute.post('/bannertoggle',mid.adminloginNoSes,adminController.bannertoggle
 adminRoute.post('/bannerremove',mid.adminloginNoSes,adminController.bannerremove)
 
 
+//to get edit banner
+adminRoute.get('/editbanners',mid.adminloginNoSes,adminController.editbanners)
+
+
+
+//edit banner post
+adminRoute.post('/bannerseditpost',mid.adminloginNoSes,upload.array('newImages',5),adminController.bannerseditpost)
+
+
+//remove banner image
+adminRoute.get('/bannereditdelete',mid.adminloginNoSes,adminController.BannerEditDelete)
+
+
 
 //logout
 adminRoute.get('/logout',adminController.adminlogout)

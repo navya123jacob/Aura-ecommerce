@@ -83,7 +83,7 @@
                                     <div class="mb-3">
                                         <!-- Display existing image and provide option to delete -->
                                         <img src="<%= s%>" alt="Product Image" style="max-width: 100px; max-height: 100px; cursor: pointer;" onclick="selectImage('<%= i %>')">
-                                        <button type="button" class="btn btn-danger btn-sm mt-2" onclick="deleteImage('<%= i %>')"><a href="/admin/products/editdelete?id=<%=editProduct._id%>&img=<%=editProduct.pictures[i]%>" class="text-white">Delete</a></button>
+                                        <button type="button" class="btn btn-danger btn-sm mt-2" ><a href="/admin/products/editdelete?id=<%=editProduct._id%>&img=<%=editProduct.pictures[i]%>" class="text-white">Delete</a></button>
                                     </div>
                                 <% } %>
                                 <!-- Option to add new images -->
@@ -323,7 +323,7 @@ function displaySelectedNewImage(input) {
             var imageContainer = document.createElement('div');
             imageContainer.style.height = targetHeight + 'vh';
             imageContainer.style.width = 'auto'; 
-            imageContainer.style.overflow = 'hidden';
+            imageContainer.style.display='flex';
 
             var image = document.createElement('img');
             image.src = e.target.result;
@@ -340,7 +340,8 @@ function displaySelectedNewImage(input) {
 
             var closeButton = document.createElement('button');
             closeButton.innerHTML = '&times;';
-            closeButton.classList.add('btn', 'btn-sm', 'btn-danger');
+            closeButton.classList.add('btn', 'btn-sm');
+            closeButton.style.backgroundColor = 'transparent';
             closeButton.addEventListener('click', function () {
                 // Remove the entire container when the close button is clicked
                 previewContainer.removeChild(imageContainer);

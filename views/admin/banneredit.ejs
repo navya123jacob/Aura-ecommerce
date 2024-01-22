@@ -1,0 +1,285 @@
+<%- include('./layouts/header.ejs') %>
+
+<div class="container-fluid page-body-wrapper">
+    <!-- partial:partials/_navbar.html -->
+    <%- include('./layouts/nav.ejs') %>
+    <!-- partial -->
+    <div class="main-panel">
+        <div class="content-wrapper">
+
+            <div class="card">
+                <div class="card-body" id="toload">
+                    <form class="forms-sample" enctype="multipart/form-data">
+                        <!-- Banner Name -->
+                        <div class="form-group row">
+                            <label for="bannerName" class="col-sm-3 col-form-label">Banner Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="bannerName" name="name" placeholder="Banner Name" value="<%= banners.title %>" required>
+                                <small id="nameError" class="text-danger" data-error-id="bannerNameError"></small>
+                            </div>
+                        </div>
+                    
+                        <!-- Banner Description -->
+                        <div class="form-group row">
+                            <label for="bannerDescription" class="col-sm-3 col-form-label">Banner Description</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="bannerDescription" name="description" placeholder="Banner Description" required><%= banners.description %></textarea>
+                                <small id="descriptionError" class="text-danger" data-error-id="bannerDescriptionError"></small>
+                            </div>
+                        </div>
+                    
+                        
+                        <!-- Banner Occasion -->
+                     <div class="form-group row">
+                    <label for="bannerOccasion" class="col-sm-3 col-form-label">Banner Location</label>
+                    <div class="col-sm-9">
+                    <select class="form-control" id="bannerOccasion" name="occasion" required>
+                    <option value="HOME1" <%= banners.occasion === 'HOME1' ? 'selected' : '' %>>HOME1</option>
+                    <option value="HOME2" <%= banners.occasion === 'HOME2' ? 'selected' : '' %>>HOME2</option>
+                    </select>
+                    <small id="occasionError" class="text-danger" data-error-id="bannerOccasionError"></small>
+                    </div>
+                    </div>
+                    
+                        <!-- Banner Images -->
+                        <div class="form-group row">
+                            <label for="bannerImages" class="col-sm-3 col-form-label">Banner Images</label>
+                            <div class="col-sm-9">
+                                <% for (let i = 0; i < banners.image.length; i++) { %>
+                                    <div class="mb-3">
+                                        <!-- Display existing banner image and provide option to delete -->
+                                        <img src="/admin_assets/product_images/<%=images[i] %>" alt="Banner Image" style="max-width: 100px; max-height: 100px; cursor: pointer;" onclick="selectImage('<%= i %>')">
+                                        <button type="button" class="btn btn-danger btn-sm mt-2" ><a href="/admin/bannereditdelete?id=<%=banners._id%>&img=<%=banners.image[i]%>" class="text-white">Delete</a></button>
+                                    </div>
+                                <% } %>
+                                <!-- Option to add new banner images -->
+                                <input type="file" class="form-control-file mt-2" name="newImages" accept="image/*" id="bannerImages" onchange="displaySelectedNewImage(this)" multiple>
+                                <small id="imagesError" class="text-danger" data-error-id="bannerImagesError"></small>
+                                <div id="imagePreview" class="mt-2"></div>
+                            </div>
+                        </div>
+                    
+                        <!-- Other form fields... -->
+                    
+                        <button type="button" class="btn btn-primary mr-2" onclick="return validateForm(<%= banners.image.length %>);">Submit</button>
+                        <button class="btn btn-dark" onclick="cancelAction()">Cancel</button>
+                        <p class="text-success"> <%= message %></p>
+                    </form>
+                    
+                    </div>
+            </div>
+
+            <!-- content-wrapper ends -->
+            <!-- partial:partials/_footer.html -->
+            <footer class="footer">
+                <div class="d-sm-flex justify-content-center justify-content-sm-between">
+                    <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Aura Beauty</span>
+                </div>
+            </footer>
+            <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+</div>
+<!-- container-scroller -->
+
+<%- include('./layouts/footer.ejs') %>
+<script>
+    let v = [];
+    let pictures = [];
+
+    async function validateForm(l) {
+        // Fetching input elements
+        const bannerNameInput = document.getElementById('bannerName');
+        const bannerDescriptionInput = document.getElementById('bannerDescription');
+        const bannerOccasionInput = document.getElementById('bannerOccasion');
+        const bannerImagesInput = document.getElementById('bannerImages');
+
+        // Fetching error elements
+        const nameError = document.getElementById('nameError');
+        const descriptionError = document.getElementById('descriptionError');
+        const occasionError = document.getElementById('occasionError');
+        const imagesError = document.getElementById('imagesError');
+
+        // Fetching input values
+        const bannerName = bannerNameInput.value.trim();
+        const bannerDescription = bannerDescriptionInput.value.trim();
+        const bannerOccasion = bannerOccasionInput.value.trim();
+        const bannerImages = bannerImagesInput.files;
+
+        // Clearing previous errors
+        nameError.textContent = '';
+        descriptionError.textContent = '';
+        occasionError.textContent = '';
+        imagesError.textContent = '';
+
+        let errors = {};
+
+        // Validating Banner Name
+        if (bannerName === '') {
+            errors.bannerName = 'Banner name cannot be empty.';
+            nameError.textContent = errors.bannerName;
+            bannerNameInput.focus();
+            return false;
+        }
+
+        // Validating Banner Description
+        if (bannerDescription === '') {
+            errors.bannerDescription = 'Banner description cannot be empty.';
+            descriptionError.textContent = errors.bannerDescription;
+            bannerDescriptionInput.focus();
+            return false;
+        }
+
+        // Validating Banner Occasion
+        if (bannerOccasion === '') {
+            errors.bannerOccasion = 'Banner occasion cannot be empty.';
+            occasionError.textContent = errors.bannerOccasion;
+            bannerOccasionInput.focus();
+            return false;
+        }
+
+        // Validating Banner Images
+        for (let i = 0; i < bannerImages.length; i++) {
+            if (!v.includes(i)) {
+                await appendImageToPictures(bannerImages[i], pictures);
+            }
+        }
+
+        if (!validateImages(pictures, l)) {
+            errors.bannerImages = 'Please select valid and at most 5 images.';
+            imagesError.textContent = errors.bannerImages;
+            bannerImagesInput.focus();
+            pictures = [];
+            return false;
+        }
+
+        // Creating FormData object
+        const formData = new FormData();
+        formData.append('name', bannerName);
+        formData.append('description', bannerDescription);
+        formData.append('occasion', bannerOccasion);
+
+        for (let i = 0; i < pictures.length; i++) {
+            formData.append('newImages', pictures[i]);
+        }
+
+        // Fetch request to send data to the server
+        fetch(`/admin/bannerseditpost?id=<%= banners._id %>`, {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success == true) {
+                  const encodedMessage=decodeURIComponent(data.message)
+                    $('#toload').load(`/admin/editbanners?id=<%= banners._id %>&message=${encodedMessage} #toload`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+        return true;
+    }
+
+    async function appendImageToPictures(file, pictures) {
+        return new Promise((resolve) => {
+            let reader = new FileReader();
+
+            reader.onload = function (e) {
+                pictures.push(file);
+                resolve();
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function validateImages(images, len) {
+        const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'];
+        let newlen = images.length + len;
+
+        if (newlen === 0 || newlen > 3) {
+            return false;
+        }
+
+        for (const file of images) {
+            const fileName = file.name.toLowerCase();
+            const extension = fileName.split('.').pop();
+            if (!allowedExtensions.includes(extension)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function selectImage(index) {
+        console.log(`Selecting image ${index}`);
+        document.getElementById(`bannerImageInput${index}`).click();
+    }
+
+    function deleteImage(index) {
+        console.log(`Deleting image ${index}`);
+        v.push(index);
+    }
+
+    function displaySelectedNewImage(input) {
+        var previewContainer = document.getElementById('imagePreview');
+        var files = input.files;
+        previewContainer.innerHTML = '';
+        var targetHeight = 40;
+
+        for (let i = 0; i < files.length; i++) {
+            let file = files[i];
+            let reader = new FileReader();
+
+            reader.onload = function (e) {
+                var imageContainer = document.createElement('div');
+                imageContainer.style.height = targetHeight + 'vh';
+                imageContainer.style.width = 'auto';
+                imageContainer.style.display='flex'
+                
+
+                var image = document.createElement('img');
+                image.src = e.target.result;
+                image.classList.add('img-thumbnail', 'mr-2');
+
+                // Calculate the aspect ratio of the image
+                var aspectRatio = image.naturalWidth / image.naturalHeight;
+
+                // Calculate the width to maintain the aspect ratio with the target height
+                var newWidth = targetHeight * aspectRatio;
+
+                image.style.width = newWidth + 'vh';
+                image.style.height = targetHeight + 'vh';
+                
+                var closeButton = document.createElement('button');
+                
+                closeButton.innerHTML = '&times;';
+                closeButton.classList.add('btn', 'btn-sm');
+                closeButton.style.backgroundColor = 'transparent';
+                closeButton.addEventListener('click', function () {
+                    // Remove the entire container when the close button is clicked
+                    previewContainer.removeChild(imageContainer);
+                    deleteImage(i);
+                });
+                
+                // Append the image and close button to the container
+                imageContainer.appendChild(image);
+                imageContainer.appendChild(closeButton);
+
+                // Append the container to the previewContainer
+                previewContainer.appendChild(imageContainer);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function cancelAction() {
+        window.location.href = "/admin/banners";
+    }
+</script>

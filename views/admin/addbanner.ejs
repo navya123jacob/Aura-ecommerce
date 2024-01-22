@@ -204,7 +204,7 @@ if (occasion === '') {
                     var imageContainer = document.createElement('div');
                     imageContainer.style.height = targetHeight + 'vh';
                     imageContainer.style.width = 'auto';
-                    imageContainer.style.overflow = 'hidden';
+                    imageContainer.style.display='flex';
 
                     var image = document.createElement('img');
                     image.src = e.target.result;
@@ -218,7 +218,8 @@ if (occasion === '') {
 
                     var closeButton = document.createElement('button');
                     closeButton.innerHTML = '&times;';
-                    closeButton.classList.add('btn', 'btn-sm', 'btn-danger');
+                    closeButton.classList.add('btn', 'btn-sm');
+                    closeButton.style.backgroundColor = 'transparent';
                     closeButton.addEventListener('click', function () {
                         previewContainer.removeChild(imageContainer);
                         deleteBannerImage(index, file);

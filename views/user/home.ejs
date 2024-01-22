@@ -190,7 +190,8 @@
                                 <div class="banner-content">
                                     <!-- <h4 class="banner-subtitle"><a href="#">Trending now</a></h4>End .banner-subtitle -->
                                     <h3 class="banner-title"><a href="#"><span>Skin care</span></a></h3><!-- End .banner-title -->
-                                    <a href="#" class="btn btn-outline-primary-2 banner-link">Discover Now<i class="icon-long-arrow-right"></i></a>
+                                    <% const skincareCategory = categories.find(cat => cat.name =='Skincare'); %>
+                                    <a  href="<%= skincareCategory ? `/category?cat=${skincareCategory.name}` : '#' %>">Shop Now<i class="icon-long-arrow-right"></i></a>
                                 </div><!-- End .banner-content -->
                             </div><!-- End .banner -->
                         </div><!-- End .col-md-6-->
@@ -203,8 +204,9 @@
 
                                 <div class="banner-content">
                                     <!-- <h4 class="banner-subtitle"><a href="#">Limited time only.</a></h4>End .banner-subtitle -->
-                                    <h3 class="banner-title"><a href="#"><span>Hair Care</span></a></h3><!-- End .banner-title -->
-                                    <a href="#" class="btn btn-outline-primary-2 banner-link">Shop Now<i class="icon-long-arrow-right"></i></a>
+                                    <h3 class="banner-title"><a href="#"><span>Hair care</span></a></h3><!-- End .banner-title -->
+                                    <% const haircareCategory = categories.find(cat => cat.name =='Haircare'); %>
+                                    <a  href="<%= haircareCategory ? `/category?cat=${haircareCategory.name}` : '#' %>">Shop Now<i class="icon-long-arrow-right"></i></a>
                                 </div><!-- End .banner-content -->
                             </div><!-- End .banner -->
 
@@ -216,7 +218,8 @@
                                 <div class="banner-content">
                                     <!-- <h4 class="banner-subtitle"><a href="#">This week we love...</a></h4>End .banner-subtitle -->
                                     <h3 class="banner-title "><a href="#"><span>Bath <br>& Body</span></a></h3><!-- End .banner-title -->
-                                    <a href="#" class="btn btn-outline-primary-2 banner-link">Discover Now<i class="icon-long-arrow-right"></i></a>
+                                    <% const bathcareCategory = categories.find(cat => cat.name =='Bath and Body'); %>
+                                    <a  href="<%= bathcareCategory ? `/category?cat=${bathcareCategory.name}` : '#' %>">Shop Now<i class="icon-long-arrow-right"></i></a>
                                 </div><!-- End .banner-content -->
                             </div><!-- End .banner -->
                         </div><!-- End .col-md-6 -->
