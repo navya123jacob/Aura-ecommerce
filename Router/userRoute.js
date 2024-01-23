@@ -120,7 +120,7 @@ userRoute.post('/addwalletmoney',mid.UserNoSes,mid.logiheader,userController.add
 
 
 //to add product to cart
-userRoute.post('/productaddtocart',userController.productaddtocart)
+userRoute.post('/productaddtocart',mid.otpmid,mid.logiheader,userController.productaddtocart)
 
 //to remove from cart
 userRoute.post('/productremovefromcart',userController.productremovefromcart)
