@@ -133,7 +133,7 @@ for (let i = 0; i < products.length; i ++) {
 
 }  
 
-  const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
+  const buser=await User.findOne({Fname:req.session.checkuser,email:req.session.email,is_blocked:true})
   if(buser)
     {
       req.session.checkuser='';
@@ -184,7 +184,7 @@ const loadLogin=async(req,res)=>{
     try{
       
       
-        const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
+        const buser=await User.findOne({Fname:req.session.checkuser,email:req.session.email,is_blocked:true})
         if(buser)
           {
             req.session.checkuser='';req.session.email='';
@@ -230,7 +230,7 @@ const loadRegister=async(req,res)=>{
        }
        else
        {
-      const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
+      const buser=await User.findOne({Fname:req.session.checkuser,email:req.session.email,is_blocked:true})
       if(buser)
         {
           req.session.checkuser='';req.session.email='';
@@ -382,7 +382,7 @@ const loadRegisterOTP=async(req,res)=>{
        if(req.session.userId)
        {
        
-        const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
+        const buser=await User.findOne({Fname:req.session.checkuser,email:req.session.email,is_blocked:true})
         if(buser)
           {
             req.session.checkuser='';req.session.email='';

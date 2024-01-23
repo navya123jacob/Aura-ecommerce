@@ -78,7 +78,7 @@ const adminloginNoSes = (req, res, next) => {
     let ses = false; // If checkuser doesn't exists
    
     
-  const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
+  const buser=await User.findOne({Fname:req.session.checkuser,email:req.session.email,is_blocked:true})
       if(buser)
         {
           req.session.checkuser='';req.session.email='';
