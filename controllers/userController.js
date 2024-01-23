@@ -155,12 +155,24 @@ for (let i = 0; i < products.length; i ++) {
    
 
     const images = [];
-    if(banners){
+    const adminAssetsPath = path.join('admin_assets', 'product_images');
+    const separator = path.sep;
+  
+
+if (banners) {
+    // Assuming this code is inside the user_Controller
+    const separator = '/';
+
     for (let j = 0; j < banners.image.length; j++) {
         const filePath = banners.image[j];
-        const baseName = path.basename(filePath);
-        images.push(baseName);
-    }}
+        const adminAssetsPath = path.join('admin_assets', 'product_images', path.basename(filePath));
+
+        // Ensure the result uses forward slashes
+        const resultPath = separator + adminAssetsPath.replace(/\\/g, separator);
+        console.log(resultPath);
+        images.push(resultPath);
+    }
+}
     const images2 = [];
     
     if(banners2){
