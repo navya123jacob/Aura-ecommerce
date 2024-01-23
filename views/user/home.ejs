@@ -104,7 +104,8 @@
                             <div class="intro-slider owl-carousel owl-theme owl-nav-inside owl-light" data-toggle="owl" data-owl-options='{"nav": false, "dots": false}'>
                                 <% for (let i = 0; i < banners.image.length; i++) { %>
                                     <!-- Slide for each image -->
-                                    <div class="intro-slide" style="background-image: url(/admin_assets/product_images/<%= images[i] %>);">
+                                    <!-- <div class="intro-slide" style="background-image: url(/admin_assets/product_images/<%= images[i] %>)"> -->
+                                        <div class="intro-slide" style="background-image: url('/admin_assets/product_images/<%= images[i] %>')">
                                         <div class="container intro-content text-center">
                                             <h3 class="intro-title text-white"><%= banners.title %></h3><!-- Display title -->
                                             <a href="/category" class="btn btn-primary mt-5">SHOP</a>
@@ -288,11 +289,11 @@
                                         </a>
                             
                                         <div class="product-action-vertical">
-                                            <button href="#" class="btn-product-icon btn-wishlist btn-expandable" title="Add to wishlist"  onclick="addtowish('<%=products[i].name%>','<%=email%>',<%=i%>)"><span id="wish<%=i%>">Add to Wishlist</span></button>
+                                            <button href="#" class="btn-product-icon btn-wishlist btn-expandable" title="Add to wishlist"  onclick="addtowish('<%=products[i].name%>','<%=email%>','<%=i%>')"><span id="wish<%=i%>">Add to Wishlist</span></button>
                                         </div><!-- End .product-action -->
                             
                                         <div class="product-action product-action-transparent">
-                                            <button class="btn-product btn-cart" id="cart<%=i%>" onclick="addtocart('<%=products[i].name%>','<%=email%>',<%=i%>)">Add to cart</button>
+                                            <button class="btn-product btn-cart" id="cart<%=i%>" onclick="addtocart('<%=products[i].name%>','<%=email%>','<%=i%>')">Add to cart</button>
                                           </div><!-- End .product-action -->
                                     </figure><!-- End .product-media -->
                             
@@ -411,7 +412,7 @@
                 <% if (banners2.image.length>0) { %>
                     <div class="intro-slider owl-carousel owl-theme owl-nav-inside owl-light" data-toggle="owl" data-owl-options='{"nav": false, "dots": false}'>
                         <% for (let i = 0; i < banners2.image.length; i++) { %>
-                            <div class="intro-slide" style="background-image: url(/admin_assets/product_images/<%= images2[i] %>);">
+                            <div class="intro-slide" style="background-image: url('/admin_assets/product_images/<%= images2[i] %>')">
                                 <div class="container intro-content text-center">
                                     <h3 class="intro-subtitle text-white">Explore</h3>
                                     <a href="/category" class="btn btn-primary mt-5">SHOP</a>
