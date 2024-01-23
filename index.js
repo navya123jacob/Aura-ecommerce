@@ -52,9 +52,4 @@ app.listen(port, () => {
   console.log('Listening at http://localhost:3000');
 });
 
-// app.use((err, req, res, next) => {
-//   console.error(err.stack);
-//   res.status(500).send('Something went wrong!');
-// });
 
-// hello

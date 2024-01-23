@@ -136,7 +136,8 @@ for (let i = 0; i < products.length; i ++) {
   const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
   if(buser)
     {
-      req.session.checkuser=''
+      req.session.checkuser='';
+      req.session.email='';
       
     }
     let ses = false; // If checkuser doesn't exists
@@ -186,7 +187,7 @@ const loadLogin=async(req,res)=>{
         const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
         if(buser)
           {
-            req.session.checkuser=''
+            req.session.checkuser='';req.session.email='';
             
           }
           let ses = false; // If checkuser doesn't exists
@@ -232,7 +233,7 @@ const loadRegister=async(req,res)=>{
       const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
       if(buser)
         {
-          req.session.checkuser=''
+          req.session.checkuser='';req.session.email='';
           
         }
         let ses = false; // If checkuser doesn't exists
@@ -384,7 +385,7 @@ const loadRegisterOTP=async(req,res)=>{
         const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
         if(buser)
           {
-            req.session.checkuser=''
+            req.session.checkuser='';req.session.email='';
             
           }
           let ses = false; // If checkuser doesn't exists
@@ -1995,7 +1996,8 @@ const logout=async(req,res)=>{
   try{
     
     
-    req.session.checkuser=''  //req.session.destroy is called, it destroys the session associated with the current request based on the session ID.
+    req.session.checkuser=''  //req.session.destroy is called, it destroys the session associated with the current request based on the session ID.;
+
     req.session.email='' 
      res.redirect('/')
   }
