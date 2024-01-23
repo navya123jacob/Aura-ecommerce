@@ -6,8 +6,6 @@ const morgan=require('morgan')
 
 // Create an Express application
 const app = express();
-app.use(morgan('dev'));
-
 
 // Connect to MongoDB
  mongoose.connect(process.env.MONGO_URL); //process.env is a Node.js global object that provides access to the environment variables. Environment variables are key-value pairs that can be set outside of your application and are accessible from within your Node.js application
