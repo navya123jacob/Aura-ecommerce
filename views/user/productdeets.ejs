@@ -37,7 +37,7 @@
                                 <% for (let i = 0; i < Math.min(products.pictures.length, 4); i++) { %>
                                     <% let additionalImage = products.pictures[i].replace('public', ''); %>
                         
-                                    <a class="product-gallery-item" href="#" data-image="<%= additionalImage %>" data-zoom-image="/admin_assets/product_images/<%= images[i] %>" >
+                                    <a class="product-gallery-item" href="#" data-image="<%= additionalImage %>" data-zoom-image="<%= additionalImage %>" >
                                         <img src="<%= additionalImage %>" alt="product side">
                                     </a>
                                 <% } %> 
