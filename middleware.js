@@ -81,7 +81,7 @@ const adminloginNoSes = (req, res, next) => {
   const buser=await User.findOne({Fname:req.session.checkuser,is_blocked:true})
       if(buser)
         {
-          req.session.checkuser=''
+          req.session.checkuser='';req.session.email='';
           
         }
         
