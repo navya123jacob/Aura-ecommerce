@@ -104,16 +104,23 @@
         mobileError.textContent = '';
         
 
-        // Add your validation logic here
-        if (firstName.length < 2) {
-            firstNameError.textContent = 'First name must be at least 2 characters.';
-            return false;
-        }
+        
+function isOnlyLetters(str) {
+  return /^[a-zA-Z]+$/.test(str);
+}
 
-        if (lastName.length < 1) {
-            lastNameError.textContent = 'Last name must be at least 1 character.';
-            return false;
-        }
+// Validate first name
+if (firstName.length < 2 || !isOnlyLetters(firstName)) {
+    firstNameError.textContent = 'First name must be at least 2 characters and contain only letters.';
+    return false;
+}
+
+// Validate last name
+if (lastName.length < 1 || !isOnlyLetters(lastName)) {
+    lastNameError.textContent = 'Last name must be at least 1 character and contain only letters.';
+    return false;
+}
+
 
         if (!/^\d{10}$/.test(mobile)) {
             mobileError.textContent = 'Please enter a valid 10-digit mobile number.';
