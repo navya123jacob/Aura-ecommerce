@@ -632,7 +632,7 @@ const about = async (req, res) => {
     }
   };
 
-
+let so=1;
 const CatProductsView = async (req, res) => {
   try {
      //for logi mid
@@ -647,8 +647,11 @@ const CatProductsView = async (req, res) => {
 
     const searchQuery = req.query.search || ''; 
     
-
-   let sortvalue=parseInt(req.query.sort)||1
+    if(req.query.sort)
+    {
+      so=parseInt(req.query.sort)
+   
+    }
    
 
     let mycategory=await category.findOne({name:cat,'status':'active'})
@@ -667,7 +670,7 @@ const CatProductsView = async (req, res) => {
   let tot=[]
   let protot = await product.find(query).populate({
         path: 'category',
-        model: 'Category'}).sort({ price: sortvalue}).exec()
+        model: 'Category'}).sort({ price: so}).exec()
         protot.forEach((e)=>{
     
           if(e.category.status=='active')
