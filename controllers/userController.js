@@ -164,14 +164,11 @@ if (banners) {
     const separator = '/';
 
     for (let j = 0; j < banners.image.length; j++) {
-        const filePath = banners.image[j];
-        const adminAssetsPath = path.join('admin_assets', 'product_images', path.basename(filePath));
+      const filePath = banners.image[j];
+      const baseName = path.basename(filePath);
+      images.push(baseName);
+  }
 
-        // Ensure the result uses forward slashes
-        const resultPath = separator + adminAssetsPath.replace(/\\/g, separator);
-        
-        images.push(resultPath);
-    }
 }
     const images2 = [];
     
