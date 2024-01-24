@@ -53,7 +53,7 @@
 												<td class="price-col">₹<%=proprice[i]%></td>
 												<td class="quantity-col">
 													<div class="cart-product-quantity">
-														<input type="number" class="form-control" id="quantity" value="<%= product.quantity %>" min="1" max="<%= product.products.quantity %>" step="1" data-decimals="0" onchange="addtocart('<%=product.name%>','<%=email%>', this.value)" required></div><!-- End .cart-product-quantity -->
+														<input type="number" class="form-control" id="quantity" value="<%= product.quantity %>" min="1" max="<%= product.products.quantity %>" step="1" data-decimals="0" onchange="addtocart('<%=product.name%>','<%=email%>', this.value,<%=product.products.quantity%>)" required></div><!-- End .cart-product-quantity -->
 												</td>
 												
 												<td class="total-col">₹<%= totalproprice[i] %></td>
@@ -137,10 +137,13 @@ if (shipping > 0) {
 
 			//to remove product
 
-			function addtocart(prodname,email,qtyValue)
+			function addtocart(prodname,email,qtyValue,real)
             {
                
-				
+			if(qtyValue<=0 || qtyValue>real)	
+			{
+				return
+			}
            
             fetch(`/productaddtocart?name=${prodname}&email=${email}&qtyValue=${qtyValue}&cart='yes'`, {
             method: 'POST', // Use POST or PATCH for updating data

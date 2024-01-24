@@ -169,7 +169,7 @@ if (banners) {
 
         // Ensure the result uses forward slashes
         const resultPath = separator + adminAssetsPath.replace(/\\/g, separator);
-        console.log(resultPath);
+        
         images.push(resultPath);
     }
 }
@@ -1202,6 +1202,7 @@ couponfind = couponfind.filter(co => {
       usercart.Products.forEach(async(product)=> {
         let productPrice = parseFloat(product.total);
         let individualprice=product.price;let discountpercent=0
+
         
         if(product.products.category.offer != 0)
         {
@@ -1321,37 +1322,45 @@ const placeorder=async(req,res)=>{
     let grandtotal = 0;
     let b=0;let c=0
    
-    
+    let cond=true;let name='';let quantityamount=0;
     let totalproprice=[];let proprice=[]
     if (usercart && usercart.Products[0]) {
       b=1
       let Total = 0;
       
-      usercart.Products.forEach(product => {
-        let productPrice = parseFloat(product.total);
-        let individualprice=product.price;let discountpercent=0
+      usercart.Products.forEach(async(prod)=> {
+        let productPrice = parseFloat(prod.total);
+        let individualprice=prod.price;let discountpercent=0
         
-        if(product.products.category.offer != 0)
+        if(prod.products.category.offer != 0)
         {
-          discountpercent=product.products.category.offer
+          discountpercent=prod.products.category.offer
         }
-        if(product.products.offer != 0)
+        if(prod.products.offer != 0)
         {
-          discountpercent=product.products.offer
+          discountpercent=pro.products.offer
         }
         
-        if (product.products.offer != 0 ||product.products.category.offer!= 0 ) {
+        if (prod.products.offer != 0 ||prod.products.category.offer!= 0 ) {
             const discountAmount = (discountpercent / 100) * productPrice;
             const discountedPrice = productPrice - discountAmount;
             productPrice = discountedPrice.toFixed(2);
             individualprice=(individualprice-((discountpercent / 100) * individualprice)).toFixed(2);
         }
-    
+        
         Total = Total + parseFloat(productPrice);
         totalproprice.push(parseFloat(productPrice))
         proprice.push(parseFloat(individualprice))
+        
+        if(prod.quantity>prod.products.quantity || prod.quantity<=0)
+          {
+            name=prod.products.name;
+            cond=false;
+            quantityamount=prod.products.quantity
+            
+          }
     });
-    
+   
 
         if (Total < 500) {
             shipping = 40;
@@ -1359,7 +1368,10 @@ const placeorder=async(req,res)=>{
 
         grandtotal = Total + shipping;
     }
-    
+    if(cond==false){
+      res.json({ success: 'insuff',check:true,name,quantityamount})
+    }
+    else{
     
     const newOrderData = new order({
       user: myuser._id,
@@ -1443,6 +1455,7 @@ else
 
 
 }
+    }
 
 
 } catch (error) {

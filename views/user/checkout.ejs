@@ -474,7 +474,25 @@ fetch('/placeorder', {
     })
     .then(data => {
         let difference=data.diff
-    if (data.success === 'cod') {
+        if(data.success=='insuff')
+        {
+            let name=decodeURIComponent(data.name);
+            let quamount=decodeURIComponent(data.quantityamount);
+            Swal.fire({
+    title: 'Insufficient',
+    html: ` ${name} have ${quamount} quantity`,
+    icon: 'error',
+    confirmButtonText: 'OK'
+}).then((result) => {
+    if (result.isConfirmed) {
+     window.location.href=`/cart`
+    } else {
+        console.log('User closed the dialog without clicking OK');
+      
+    }
+});
+        }
+    else if (data.success === 'cod') {
         // COD
         window.location.href = `/orderplaced?orderid=${data.oid}`;
     } else if (data.success === 'wal') {

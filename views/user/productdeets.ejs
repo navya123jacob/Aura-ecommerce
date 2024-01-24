@@ -85,7 +85,7 @@
                         <div class="product-details-action">
                             <div class="details-action-col">
                                 <div class="product-details-quantity">
-                                    <input type="number" id="qty" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
+                                    <input type="number" id="qty" class="form-control" value="1" min="1" max="<%=products.quantity%>" step="1" data-decimals="0" required>
                                 </div><!-- End .product-details-quantity -->
                                 <button class="btn-product btn-cart" onclick="addtocart('<%=products.name%>','<%=email%>','<%=products.quantity%>')">Add to cart</button>
                                

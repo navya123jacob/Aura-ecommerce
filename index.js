@@ -6,7 +6,7 @@ const morgan=require('morgan')
 
 // Create an Express application
 const app = express();
-app.use(morgan('dev'));
+
 
 
 // Connect to MongoDB
