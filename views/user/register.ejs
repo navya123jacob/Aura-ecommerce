@@ -117,14 +117,17 @@
         emailError.textContent = '';
         passwordError.textContent = '';
         let isvalid=true;
+        function isOnlyLetters(str) {
+  return /^[a-zA-Z\s]+$/.test(str);
+}
 
         // Add your validation logic here
-        if (firstName.length < 2) {
+        if (firstName.length < 2  || !isOnlyLetters(firstName)) {
             firstNameError.textContent = 'First name must be at least 2 characters.';
             isvalid=false;
         }
 
-        if (lastName.length < 1) {
+        if (lastName.length < 1 || !isOnlyLetters(lastName)) {
             lastNameError.textContent = 'Last name must be at least 1 character.';
             isvalid=false;
         }
