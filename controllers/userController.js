@@ -1116,6 +1116,7 @@ const wishlistload=async(req,res)=>{
 }
 
 
+
 //to remove products from wishlist
 
 const productremovefromwish = async (req, res) => {

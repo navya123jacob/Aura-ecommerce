@@ -25,16 +25,31 @@ const otpmid = async(req, res, next) => {
     
 
 // Login session middleware
-const UserNoSes = (req, res, next) => {
+const UserNoSes = async(req, res, next) => {
     // Check if the user is already logged in
+    
     if (!req.session.checkuser) {
+  
         // User is logged in, redirect to the home page
         res.redirect('/login');
-    } else {
-        // User is not logged in, allow the request to proceed to the next middleware
+    } 
+        else{
+            const buser=await User.findOne({Fname:req.session.checkuser,email:req.session.email,is_blocked:true})
+  if(buser)
+    {
+      req.session.checkuser='';
+      req.session.email='';
+      res.redirect('/login?message=blocked')
+      
+    }
+    else{
         next();
     }
-};
+        
+        }
+     
+    }
+
 // Login session middleware
 const UserSes = (req, res, next) => {
     // Check if the user is already logged in
@@ -78,13 +93,6 @@ const adminloginNoSes = (req, res, next) => {
     let ses = false; // If checkuser doesn't exists
    
     
-  const buser=await User.findOne({Fname:req.session.checkuser,email:req.session.email,is_blocked:true})
-      if(buser)
-        {
-          req.session.checkuser='';req.session.email='';
-          
-        }
-        
                 
           if (req.session.checkuser) {
               // If checkuser exists in the session, set ses to true
@@ -97,6 +105,9 @@ const adminloginNoSes = (req, res, next) => {
      
       await next()
     };
+
+   
+    
 
 module.exports = 
 {UserNoSes,
