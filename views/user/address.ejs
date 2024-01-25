@@ -410,153 +410,79 @@ function removeItem(address,email){
 }
 
 
-//for edit address 
-function submitEditForm(index) {
-    // Reset error messages
-    resetEditErrors(index);
-
-    // Validate inputs
-    if (!validateEditName(index)) return;
-    if (!validateEditPhone(index)) return;
-    if (!validateEditAddressDetails(index)) return;
-    if (!validateEditDistrict(index)) return;
-    if (!validateEditState(index)) return;
-    if (!validateEditPincode(index)) return;
-
-    // Collect form data
-    const formData = {
-        addressName: document.getElementById(`editaddressName${index}`).value,
-        addressPhone: document.getElementById(`editaddressPhone${index}`).value,
-        addressDetails: document.getElementById(`editaddressDetails${index}`).value,
-        addressDistrict: document.getElementById(`editaddressDistrict${index}`).value,
-        addressState: document.getElementById(`editaddressState${index}`).value,
-        addressPincode: document.getElementById(`editaddressPincode${index}`).value
-    };
-
-    // Log form data to the console (you can send it to a server or use it as needed)
-    fetch('/submit-edit-address', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-        })
-        .then(response => response.json())
-        .then((data) => {
-            if (data.success == true) {
-                $('#mainaddresspart').load('/address #mainaddresspart');
-                document.getElementById('message').innerText = "Address updated successfully";
-            } else {
-                alert('Failed to update address');
-            }
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-function resetEditErrors(index) {
-    document.getElementById(`editerrorName${index}`).innerText = '';
-    document.getElementById(`editerrorPhone${index}`).innerText = '';
-    document.getElementById(`editerrorDetails${index}`).innerText = '';
-    document.getElementById(`editerrorDistrict${index}`).innerText = '';
-    document.getElementById(`errorEditState${index}`).innerText = '';
-    document.getElementById(`editerrorPincode${index}`).innerText = '';
-}
-
-function validateEditName(index) {
-    const name = document.getElementById(`editaddressName${index}`).value.trim();
-    if (!name) {
-        document.getElementById(`editerrorName${index}`).innerText = 'Name is required';
-        return false;
-    }
-    return true;
-}
-
-function validateEditPhone(index) {
-    const phone = document.getElementById(`editaddressPhone${index}`).value.trim();
-    const phoneRegex = /^\d{10}$/; // Validates 10 digits
-
-    if (!phone) {
-        document.getElementById(`editerrorPhone${index}`).innerText = 'Phone is required';
-        return false;
-    }
-
-    if (!phoneRegex.test(phone)) {
-        document.getElementById(`editerrorPhone${index}`).innerText = 'Invalid phone number. It should be 10 digits.';
-        return false;
-    }
-
-    return true;
-}
-
-function validateEditAddressDetails(index) {
-    const details = document.getElementById(`editaddressDetails${index}`).value.trim();
-    if (!details) {
-        document.getElementById(`editerrorDetails${index}`).innerText = 'Address is required';
-        return false;
-    }
-    return true;
-}
-
-function validateEditDistrict(index) {
-    const district = document.getElementById(`editaddressDistrict${index}`).value.trim();
-    if (!district) {
-        document.getElementById(`editerrorDistrict${index}`).innerText = 'District is required';
-        return false;
-    }
-
-    // Validate no digits in district
-    const digitRegex = /\d/;
-    if (digitRegex.test(district)) {
-        document.getElementById(`editerrorDistrict${index}`).innerText = 'District should not contain digits';
-        return false;
-    }
-
-    return true;
-}
-
-function validateEditState(index) {
-    const state = document.getElementById(`editaddressState${index}`).value.trim();
-    if (!state) {
-        document.getElementById(`errorEditState${index}`).innerText = 'State is required';
-        return false;
-    }
-
-    // Validate no digits in state
-    if (digitRegex.test(state)) {
-        document.getElementById(`errorEditState${index}`).innerText = 'State should not contain digits';
-        return false;
-    }
-
-    return true;
-}
-
-function validateEditPincode(index) {
-    const pincode = document.getElementById(`editaddressPincode${index}`).value.trim();
-    if (!pincode) {
-        document.getElementById(`editerrorPincode${index}`).innerText = 'Pincode is required';
-        return false;
-    }
-
-    // Validate 6-digit pincode
-    const pincodeRegex = /^\d{6}$/;
-    if (!pincodeRegex.test(pincode)) {
-        document.getElementById(`editerrorPincode${index}`).innerText = 'Invalid pincode (6 digits required)';
-        return false;
-    }
-
-    return true;
-}
-
 
 //submitting edit form
 function prepareAndSubmitEditForm(index,real) {
+    const editname=document.getElementById(`editaddressName${index}`).value;
+    const phoneedit=document.getElementById(`editaddressPhone${index}`).value;
+    const addressedit=document.getElementById(`editaddressDetails${index}`).value;
+    const districtedit=document.getElementById(`editaddressDistrict${index}`).value;
+    const stateedit=document.getElementById(`editaddressState${index}`).value;
+    const pincodeedit= document.getElementById(`editaddressPincode${index}`).value;
+
+    const editnameerror=document.getElementById(`editerrorName${index}`);
+    const phoneediterror=document.getElementById(`editerrorPhone${index}`);
+    const addressediterror=document.getElementById(`editerrorDetails${index}`);
+    const districtediterror=document.getElementById(`editerrorDistrict${index}`);
+    const stateediterror=document.getElementById(`errorEditState${index}`);
+    const pincodeediterror= document.getElementById(`editerrorPincode${index}`);
+
+    // Validate Name
+if (!editname.match(/^[A-Za-z\s]+$/) || !editname.trim()) {
+    editnameerror.innerText = 'Name should contain only letters and can contain space in between';
+    return false;
+} else {
+    editnameerror.innerText = '';
+}
+
+// Validate Phone
+if (!phoneedit.match(/^\d{10}$/) || !phoneedit.trim()) {
+    phoneediterror.innerText = 'Phone number should be 10 digits';
+    return false;
+} else {
+    phoneediterror.innerText = '';
+}
+
+// Validate Address
+if (!addressedit.trim()) {
+    addressediterror.innerText = 'Address is required';
+    return false;
+} else {
+    addressediterror.innerText = '';
+}
+
+// Validate District
+if (!districtedit.match(/^[A-Za-z]+$/) || !districtedit.trim()) {
+    districtediterror.innerText = 'District should contain only letters';
+    return false;
+} else {
+    districtediterror.innerText = '';
+}
+
+// Validate State
+if (!stateedit.trim()) {
+    stateediterror.innerText = 'State is required';
+    return false;
+} else {
+    stateediterror.innerText = '';
+}
+
+// Validate Pincode
+if (!pincodeedit.match(/^\d{6}$/) || !pincodeedit.trim()) {
+    pincodeediterror.innerText = 'Pincode should be a 6-digit number';
+    return false;
+} else {
+    pincodeediterror.innerText = '';
+}
+      
+    
     const formData = {
-        name: document.getElementById(`editaddressName${index}`).value,
-        phone: document.getElementById(`editaddressPhone${index}`).value,
-        address: document.getElementById(`editaddressDetails${index}`).value,
-        district: document.getElementById(`editaddressDistrict${index}`).value,
-        state: document.getElementById(`editaddressState${index}`).value,
-        pincode: document.getElementById(`editaddressPincode${index}`).value,
+        name:editname,
+        phone:phoneedit,
+        address:addressedit,
+        district:districtedit,
+        state:stateedit,
+        pincode:pincodeedit,
         realaddress:real
     };
 
@@ -571,7 +497,7 @@ function prepareAndSubmitEditForm(index,real) {
             response.json()
         }).then((data)=>{
            
-            $('#addresspart').load('/address #addresspart');
+            $('#mainaddresspart').load('/address #mainaddresspart');
         }).catch(error => console.error('Error:', error));
 }
 
