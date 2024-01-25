@@ -128,6 +128,7 @@ const dashboard=async(req,res)=>{
           ]);
           let revenuelen = revenue.length > 0 ? revenue[0].total : 0;
           revenuelen += revenue2.length > 0 ? revenue2[0].total : 0;
+          revenuelen=(revenuelen).toFixed(2)
           let pendlen=pending.length;
          
           //area chart
@@ -341,6 +342,7 @@ const dashboard=async(req,res)=>{
       }
     }
   ]);
+ 
   const cashOnDeliveryamount = await order.aggregate([
     {
       $match: {
