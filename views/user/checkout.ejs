@@ -98,23 +98,23 @@
                                                     <% usercart.Products.forEach(product => { %>
                                                         <tr>
                                                             <td><a href="#"><%= product.products.name %></a></td>
-                                                            <td>$<%= totalproprice[i] %></td>
+                                                            <td>₹<%= totalproprice[i] %></td>
                                                         </tr>
                                                         <% i++%>
                                                     <% }); %>
                                                     
                                                     <tr class="summary-subtotal">
                                                         <td>Subtotal:</td>
-                                                        <td>$<%= Total %></td>
+                                                        <td>₹<%= Total %></td>
                                                         
                                                     </tr>
                                                     <tr>
                                                         <td>Shipping:</td>
-                                                        <td>$<%= shipping %></td>
+                                                        <td>₹<%= shipping %></td>
                                                     </tr>
                                                     <tr class="summary-total" >
                                                         <td>Total:</td>
-                                                        <td>$<%= grandtotal %></td>
+                                                        <td>₹<%= grandtotal %></td>
                                                         
                                                     </tr>
                                                     <tr>

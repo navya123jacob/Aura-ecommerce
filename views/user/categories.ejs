@@ -59,7 +59,7 @@
                 			</div><!-- End .toolbox -->
                             <div class="row justify-content-center">
                                 <% for (let i = 0; i < products.length; i ++) { %>
-                                    <div class="col-6">
+                                    <div class="col-6 ">
                                         <!-- Product 1 -->
                                         <div class="product product-2" style="height:80vh" data-price="<%= products[i].price %>">
                                             <figure class="product-media" style="height:70%" >
@@ -83,11 +83,11 @@
                                                   <button class="btn-product btn-cart" id="cart<%=i%>" onclick="addtocart('<%=products[i].name%>','<%=email%>',<%=i%>,'<%=products[i].quantity%>')">Add to cart</button>
                                                 </div><!-- End .product-action -->
                                             </figure><!-- End .product-media -->
-                                            <div class="product-body">
+                                            <div class="product-body ml-4">
                                                 <div class="product-cat">
-                                                    <a href="<%= products[i].category ? '/category/' + products[i].category._id : '#' %>"><%= products[i].category.name %></a>
+                                                    <a href="/category?cat=<%= products[i].category.name%>"><%= products[i].category.name %></a>
                                                 </div><!-- End .product-cat -->
-                                                <h3 class="product-title"><a href="<%= '/product/' + products[i]._id %>"><%= products[i].name %></a></h3><!-- End .product-title -->
+                                                <h3 class="product-title"><a href="/productdetails?id=<%=products[i]._id%>"><%= products[i].name %></a></h3><!-- End .product-title -->
                                                 <div class="product-price" style=" display: inline-block;">
                                                   <% if (products[i].offer != 0 ||products[i].category.offer!=0 ) { %>
                                                       <span style="color: grey; text-decoration: line-through;">₹<%= products[i].price %></span>

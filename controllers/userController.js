@@ -663,8 +663,8 @@ const CatProductsView = async (req, res) => {
     }
    
     if (searchQuery) {
-      const regex = new RegExp(`^${searchQuery}`, 'i');
-      query.name = regex
+      const regex = new RegExp(searchQuery, 'i');
+      query.name = regex;
   }
 
   let tot=[]
