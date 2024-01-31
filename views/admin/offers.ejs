@@ -145,7 +145,7 @@
         if (result.isConfirmed) {
             // If the user confirms, proceed with the removal
             fetch(`/admin/Offerremove?name=${name}`, {
-                method: 'POST',
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },

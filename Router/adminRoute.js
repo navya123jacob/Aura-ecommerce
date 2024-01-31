@@ -122,7 +122,7 @@ adminRoute.get('/couponsadd',mid.adminloginNoSes,adminController.addcoupons)
 adminRoute.post('/addcouponpost',mid.adminloginNoSes,adminController.addcouponpost)
 
 //to remove coupon
-adminRoute.post('/couponremove',mid.adminloginNoSes,adminController.couponremove)
+adminRoute.delete('/couponremove',mid.adminloginNoSes,adminController.couponremove)
 
 //to view offers
 adminRoute.get('/offers',mid.adminloginNoSes,adminController.offers)
@@ -137,7 +137,7 @@ adminRoute.get('/offersAdd',mid.adminloginNoSes,adminController.addoffers)
 adminRoute.post('/addofferpost',mid.adminloginNoSes,adminController.addofferspost)
 
 //to remove offer
-adminRoute.post('/Offerremove',mid.adminloginNoSes,adminController.offerremove)
+adminRoute.delete('/Offerremove',mid.adminloginNoSes,adminController.offerremove)
 
 //to view banners
 adminRoute.get('/banners',mid.adminloginNoSes,adminController.banners)
