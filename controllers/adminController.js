@@ -63,7 +63,8 @@ const dashboard=async(req,res)=>{
     const [prodlen, catlen, totalUsers] = await Promise.all([
       product.countDocuments(),
       Category.countDocuments(),
-      User.countDocuments()
+      User.countDocuments(),
+
   ]);
         let salesdash = await order.aggregate([
           {
@@ -313,6 +314,7 @@ const dashboard=async(req,res)=>{
   let razor=await order.countDocuments({paymentMode:"razorpay"})||0
   let cod=await order.countDocuments({paymentMode:"cashOnDelivery"})||0
   let wal=await order.countDocuments({paymentMode:"wallet"})||0
+  let totalpayments=razor+cod+wal
   let payment=[wal,cod,razor]
   const razorpayamount = await order.aggregate([
     {
@@ -384,7 +386,7 @@ const dashboard=async(req,res)=>{
             
           
         const message=req.query.message||'';
-        res.render('dashboard',{prodlen,catlen,revenuelen,pendlen,yeardata,yearuser,monthorder,monthuser,profit,totalUsers,saleslen,payment,razoramount,codamount,walamount,orders,page,totalPages})
+        res.render('dashboard',{prodlen,catlen,revenuelen,pendlen,yeardata,yearuser,monthorder,monthuser,profit,totalUsers,saleslen,payment,razoramount,codamount,walamount,orders,page,totalPages,totalpayments})
     }
     catch (error) {
         console.log(error.message);
