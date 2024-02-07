@@ -774,7 +774,7 @@ const productdetails = async (req, res) => {
 
 for (let i = 0; i < products.pictures.length; i++) {
     const filePath = products.pictures[i];
-    const baseName = path.basename(filePath);
+    const baseName = filePath.substring(filePath.lastIndexOf('\\') + 1);
     images.push(baseName);
 }
 
