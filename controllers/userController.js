@@ -164,18 +164,18 @@ if (banners) {
 
     for (let j = 0; j < banners.image.length; j++) {
       const filePath = banners.image[j];
-      const baseName =filePath.substring(filePath.lastIndexOf('\\') + 1);
+      const baseName =filePath.substring(filePath.lastIndexOf('\\') + 1); //basename nbot supported in aws
       images.push(baseName);
   }
 
 }
-console.log(images)
+
     const images2 = [];
     
     if(banners2){
     for (let j = 0; j < banners2.image.length; j++) {
         const filePath = banners2.image[j];
-        const baseName = path.basename(filePath);
+        const baseName = filePath.substring(filePath.lastIndexOf('\\') + 1);
         images2.push(baseName);
     }}
 
