@@ -170,6 +170,7 @@ if (banners) {
   }
 
 }
+console.log(images)
     const images2 = [];
     
     if(banners2){
