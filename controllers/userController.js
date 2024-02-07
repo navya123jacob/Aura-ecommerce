@@ -165,7 +165,7 @@ if (banners) {
 
     for (let j = 0; j < banners.image.length; j++) {
       const filePath = banners.image[j];
-      const baseName = path.basename(filePath);
+      const baseName =filePath.substring(filePath.lastIndexOf('/') + 1);
       images.push(baseName);
   }
 
