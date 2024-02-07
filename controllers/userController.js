@@ -179,8 +179,8 @@ if (banners) {
         images2.push(baseName);
     }}
 
-   
-      res.render('home',{user,ses,products,categories,email,totalprice,banners,images,banners2,images2})
+   let sep=path.sep
+      res.render('home',{user,ses,products,categories,email,totalprice,banners,images,banners2,images2,sep})
   }
   catch (error) {
       console.log(error.message);
