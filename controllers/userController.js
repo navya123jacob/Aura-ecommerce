@@ -161,11 +161,10 @@ for (let i = 0; i < products.length; i ++) {
 
 if (banners) {
     // Assuming this code is inside the user_Controller
-    const separator = '/';
 
     for (let j = 0; j < banners.image.length; j++) {
       const filePath = banners.image[j];
-      const baseName =filePath.substring(filePath.lastIndexOf('/') + 1);
+      const baseName =filePath.substring(filePath.lastIndexOf('\\') + 1);
       images.push(baseName);
   }
 
