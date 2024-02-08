@@ -180,7 +180,6 @@ if (banners) {
     }}
 
    let sep=path.sep
-   console.log(sep)
       res.render('home',{user,ses,products,categories,email,totalprice,banners,images,banners2,images2,sep})
   }
   catch (error) {
