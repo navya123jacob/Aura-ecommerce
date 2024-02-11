@@ -175,11 +175,12 @@ if (quantity == 0) {
             
             
             document.querySelector('.btn-cart').textContent = 'Added to Cart';
-            
-            setTimeout(() => {
-            document.querySelector('.btn-cart').textContent = 'Add to Cart';
-            
-        }, 1500);
+            document.querySelector('.btn-cart').style.backgroundColor = '#499c5a'
+
+setTimeout(() => {
+    document.querySelector('.btn-cart').textContent = 'Add to Cart';
+    document.querySelector('.btn-cart').style.backgroundColor = '';
+}, 1500);
             
             
            

@@ -244,11 +244,13 @@ if (quantity == 0) {
             
            
             document.getElementById(`cart${i}`).textContent = 'Added to Cart';
+            document.getElementById(`cart${i}`).style.backgroundColor = '#499c5a'
+
             
             setTimeout(() => {
               document.getElementById(`cart${i}`).textContent = 'Add to Cart';
-            
-        }, 1000);
+              document.getElementById(`cart${i}`).style.backgroundColor = ''
+        }, 1500);
             
             
            
