@@ -1,2 +1,5 @@
+
+# Ignore config.env to avoid exposing sensitive information
 .env
-public/
+# Ignore node_modules directory
+node_modules
