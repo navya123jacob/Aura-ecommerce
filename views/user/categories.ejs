@@ -1,8 +1,15 @@
 <%- include('../layouts/header') %>
 <%- include('../layouts/Login/loginHeader') %>
-<main class="main">
+<% if (cat === "Skincare") { %>
+  <div class="page-header text-center" style="background-image: url('/assets/images/pexels-alesia-kozik-7797740 (1).jpg'); background-size: cover; height: 30vh;">
+    <%} else if (cat === "Haircare") { %>
+      <div class="page-header text-center" style="background-image: url('/assets/images/pexels-vlada-karpovich-6634680.jpg'); background-size: cover; height: 30vh;">
+    <%} else if (cat === "Bath and Body") { %>
+      <div class="page-header text-center" style="background-image: url('/assets/images/bathcat.jpg'); background-size: cover; height: 30vh;">
+  <% } else { %>
   <div class="page-header text-center" style="background-image: url('/assets/images/demos/demo-5/slider/category.jpg'); background-size: cover; height: 30vh;">
-    <div class="container">
+  <% } %>
+        <div class="container">
       <h1 style="color: black; font-size: 4rem; margin-top: 10vh;">
         <% if (cat) { %>
             <%= cat.toUpperCase() %>
