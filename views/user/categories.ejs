@@ -1,9 +1,9 @@
 <%- include('../layouts/header') %>
 <%- include('../layouts/Login/loginHeader') %>
 <% if (cat === "Skincare") { %>
-  <div class="page-header text-center" style="background-image: url('/assets/images/pexels-alesia-kozik-7797740 (1).jpg'); background-size: cover; height: 30vh;">
+  <div class="page-header text-center" style="background-image: url('/assets/images/pexels-karolina-grabowska-4938327.jpg'); background-size: cover; height: 30vh;">
     <%} else if (cat === "Haircare") { %>
-      <div class="page-header text-center" style="background-image: url('/assets/images/pexels-vlada-karpovich-6634680.jpg'); background-size: cover; height: 30vh;">
+      <div class="page-header text-center" style="background-image: url('/assets/images/haircat.jpg'); background-size: cover; height: 30vh;">
     <%} else if (cat === "Bath and Body") { %>
       <div class="page-header text-center" style="background-image: url('/assets/images/bathcat.jpg'); background-size: cover; height: 30vh;">
   <% } else { %>
@@ -35,8 +35,8 @@
         </div><!-- End .container -->
     </nav><!-- End .breadcrumb-nav -->
     
-            <div class="page-content" id="toload">
-                <div class="container">
+            <div class="page-content" >
+                <div class="container" id="toload">
                     
                 	<div class="row">
                        
@@ -199,7 +199,11 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <script>
           function searchUsers(searchvalue) {
- $('#toload').load(`/category?search=${searchvalue}&cat=<%=cat%> #toload`)}
+    const encodedCat = encodeURIComponent('<%=cat%>');
+    const url = searchvalue.trim() !== '' ? `/category?search=${searchvalue}&cat=${encodedCat}` : `/category?cat=${encodedCat}`;
+    $('#toload').load(url + ' #toload');
+}
+
 
   
   function addtocart(prodname,email,i,quantity)
