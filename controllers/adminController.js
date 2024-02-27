@@ -314,6 +314,7 @@ const dashboard=async(req,res)=>{
   let razor=await order.countDocuments({paymentMode:"razorpay"})||0
   let cod=await order.countDocuments({paymentMode:"cashOnDelivery"})||0
   let wal=await order.countDocuments({paymentMode:"wallet"})||0
+  
   let totalpayments=razor+cod+wal
   let payment=[wal,cod,razor]
   const razorpayamount = await order.aggregate([
@@ -361,9 +362,9 @@ const dashboard=async(req,res)=>{
   ]);
   let razoramount,codamount,walamount;
   razoramount=codamount=walamount=0
- if(razorpayamount.length>0){ razoramount=razorpayamount[0].totalSum;}
- if(cashOnDeliveryamount.length>0){codamount=cashOnDeliveryamount[0].totalSum;}
- if(walamount.length>0){walamount=walletamount[0].totalSum;}
+ if(razorpayamount.length>0){ razoramount=razorpayamount[0].totalSum.toFixed(2);}
+ if(cashOnDeliveryamount.length>0){codamount=cashOnDeliveryamount[0].totalSum.toFixed(2);}
+ if(walamount.length>0){walamount=walletamount[0].totalSum.toFixed(2);}
 
   const page = parseInt(req.query.page) || 1;
         const pageSize = 6; 
